@@ -1,40 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 ---
 
-<Layout title="Arne Natskår">
-  <Header slot="header" />
-
-  <section class="mb-10">
-    <h2 class="text-2xl font-bold mb-3">Hei, jeg er Arne!</h2>
-    <p>
-      Jeg er en utvikler fra Bergen med bakgrunn i datasikkerhet fra UiB.
-      Jeg er interessert i programmering, sikkerhet, lyd, sjakk og brettspill.
-      Når jeg ikke koder liker jeg å være sosial, engasjere meg i studentlivet,
-      og jobbe med morsomme sideprosjekter.
-    </p>
-  </section>
-
-  <section>
-    <h2 class="text-xl font-semibold mb-4">Utvalgte prosjekter</h2>
-    <div class="grid gap-3">
-      <ProjectCard
-        href="/bysykkelApp/index_bysykkel.html"
-        title="Bergen Bysykkel tilgjengelighet"
-        year="2022"
-      />
-      <ProjectCard
-        href="/kanonspill/index_kanon.html"
-        title="Spill med kanon!"
-        year="2019"
-      />
-    </div>
-    <p class="mt-4">
-      <a href="/code" class="underline text-blue-600 hover:text-blue-800">
-        Se alle eksempler &rarr;
-      </a>
-    </p>
-  </section>
+<Layout title="Arne Natskår" centered>
+  <div class="text-center">
+    <h1 class="text-4xl font-bold mb-2">Arne Natskår</h1>
+    <p class="text-gray-500 mb-6">Security Developer</p>
+    <nav class="flex gap-6 justify-center text-sm">
+      <a href="/code" class="underline hover:text-gray-600">Prosjekter</a>
+      <a href="/contact" class="underline hover:text-gray-600">Kontakt</a>
+      <a href="https://github.com/ArneeMe" class="underline hover:text-gray-600">GitHub</a>
+    </nav>
+  </div>
 </Layout>
