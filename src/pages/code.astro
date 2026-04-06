@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const projects = [
+  { href: '/bysykkelApp/index_bysykkel.html', title: 'Sjekk Bergen Bysykkel tilgjengelighet', year: '2022' },
+  { href: '/theDogApp/index_dogapp.html', title: 'Hvilken hund er din favoritthund?', year: '2022' },
+  { href: '/kanonspill/index_kanon.html', title: 'Spill med kanon!', year: '2019' },
+  { href: '/hoksrudspill/index_hoksrud.html', title: 'Spill med Bård Hoksrud!', year: '2019' },
+  { href: '/velgTlf/velgTlfNr.html', title: 'Beste måten å velge telefonnummer på!' },
+  { href: '/eksamen/oppgave3Eksamen.html', title: 'Siste oppgave IT2 Eksamen', year: '2019' },
+  { href: '/farger', title: 'Farger til echo!' },
+];
+---
+
+<Layout title="Eksempler - Arne Natskår">
+  <Header slot="header" />
+
+  <h2 class="text-xl font-semibold mb-6">Kodeeksempler</h2>
+  <div class="grid gap-3">
+    {projects.map((p) => (
+      <ProjectCard href={p.href} title={p.title} year={p.year} />
+    ))}
+  </div>
+</Layout>

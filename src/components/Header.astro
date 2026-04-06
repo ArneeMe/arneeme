@@ -1,0 +1,35 @@
+---
+const navLinks = [
+  { href: '/', label: 'Hjem' },
+  { href: '/code', label: 'Eksempler' },
+  { href: '/cv', label: 'CV' },
+  { href: '/contact', label: 'Kontakt' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="bg-gray-800 text-white py-6" slot="header">
+  <div class="max-w-3xl mx-auto px-4">
+    <h1 class="text-2xl font-bold mb-4">
+      <a href="/">Arne Natskår</a>
+    </h1>
+    <nav class="flex gap-4">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'hover:underline',
+            {
+              'font-bold underline':
+                currentPath === link.href ||
+                currentPath === link.href + '/',
+            },
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>

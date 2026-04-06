@@ -1,0 +1,90 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+---
+
+<Layout title="Arne Natskår">
+  <Header slot="header" />
+
+  <section class="mb-10">
+    <h2 class="text-xl font-semibold mb-3">Velkommen til min nettside!</h2>
+    <p>
+      Her finner du noen morsomme kodeeksempler, litt om det jeg har holdt med
+      på de siste årene og måter å kontakte meg på!
+    </p>
+  </section>
+
+  <section class="mb-10">
+    <h2 class="text-xl font-semibold mb-4">Om meg</h2>
+    <div class="space-y-4">
+      <p>
+        Jeg studerer datasikkerhet ved Universitetet i Bergen. Jeg begynte på et
+        sivilingeniør studie på NTNU men fant fort ut at programmering og Bergen
+        er der jeg kommer til å trives. Jeg flyttet til Bergen og fant meg
+        straks til rette både med jobber og studier og senere flere verv og en
+        sosial studiehverdag.
+      </p>
+      <p>
+        Programmering, sikkerhet, lyd, sjakk, brettspill. Dette er noen av
+        temaene jeg er dypt fascinert av, og setter meg godt inn i. Jeg kan
+        snakke i det uendelige om interessene mine, til tider for mye. Det
+        kommer av at jeg setter meg inn i det og ønsker å dele det til de jeg
+        møter.
+      </p>
+      <p>
+        Å være sosial og teamarbeid er noe jeg trives med. Fra HiFi-Klubben har
+        jeg med mye erfaring fra å møte mennesker og forklare, selge og
+        diskutere problemløsning og tekniske utfordringer. I jobben som
+        gruppeleder i Programvaresikkerhet (INF226) er det mye
+        sikkerhetsdiskusjoner, samt veiledning av mine medstudenter. Da jeg
+        hadde faget Datanett (INF142) så var det teamarbeid hvor det var fint å
+        kunne samarbeide med andre og bruke hverandres styrker.
+      </p>
+      <p>
+        I tillegg til studie er Programmerbar, Helt Sikker, Kvarteret,
+        gruppeleder, deltidsjobb i HiFi-Klubben og å være sosial på lesesalen
+        det som tar resten av tiden min. Jeg trives godt med å være opptatt og
+        gjøre mye, samtidig som jeg føler at jeg har tid nok til å studere og å
+        til å gjøre de tingene jeg gjør ordentlig.
+      </p>
+      <p>
+        På fritiden liker jeg bla å holde på med morsomme Javascript eller
+        Python prosjekter. Scripts som kalkulerer sjakk ELO til spillere som du
+        selv kan legge inn, eller de ulike eksemplene som er implementert på
+        denne nettsiden er ting jeg syntes er morsomt å holde på med.
+      </p>
+      <p>
+        Sikkerhet, java-utvikling, matte og concurrent programmering er noen av
+        fagene og temaene jeg har på studie. Mye av UiB sin utdanning er
+        teoretisk, med innspill av det praktiske.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-semibold mb-4">Utvalgte prosjekter</h2>
+    <div class="grid gap-3">
+      <ProjectCard
+        href="/bysykkelApp/index_bysykkel.html"
+        title="Bergen Bysykkel tilgjengelighet"
+        year="2022"
+      />
+      <ProjectCard
+        href="/theDogApp/index_dogapp.html"
+        title="Hvilken hund er din favoritt?"
+        year="2022"
+      />
+      <ProjectCard
+        href="/kanonspill/index_kanon.html"
+        title="Spill med kanon!"
+        year="2019"
+      />
+    </div>
+    <p class="mt-4">
+      <a href="/code" class="underline text-blue-600 hover:text-blue-800">
+        Se alle eksempler &rarr;
+      </a>
+    </p>
+  </section>
+</Layout>
