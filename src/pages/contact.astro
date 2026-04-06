@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+---
+
+<Layout title="Kontakt meg - Arne Natskår">
+  <Header slot="header" />
+
+  <div id="collector">
+    <h2 class="text-xl font-semibold mb-4">Kontakt meg gjerne</h2>
+  </div>
+
+  <script>
+    function emailText() {
+      const collector = document.querySelector('#collector');
+      if (!collector) return;
+
+      const mainEmail = document.createElement('p');
+      mainEmail.className = 'text-lg font-semibold mt-4';
+      mainEmail.innerText = 'Hovedepost: natskaar@hotmail.no';
+
+      const linkdIn = document.createElement('p');
+      linkdIn.className = 'mt-2';
+      linkdIn.innerText = 'LinkedIn: www.linkedin.com/in/arne-natskår';
+
+      const secondaryEmail = document.createElement('p');
+      secondaryEmail.className = 'mt-2';
+      secondaryEmail.innerText = 'Sikrere epost: arneeme@protonmail.com';
+
+      const funfact = document.createElement('p');
+      funfact.className = 'mt-6 text-sm text-gray-500 italic';
+      funfact.innerText =
+        'Denne teksten er lastet inn med hjelp av JavaScript slik at epostene ikke vil kan plukkes opp av bots som scanner nettsiden.';
+
+      collector.appendChild(mainEmail);
+      collector.appendChild(linkdIn);
+      collector.appendChild(secondaryEmail);
+      collector.appendChild(funfact);
+    }
+
+    emailText();
+  </script>
+</Layout>

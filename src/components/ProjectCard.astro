@@ -1,0 +1,17 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  year?: string;
+}
+
+const { href, title, year } = Astro.props;
+---
+
+<a
+  href={href}
+  class="block p-4 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors"
+>
+  <span class="font-medium">{title}</span>
+  {year && <span class="ml-2 text-sm text-gray-500">({year})</span>}
+</a>
