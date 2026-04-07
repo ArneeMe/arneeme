@@ -1,40 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 ---
 
-<Layout title="Arne Natskår">
-  <Header slot="header" />
-
-  <section class="mb-10">
-    <h2 class="text-2xl font-bold mb-3">Hei, jeg er Arne!</h2>
-    <p>
-      Jeg er en utvikler fra Bergen med bakgrunn i datasikkerhet fra UiB.
-      Jeg er interessert i programmering, sikkerhet, lyd, sjakk og brettspill.
-      Når jeg ikke koder liker jeg å være sosial, engasjere meg i studentlivet,
-      og jobbe med morsomme sideprosjekter.
-    </p>
-  </section>
-
-  <section>
-    <h2 class="text-xl font-semibold mb-4">Utvalgte prosjekter</h2>
-    <div class="grid gap-3">
-      <ProjectCard
-        href="/bysykkelApp/index_bysykkel.html"
-        title="Bergen Bysykkel tilgjengelighet"
-        year="2022"
-      />
-      <ProjectCard
-        href="/kanonspill/index_kanon.html"
-        title="Spill med kanon!"
-        year="2019"
-      />
+<Layout title="Arne Natskår" centered>
+  <div class="flex flex-col items-center gap-5 text-center px-4">
+    <img
+      src="/profile.png"
+      alt="Arne Natskår"
+      class="w-28 h-28 rounded-full object-cover grayscale"
+    />
+    <div>
+      <h1 class="text-3xl font-semibold tracking-tight">Arne Natskår</h1>
+      <p class="text-gray-400 mt-1 text-sm tracking-wide uppercase">Security Developer</p>
     </div>
-    <p class="mt-4">
-      <a href="/code" class="underline text-blue-600 hover:text-blue-800">
-        Se alle eksempler &rarr;
-      </a>
-    </p>
-  </section>
+    <nav class="flex gap-8 text-sm text-gray-500">
+      <a href="/code" class="hover:text-gray-900 transition-colors">Prosjekter</a>
+      <a href="/contact" class="hover:text-gray-900 transition-colors">Kontakt</a>
+      <a href="https://github.com/ArneeMe" class="hover:text-gray-900 transition-colors">GitHub</a>
+    </nav>
+  </div>
 </Layout>
