@@ -14,8 +14,8 @@ const projects = [
 <Layout title="Eksempler - Arne Natskår">
   <Header slot="header" />
 
-  <h2 class="text-xl font-semibold mb-6">Kodeeksempler</h2>
-  <div class="grid gap-3">
+  <h2 class="text-lg font-semibold tracking-tight text-gray-900 mb-8">Kodeeksempler</h2>
+  <div class="grid gap-4">
     {projects.map((p) => (
       <ProjectCard href={p.href} title={p.title} year={p.year} />
     ))}

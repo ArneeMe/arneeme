@@ -10,8 +10,8 @@ const { href, title, year } = Astro.props;
 
 <a
   href={href}
-  class="block p-4 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors"
+  class="block p-5 bg-white border border-gray-200 rounded-lg shadow-xs hover:shadow-sm hover:border-gray-300 transition-all duration-200"
 >
-  <span class="font-medium">{title}</span>
-  {year && <span class="ml-2 text-sm text-gray-500">({year})</span>}
+  <span class="font-medium text-gray-900">{title}</span>
+  {year && <span class="ml-2 text-xs text-gray-400">({year})</span>}
 </a>
