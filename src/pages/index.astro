@@ -1,22 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { homeNavLinks } from '../data/nav';
 ---
 
 <Layout title="Arne Natskår" centered>
-  <div class="flex flex-col items-center gap-5 text-center px-4">
+  <div class="flex flex-col items-center gap-8 text-center px-6">
     <img
       src="/profile.png"
       alt="Arne Natskår"
-      class="w-28 h-28 rounded-full object-cover grayscale"
+      class="w-32 h-32 rounded-full object-cover grayscale ring-1 ring-gray-200 shadow-sm"
     />
     <div>
-      <h1 class="text-3xl font-semibold tracking-tight">Arne Natskår</h1>
-      <p class="text-gray-400 mt-1 text-sm tracking-wide uppercase">Security Developer</p>
+      <h1 class="text-3xl font-semibold tracking-tight text-gray-900">Arne Natskår</h1>
+      <p class="text-gray-400 mt-2 text-xs tracking-widest uppercase">Security Developer</p>
     </div>
-    <nav class="flex gap-8 text-sm text-gray-500">
-      <a href="/code" class="hover:text-gray-900 transition-colors">Prosjekter</a>
-      <a href="/contact" class="hover:text-gray-900 transition-colors">Kontakt</a>
-      <a href="https://github.com/ArneeMe" class="hover:text-gray-900 transition-colors">GitHub</a>
+    <nav class="flex gap-8 text-sm text-gray-400">
+      {homeNavLinks.map((link) => (
+        <a
+          href={link.href}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
+          class="hover:text-gray-800 transition-colors duration-200"
+        >
+          {link.label}
+        </a>
+      ))}
     </nav>
   </div>
 </Layout>
