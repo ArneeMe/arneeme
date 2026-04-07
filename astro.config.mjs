@@ -10,5 +10,12 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
+  session: {
+    driver: {
+      name: 'memory',
+      entrypoint: 'astro/cache/memory',
+    },
+  },
+
   adapter: cloudflare(),
 });
