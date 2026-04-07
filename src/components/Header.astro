@@ -1,20 +1,16 @@
 ---
-const navLinks = [
-  { href: '/', label: 'Hjem' },
-  { href: '/code', label: 'Eksempler' },
-  { href: '/contact', label: 'Kontakt' },
-];
+import { headerNavLinks } from '../data/nav';
 
 const currentPath = Astro.url.pathname;
 ---
 
 <header class="bg-gray-900 text-gray-100 py-8 border-b border-gray-800" slot="header">
   <div class="max-w-2xl mx-auto px-6">
-    <h1 class="text-xl font-semibold tracking-tight mb-5">
+    <p class="text-xl font-semibold tracking-tight mb-5">
       <a href="/">Arne Natskår</a>
-    </h1>
+    </p>
     <nav class="flex gap-6 text-sm">
-      {navLinks.map((link) => (
+      {headerNavLinks.map((link) => (
         <a
           href={link.href}
           class:list={[
