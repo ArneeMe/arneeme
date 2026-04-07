@@ -1,10 +1,13 @@
 {
-  "name": "arneeme",
-  "compatibility_date": "2026-04-06",
-  "assets": {
-    "directory": "dist"
-  },
-  "build": {
-    "command": "npm run build"
-  }
+	"compatibility_date": "2026-04-06",
+	"compatibility_flags": ["global_fetch_strictly_public"],
+	"name": "arneeme",
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS"
+	},
+	"observability": {
+		"enabled": true
+	}
 }
