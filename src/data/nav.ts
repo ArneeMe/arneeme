@@ -4,14 +4,9 @@ export interface NavLink {
   external?: boolean;
 }
 
-export const headerNavLinks: NavLink[] = [
-  { href: '/', label: 'Hjem' },
-  { href: '/code', label: 'Eksempler' },
-  { href: '/contact', label: 'Kontakt' },
-];
-
 export const homeNavLinks: NavLink[] = [
   { href: '/code', label: 'Prosjekter' },
-  { href: '/contact', label: 'Kontakt' },
   { href: 'https://github.com/ArneeMe', label: 'GitHub', external: true },
+  { href: 'mailto:arnejobb@protonmail.com', label: 'Email', external: true },
+  { href: 'https://www.linkedin.com/in/arne-natskår', label: 'LinkedIn', external: true },
 ];

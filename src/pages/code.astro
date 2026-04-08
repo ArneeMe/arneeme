@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 
 const projects = [
@@ -12,7 +11,7 @@ const projects = [
 ---
 
 <Layout title="Eksempler - Arne Natskår">
-  <Header slot="header" />
+  <a href="/" class="inline-block text-sm text-gray-400 hover:text-gray-800 transition-colors duration-200 mb-10">&larr; Arne Natskår</a>
 
   <h1 class="text-lg font-semibold tracking-tight text-gray-900 mb-8">Kodeeksempler</h1>
   <div class="grid gap-4">

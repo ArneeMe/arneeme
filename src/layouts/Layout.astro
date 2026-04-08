@@ -17,7 +17,6 @@ const { title, centered = false } = Astro.props;
     <title>{title}</title>
   </head>
   <body class:list={["min-h-screen bg-stone-50 text-gray-800 font-sans", centered && "flex items-center justify-center"]}>
-    {!centered && <slot name="header" />}
     <main class:list={[!centered && "max-w-2xl mx-auto px-6 py-12"]}>
       <slot />
     </main>
