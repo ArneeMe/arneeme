@@ -1,69 +1,136 @@
-body{
-    background-color: lightgrey;
+/* ===== Base ===== */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background-color: lightgrey; /* JS overrides this via inline style for theme switching */
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
 }
 
-#player{
-    width: 100px;
-    height: 100px;
-    margin-left: 0;
-    margin-top: 0;
-    border-radius: 50%;
-    position: absolute;
-    transition:0s;
+/* ===== Control Panel ===== */
+.control-panel {
+  background: #fafaf9;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 1.25rem;
+  position: relative;
+  z-index: 10;
+}
 
+.control-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.app-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+}
+
+.app-title-main {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1c1917;
+  letter-spacing: -0.01em;
+}
+
+.app-title-sub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  letter-spacing: 0.02em;
+}
+
+.btn-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+/* ===== Buttons ===== */
+.button {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+.button:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Text elements ===== */
+.tekst {
+  font-size: 0.875rem;
+  color: #374151;
+  font-family: inherit;
+  display: inline;
+}
+
+.green {
+  color: #374151;
+}
+
+.level {
+  font-weight: 600;
+  color: #1c1917;
+  /* JS sets .style.color inline for difficulty levels — that still works */
+}
+
+.info {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ===== Game Sprites ===== */
+#player {
+  width: 100px;
+  height: 100px;
+  margin-left: 0;
+  margin-top: 0;
+  border-radius: 50%;
+  position: absolute;
+  transition: 0s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 #sjokomelk {
-    width: 100px;
-    height: 100px;
-    margin-left: 0;
-    margin-top: 0;
-    border-radius: 50% ;
-    position: absolute;
+  width: 100px;
+  height: 100px;
+  margin-left: 0;
+  margin-top: 0;
+  border-radius: 50%;
+  position: absolute;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 #moxnes {
-    width: 100px;
-    height: 100px;
-    margin-left: 0;
-    margin-top: 0;
-    border-radius: 50%;
-    position: absolute;
-
+  width: 100px;
+  height: 100px;
+  margin-left: 0;
+  margin-top: 0;
+  border-radius: 50%;
+  position: absolute;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
-
-.button {
-    border-radius: 5px;
-    background: green;
-    font-size: 1rem;
-    padding: 0.7rem 0.9rem;
-    margin: 0.5rem 0;
-    border: none;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-}
-.button:hover{
-    filter: brightness(1.4);
-    cursor: pointer;
-}
-
-.tekst{
-    border: none;
-    padding: 0px 5px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 24px;
-    color: green;
-}
-
-.info{
-    font-size: 24px;
-}
-
-.level{
-    padding: 0px 0px
-}
-

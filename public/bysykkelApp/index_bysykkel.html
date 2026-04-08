@@ -1,29 +1,145 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
-    <meta charset="UTF-8">
-    <title>BysykkelApp!</title>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bergen Bysykkel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    body {
+      background-color: #fafaf9;
+      color: #1c1917;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
 
+    .page-wrap {
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .back-link {
+      display: inline-block;
+      font-size: 0.875rem;
+      color: #9ca3af;
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #111827; }
+
+    .app-header {
+      margin-bottom: 2rem;
+    }
+    .app-header h1 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: #111827;
+      margin-bottom: 0.25rem;
+    }
+    .app-header p {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .sort-btn {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-family: inherit;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sort-btn:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    #infoSchool {
+      font-size: 0.8125rem;
+      color: #9ca3af;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 9999px;
+      padding: 0.25rem 0.875rem;
+      transition: all 0.2s;
+    }
+
+    #cycleText {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    #cycleText li {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.875rem 1.25rem;
+      font-size: 0.875rem;
+      color: #1c1917;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #cycleText li:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .page-footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(229, 231, 235, 0.6);
+      font-size: 0.75rem;
+      color: #9ca3af;
+      letter-spacing: 0.025em;
+    }
+  </style>
 </head>
 <body>
-<header>
-    <h1 >Bysykkel!</h1>
-    <nav>
-        <a href="../index.html">Home</a>
-        <a href="../code.html">Eksempler</a>
-        <a href="../cv.html">CV</a>
-        <a href="../contact.html">Kontakt meg!</a>
-    </nav>
-</header>
+  <div class="page-wrap">
+    <a href="../code.html" class="back-link">&larr; Kodeeksempler</a>
 
-<button onclick="sizeSort()"> Sorter antall ledig </button>
-<p id="infoSchool">Er det sykkelutenfor Høytek?</p>
+    <div class="app-header">
+      <h1>Bergen Bysykkel</h1>
+      <p>Ledige sykler per stasjon</p>
+    </div>
 
-<ul id="cycleText">*Laster inn*</ul>
+    <div class="controls">
+      <button class="sort-btn" onclick="sizeSort()">Sorter antall ledig</button>
+      <p id="infoSchool">Er det sykkel utenfor Høytek?</p>
+    </div>
 
-<script src="script2.js"></script>
+    <ul id="cycleText">
+      <li style="color:#9ca3af; border-style:dashed;">Laster inn stasjoner...</li>
+    </ul>
 
+    <footer class="page-footer">
+      <p>Data fra Bergen Bysykkel &mdash; Urbansharing GBFS API</p>
+    </footer>
+  </div>
+
+  <script src="script2.js"></script>
 </body>
 </html>
