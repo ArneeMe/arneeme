@@ -1,54 +1,54 @@
 <!DOCTYPE html>
 <html lang="nb">
 <head>
-    <meta charset="UTF-8">
-    <title>Avfyr kanon!</title>
-    <link rel="stylesheet" href="Style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avfyr kanon!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Style.css">
 </head>
 <body>
 
 <div id="fiendeParent"></div>
 
-<div class="container">
-    <input class="slider" id="hoyde" type="range" min="0" max="399">
-    <input class="slider" id="vinkel" type="range" min="0" max= "90">
-    <select class="tekst" id="tyngdekraft">
-        <option value="1">Jorda</option>
-        <option value="2">Månen</option>
-        <option value="3">Jupiter</option>
-    </select>
-    <p class="tekst" id="tekstXpos">X-posisjon er 20</p>
-    <p class="tekst" id="tekstYpos">Y-posisjon er 0</p>
-    <p class="tekst" id="tekstHoyde">Starthøyden er 0 </p>
-    <p class="tekst" id="tekstVinkel">Vinkelen er 45 grader</p>
-    <button class="tekst button" id="reset" onclick="reset()">Reset</button>
-    <p class="tekst" id="tekstSeier"> Antall treff: 0</p>
-    <p class="tekst" id="tekstTilbakemelding"></p>
+<div class="controls-header">
+  <span class="controls-label">Kanonspill</span>
+  <span class="controls-sublabel">Hold inne space for å skyte</span>
+</div>
 
+<div class="container">
+  <input class="slider" id="hoyde" type="range" min="0" max="399">
+  <input class="slider" id="vinkel" type="range" min="0" max="90">
+  <select class="tekst" id="tyngdekraft">
+    <option value="1">Jorda</option>
+    <option value="2">Månen</option>
+    <option value="3">Jupiter</option>
+  </select>
+  <p class="tekst" id="tekstXpos">X-posisjon er 20</p>
+  <p class="tekst" id="tekstYpos">Y-posisjon er 0</p>
+  <p class="tekst" id="tekstHoyde">Starthøyden er 0</p>
+  <p class="tekst" id="tekstVinkel">Vinkelen er 45 grader</p>
+  <button class="tekst button" id="reset" onclick="reset()">Reset</button>
+  <p class="tekst" id="tekstSeier">Antall treff: 0</p>
+  <p class="tekst" id="tekstTilbakemelding"></p>
 </div>
 
 <img src="bilder/kule.png" id="kule" class="kule">
-
 <img src="bilder/kanonFirstFrame.png" id="kanon">
 <img src="bilder/target.png" id="blink">
 
 <input class="slider" id="fart" type="range" min="1" max="15">
-
 <p class="tekst" id="tekstFart">Hold inne space for å skyte!</p>
+
 <div class="container2">
-<button class="tekst button" onclick=leggTilFiende()> Legg til fiende</button>
-<button class="tekst button" onclick=fjernFiender()>Fjern alle fiender!</button>
-<p class="tekst" id="tekstTips">Skyt litt, så får du noen tips etterhvert</p>
+  <button class="tekst button" onclick="leggTilFiende()">Legg til fiende</button>
+  <button class="tekst button" onclick="fjernFiender()">Fjern alle fiender!</button>
+  <p class="tekst" id="tekstTips">Skyt litt, så får du noen tips etterhvert</p>
 </div>
+
 <button class="button" id="leaveGameButton" onclick="leaveGame()">Forlat Spillet</button>
-
-
-
-<!--
-    <button id="avfyr" onclick="fjernFiender()" >Fjern fiender</button>
-    <button id="leggTilFiende" onclick="leggTilFiende()">Legg til fiende!</button>
-
--->
 
 <script src="kastJS.js"></script>
 

@@ -1,32 +1,42 @@
 <!DOCTYPE html>
 <html lang="nb">
 <head>
-    <meta charset="UTF-8">
-    <title>Du må hjelpe!</title>
-    <link rel="stylesheet" href="CSS.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Du må hjelpe!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="CSS.css">
 </head>
 <body>
 
-
-<div>
-    <button class="button" onclick="leaveGame()" id="leaveGameButton">Forlat spillet</button>
-    <button class="button" onclick="byttPlayerIcon()"> Bytt "playericon" </button>
-    <p  class="tekst green ">Du er på </p>
-    <p id="level" class="tekst level"> level 1.</p>
-    <p id="info" class="tekst info"> Du (Bård Hoksrud) skal prøve å komme til sjokomelk. Men ikke la Moxnes ta deg! (Piltaster for å bevege)</p>
-
+<div class="control-panel">
+  <div class="control-top">
+    <div class="app-title">
+      <span class="app-title-main">Hoksrud-spillet</span>
+      <span class="app-title-sub">Bruk piltaster for å bevege</span>
+    </div>
+    <div class="btn-row">
+      <button class="button" onclick="leaveGame()" id="leaveGameButton">Forlat spillet</button>
+      <button class="button" onclick="byttPlayerIcon()">Bytt "playericon"</button>
+    </div>
+  </div>
+  <div class="info-row">
+    <span class="tekst green">Du er på</span>
+    <span id="level" class="tekst level">level 1.</span>
+    <span id="info" class="tekst info">Du (Bård Hoksrud) skal prøve å komme til sjokomelk. Men ikke la Moxnes ta deg! (Piltaster for å bevege)</span>
+  </div>
 </div>
+
 <img src="sjokomelkRedigert1.jpg" id="sjokomelk">
 <img src="bardhoksrudRedigert1.jpg" id="player">
 <img src="moxnes2Redigert1.jpg" id="moxnes">
 
-<audio src="vinnFanfare.mp3" id="lydVinn" ></audio>
+<audio src="vinnFanfare.mp3" id="lydVinn"></audio>
 <audio src="tapMoxnes.mp3" id="lydTap"></audio>
 
-<script src="Javascript.js">
-</script>
-
+<script src="Javascript.js"></script>
 
 </body>
 </html>
