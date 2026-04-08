@@ -1,0 +1,4 @@
+# GitHub Pages deployment is disabled — site is served via Cloudflare Workers.
+# This file exists to prevent accidental Pages deployments if the source setting
+# is ever changed to "GitHub Actions".
+on: []
