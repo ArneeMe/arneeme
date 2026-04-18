@@ -373,3 +373,294 @@ body {
     display: flex;
   }
 }
+
+/* ── File Explorer (My Computer) ── */
+.explorer-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+}
+
+.explorer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+}
+
+.explorer-btn {
+  padding: 2px 8px;
+  font-size: 11px;
+  height: 22px;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  background: #c0c0c0;
+  cursor: default;
+  user-select: none;
+}
+
+.explorer-btn:disabled {
+  color: #808080;
+  border-color: #c0c0c0 #c0c0c0 #c0c0c0 #c0c0c0;
+}
+
+.explorer-btn:not(:disabled):active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 3px 7px 1px 9px;
+}
+
+.explorer-addressbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  background: #c0c0c0;
+  border-bottom: 2px solid #808080;
+  font-size: 11px;
+}
+
+.addressbar-label {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.addressbar-value {
+  flex: 1;
+  padding: 1px 4px;
+  background: #fff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-size: 11px;
+}
+
+.explorer-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.explorer-icons {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+  padding: 8px;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.explorer-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 72px;
+  padding: 4px;
+  cursor: default;
+  user-select: none;
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.explorer-icon:hover {
+  border-color: #000080;
+  background: #c0c0ff;
+}
+
+.explorer-icon span {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.2;
+  max-width: 68px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.explorer-statusbar {
+  padding: 2px 6px;
+  font-size: 11px;
+  border-top: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #c0c0c0;
+}
+
+/* ── Inbox (Outlook Express) ── */
+.inbox-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #c0c0c0;
+}
+
+.inbox-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  border-top: 2px solid #808080;
+}
+
+.inbox-sidebar {
+  width: 140px;
+  min-width: 140px;
+  border-right: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  overflow-y: auto;
+}
+
+.inbox-sidebar-header {
+  padding: 4px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  border-bottom: 1px solid #808080;
+  background: #c0c0c0;
+}
+
+.inbox-folder-item {
+  display: flex;
+  align-items: center;
+  padding: 3px 6px;
+  font-size: 11px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: default;
+  user-select: none;
+  width: 100%;
+}
+
+.inbox-folder-item:hover,
+.inbox-folder-item.active {
+  background: #000080;
+  color: #fff;
+}
+
+.inbox-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.inbox-list {
+  flex: 0 0 40%;
+  border-bottom: 2px solid #808080;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.inbox-list-header {
+  display: flex;
+  background: #c0c0c0;
+  border-bottom: 2px solid #808080;
+  position: sticky;
+  top: 0;
+}
+
+.inbox-col-from {
+  width: 120px;
+  min-width: 120px;
+  padding: 2px 6px;
+  font-size: 11px;
+  border-right: 1px solid #808080;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inbox-col-subject {
+  flex: 1;
+  padding: 2px 6px;
+  font-size: 11px;
+  border-right: 1px solid #808080;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inbox-col-date {
+  width: 90px;
+  min-width: 90px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.inbox-row {
+  display: flex;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: default;
+  user-select: none;
+}
+
+.inbox-row .inbox-col-from,
+.inbox-row .inbox-col-subject,
+.inbox-row .inbox-col-date {
+  font-weight: normal;
+}
+
+.inbox-row:hover {
+  background: #c0c0ff;
+}
+
+.inbox-row.selected {
+  background: #000080;
+  color: #fff;
+}
+
+.inbox-reading-pane {
+  flex: 1;
+  background: #fff;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.reading-header {
+  padding: 8px 10px;
+  border-bottom: 2px solid #808080;
+  font-size: 11px;
+  background: #c0c0c0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reading-body {
+  padding: 10px;
+  font-size: 12px;
+  font-family: 'Times New Roman', serif;
+  line-height: 1.6;
+}
+
+.reading-body p {
+  margin: 0 0 8px;
+}
+
+.inbox-empty {
+  padding: 12px;
+  font-size: 11px;
+  color: #808080;
+  text-align: center;
+}
+
+.inbox-statusbar {
+  padding: 2px 6px;
+  font-size: 11px;
+  border-top: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #c0c0c0;
+}
