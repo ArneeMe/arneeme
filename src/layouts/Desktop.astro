@@ -1,0 +1,34 @@
+---
+import '../styles/desktop.css';
+import '98.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/icons/computer.svg" />
+  </head>
+  <body>
+    <slot />
+
+    <div class="mobile-gate">
+      <h2>🖥️ Desktop Required</h2>
+      <p>
+        This site is a Windows 95 desktop experience — it's best viewed on a
+        larger screen.
+      </p>
+      <p style="margin-top: 12px;">
+        <a href="/code">View Projects →</a>
+      </p>
+    </div>
+  </body>
+</html>
