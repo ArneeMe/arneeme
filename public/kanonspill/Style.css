@@ -48,17 +48,19 @@ body {
   margin-top: 8px;
   display: grid;
   grid-column-gap: 10px;
-  grid-template-columns: 250px 250px 85px 140px 200px;
+  grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) 85px 140px minmax(150px, 200px);
   align-items: center;
+  max-width: 100%;
 }
 
 /* ===== Enemy/secondary controls grid ===== */
 .container2 {
   display: grid;
   grid-column-gap: 10px;
-  grid-template-columns: 150px 150px 500px;
+  grid-template-columns: minmax(120px, 150px) minmax(120px, 150px) minmax(200px, 1fr);
   margin-top: -10px;
   align-items: center;
+  max-width: 100%;
 }
 
 /* ===== Buttons ===== */
@@ -160,10 +162,11 @@ body {
   border: 2px solid #ffffff;
 }
 
-/* ===== Speed slider — keep margin-top: 450px (intentional play-area placement) ===== */
+/* ===== Speed slider — placed near bottom of play area ===== */
 #fart {
-  margin-top: 450px;
-  width: 300px;
+  margin-top: 320px;
+  width: 260px;
+  max-width: 90%;
   display: block;
 }
 

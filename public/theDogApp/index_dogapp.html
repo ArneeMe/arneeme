@@ -5,6 +5,10 @@
     <title>Title</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
    <style>
+        body {
+            padding: 8px;
+            max-width: 100%;
+        }
 
         button{
             margin: 1px
@@ -12,33 +16,42 @@
 
         .dogsDivClass{
             border: 5px solid black;
-            float: left;
-            margin: auto;
             padding: 3px;
-            width: 50%;
             text-align: center;
+            max-width: 100%;
         }
 
-
+        #tempButtonsDiv {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+            max-width: 100%;
+        }
 
         #breed_data {
             background: #fff;
             border-radius: 4px;
-            padding: 20px;
+            padding: 12px;
             font-size: 12px;
             text-align: left;
             transition: all 0.2s;
             margin: 0 auto;
-            width: 500px;
+            max-width: 100%;
         }
 
         #breed_image {
             background: #fff;
             margin: 0 auto;
-            width: 460px;
+            max-width: 100%;
+        }
+        #breed_image img {
+            max-width: 100%;
+            height: auto;
         }
         #continue {
-            width: 30%;
+            width: auto;
+            padding: 4px 12px;
         }
 
 

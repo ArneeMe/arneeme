@@ -3,6 +3,7 @@ import AboutMe from '../components/desktop/apps/AboutMe';
 import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
+import Paint from '../components/desktop/apps/Paint';
 
 export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
@@ -42,13 +43,25 @@ export const apps: Record<string, AppDefinition> = {
     showInStartMenu: true,
     component: Inbox,
   },
+  'paint': {
+    id: 'paint',
+    title: 'untitled - Paint',
+    icon: '/icons/paint.svg',
+    defaultSize: { w: 640, h: 560 },
+    minSize: { w: 500, h: 460 },
+    resizable: true,
+    singleton: false,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    component: Paint,
+  },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
   'bysykkel': {
     id: 'bysykkel',
     title: 'Bergen Bysykkel',
     icon: '/icons/file.svg',
-    defaultSize: { w: 800, h: 600 },
+    defaultSize: { w: 900, h: 650 },
     minSize: { w: 400, h: 300 },
     resizable: true,
     singleton: true,
@@ -61,7 +74,7 @@ export const apps: Record<string, AppDefinition> = {
     id: 'kanonspill',
     title: 'Kanonspill',
     icon: '/icons/gamepad.svg',
-    defaultSize: { w: 800, h: 600 },
+    defaultSize: { w: 900, h: 650 },
     minSize: { w: 400, h: 300 },
     resizable: true,
     singleton: false,
@@ -74,7 +87,7 @@ export const apps: Record<string, AppDefinition> = {
     id: 'hoksrud',
     title: 'Bård Hoksrud',
     icon: '/icons/gamepad.svg',
-    defaultSize: { w: 800, h: 600 },
+    defaultSize: { w: 900, h: 650 },
     minSize: { w: 400, h: 300 },
     resizable: true,
     singleton: false,

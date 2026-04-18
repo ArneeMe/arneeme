@@ -1,5 +1,6 @@
 import { apps } from '../../apps/registry';
 import { openApp } from '../../stores/desktop';
+import { logOff } from '../../stores/boot';
 
 interface Props {
   onClose: () => void;
@@ -39,17 +40,16 @@ export function StartMenu({ onClose }: Props) {
         </div>
         <div class="start-menu-divider" />
         <div class="start-menu-section">
-          <a
+          <button
             class="start-menu-item"
-            href="/code"
-            onClick={onClose}
+            onClick={() => {
+              logOff();
+              onClose();
+            }}
           >
-            <img src="/icons/folder.svg" alt="" style={{ width: 16, height: 16, imageRendering: 'pixelated' }} />
-            <span>Projects</span>
-          </a>
-        </div>
-        <div class="start-menu-divider" />
-        <div class="start-menu-section">
+            <img src="/icons/shutdown.svg" alt="" style={{ width: 16, height: 16, imageRendering: 'pixelated' }} />
+            <span>Log Off...</span>
+          </button>
           <button class="start-menu-item" onClick={() => window.location.reload()}>
             <img src="/icons/shutdown.svg" alt="" style={{ width: 16, height: 16, imageRendering: 'pixelated' }} />
             <span>Shut Down...</span>

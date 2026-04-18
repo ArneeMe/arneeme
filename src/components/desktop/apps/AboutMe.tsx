@@ -3,7 +3,6 @@ interface Props {
 }
 
 const links = [
-  { href: '/code', label: 'Projects', external: false },
   { href: 'https://github.com/ArneeMe', label: 'GitHub', external: true },
   { href: 'mailto:arnejobb@protonmail.com', label: 'Email', external: true },
   { href: 'https://www.linkedin.com/in/arne-natsk%C3%A5r', label: 'LinkedIn', external: true },
