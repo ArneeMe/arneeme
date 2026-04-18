@@ -11,4 +11,5 @@ export interface AppDefinition {
   showOnDesktop?: boolean;
   showInStartMenu?: boolean;
   component: ComponentType<{ instanceId: string }>;
+  props?: Record<string, unknown>;
 }

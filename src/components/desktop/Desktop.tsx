@@ -36,7 +36,7 @@ export function Desktop() {
         const AppComponent = app.component;
         return (
           <WindowFrame key={win.id} win={win} app={app}>
-            <AppComponent instanceId={win.id} />
+            <AppComponent instanceId={win.id} {...(app.props ?? {})} />
           </WindowFrame>
         );
       })}
