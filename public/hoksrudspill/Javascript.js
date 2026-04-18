@@ -6,7 +6,7 @@ function leaveGame(){
         areYouSure = true;
     }
     else{
-        location.replace("../code.html")
+        window.parent.postMessage({ type: 'close-app' }, '*');
     }
 
 }
@@ -16,13 +16,17 @@ let moxnes = document.getElementById("moxnes");
 let playerX = 1; //Startposisjon til player
 let playerY= 1;
 
-let sjokomelkX= 800+(Math.floor(Math.random()*200)); //Startposisjon til sjokolademelk (eller det du skal prøve å ta)
-let sjokomelkY = Math.floor(Math.random()*400);
+// Dynamic play-area bounds based on window size (works inside any iframe size)
+const maxX = () => Math.max(300, window.innerWidth - 120);
+const maxY = () => Math.max(200, window.innerHeight - 200);
+
+let sjokomelkX= Math.max(300, maxX() - 200) + Math.floor(Math.random() * 100); //Startposisjon til sjokolademelk (eller det du skal prøve å ta)
+let sjokomelkY = Math.floor(Math.random() * maxY());
 sjokomelk.style.marginLeft = sjokomelkX +"px";
 sjokomelk.style.marginTop = sjokomelkY +"px";
 
-let moxnesX = 1000; //Startposisjon til det som prøver å fange deg
-let moxnesY = Math.floor(Math.random()*400);
+let moxnesX = maxX(); //Startposisjon til det som prøver å fange deg
+let moxnesY = Math.floor(Math.random() * maxY());
 moxnes.style.marginLeft= moxnesX + "px"; //faktisk endrer
 moxnes.style.marginTop = moxnesY + "px";
 
@@ -56,12 +60,12 @@ window.onkeydown = function(event){
                 playerY = playerY - 5;
             }
         }
-        if (playerY < 450) {
+        if (playerY < maxY()) {
             if (event.code === "ArrowDown") {
                 playerY = playerY + 5;
             }
         }
-        if (playerX < 1000) {
+        if (playerX < maxX()) {
             if (event.code === "ArrowRight") {
                 playerX = playerX + 5;
 
@@ -145,8 +149,8 @@ function byttPlayerIcon(){
 function sjekklevel(){ //funksjonen som gjør at det blir vanskligere jo flere ganger du har klart det
     playerX = 1;
     playerY= 1;
-    moxnesX=1000;
-    moxnesY = Math.floor(Math.random() * 400);
+    moxnesX = maxX();
+    moxnesY = Math.floor(Math.random() * maxY());
     //Først tilbakestiller jeg posisjonen til player og til moxnes. Han er delvis tilfeldig denne gangen og
     document.getElementById("level").innerHTML = " level " + level + ".";
     if (sjekkVinn === true) { //Hvis spilleren klarer det går spilleren til neste level, da beveger også moxnes seg fortere

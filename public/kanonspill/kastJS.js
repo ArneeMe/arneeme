@@ -6,7 +6,7 @@ function leaveGame(){
         areYouSure = true;
     }
     else{
-        location.replace("../code.html")
+        window.parent.postMessage({ type: 'close-app' }, '*');
     }
 
 }

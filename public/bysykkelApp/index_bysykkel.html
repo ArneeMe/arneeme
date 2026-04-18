@@ -19,9 +19,16 @@
     }
 
     .page-wrap {
-      max-width: 42rem;
+      max-width: 100%;
       margin: 0 auto;
-      padding: 3rem 1.5rem;
+      padding: 1rem 1rem;
+    }
+
+    @media (min-width: 720px) {
+      .page-wrap {
+        max-width: 42rem;
+        padding: 2rem 1.5rem;
+      }
     }
 
     .back-link {
@@ -119,7 +126,7 @@
 </head>
 <body>
   <div class="page-wrap">
-    <a href="../code.html" class="back-link">&larr; Kodeeksempler</a>
+    <a href="../" class="back-link">&larr; Tilbake til desktop</a>
 
     <div class="app-header">
       <h1>Bergen Bysykkel</h1>
