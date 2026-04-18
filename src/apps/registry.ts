@@ -45,7 +45,7 @@ export const apps: Record<string, AppDefinition> = {
   },
   'paint': {
     id: 'paint',
-    title: 'untitled - Paint',
+    title: 'MS Paint',
     icon: '/icons/paint.svg',
     defaultSize: { w: 640, h: 560 },
     minSize: { w: 500, h: 460 },
