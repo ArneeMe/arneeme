@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals';
 
-export type BootPhase = 'bios' | 'splash' | 'login' | 'desktop';
+export type BootPhase = 'splash' | 'desktop';
 
 const STORAGE_KEY = 'arneeme:boot:v1';
 
@@ -27,7 +27,7 @@ function clearSeen() {
   } catch {}
 }
 
-export const bootPhase = signal<BootPhase>(hasBootedBefore() ? 'desktop' : 'bios');
+export const bootPhase = signal<BootPhase>(hasBootedBefore() ? 'desktop' : 'splash');
 
 export function advanceBoot(next: BootPhase) {
   bootPhase.value = next;
@@ -36,5 +36,5 @@ export function advanceBoot(next: BootPhase) {
 
 export function logOff() {
   clearSeen();
-  bootPhase.value = 'bios';
+  bootPhase.value = 'splash';
 }

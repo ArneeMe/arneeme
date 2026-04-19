@@ -79,10 +79,6 @@ export function StartMenu({ onClose }: Props) {
             <img src="/icons/shutdown.svg" alt="" style={{ width: 16, height: 16, imageRendering: 'pixelated' }} />
             <span>Log Off...</span>
           </button>
-          <button class="start-menu-item" onClick={() => window.location.reload()}>
-            <img src="/icons/shutdown.svg" alt="" style={{ width: 16, height: 16, imageRendering: 'pixelated' }} />
-            <span>Shut Down...</span>
-          </button>
         </div>
       </div>
     </div>

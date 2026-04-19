@@ -1,5 +1,7 @@
 import * as preact from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { MenuBar } from '../MenuBar';
+import { closeWindow } from '../../../stores/desktop';
 
 interface Props {
   instanceId: string;
@@ -59,7 +61,7 @@ function floodFill(ctx: CanvasRenderingContext2D, x: number, y: number, fillColo
   ctx.putImageData(imageData, 0, 0);
 }
 
-export default function Paint({ instanceId: _instanceId }: Props) {
+export default function Paint({ instanceId }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLCanvasElement>(null);
   const snapshotRef = useRef<ImageData | null>(null);
@@ -267,21 +269,32 @@ export default function Paint({ instanceId: _instanceId }: Props) {
     { id: 'picker', label: 'Pick color' },
   ];
 
+  const paintMenus = [
+    {
+      label: 'File',
+      items: [
+        { label: 'New', onClick: clearCanvas },
+        { label: 'Save', onClick: saveImage },
+        { label: 'Exit', onClick: () => closeWindow(instanceId) },
+      ],
+    },
+    {
+      label: 'Edit',
+      items: [
+        { label: 'Undo', onClick: doUndo },
+      ],
+    },
+    {
+      label: 'Help',
+      items: [
+        { label: 'About MS Paint...', onClick: () => alert('MS Paint\nWindows 95 Edition\n\nDraw something nice!') },
+      ],
+    },
+  ];
+
   return (
     <div class="paint-app">
-      <div class="explorer-menubar">
-        <button class="menu-item" onClick={clearCanvas}>File</button>
-        <button class="menu-item" onClick={doUndo}>Edit</button>
-        <button class="menu-item">View</button>
-        <button class="menu-item">Image</button>
-        <button class="menu-item">Help</button>
-      </div>
-
-      <div class="paint-toolbar-row">
-        <button class="paint-toolbar-btn" onClick={clearCanvas} title="New (clear canvas)">New</button>
-        <button class="paint-toolbar-btn" onClick={saveImage} title="Save as PNG">Save</button>
-        <button class="paint-toolbar-btn" onClick={doUndo} title="Undo last action">Undo</button>
-      </div>
+      <MenuBar menus={paintMenus} />
 
       <div class="paint-body">
         <div class="paint-tools">

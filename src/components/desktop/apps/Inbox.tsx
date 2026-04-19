@@ -15,7 +15,7 @@ interface Message {
   link?: { href: string; label: string };
 }
 
-const messages: Message[] = [
+const inboxMessages: Message[] = [
   {
     id: 'welcome',
     from: 'Arne Natskår',
@@ -49,19 +49,49 @@ const messages: Message[] = [
   },
 ];
 
+const deletedMessages: Message[] = [
+  {
+    id: 'clippy',
+    from: 'Clippy <clippy@microsoft.com>',
+    subject: 'It looks like you\'re checking email!',
+    date: '04/15/1998',
+    body: "Hi! It looks like you're reading your email. Would you like help with that?\n\n📎 I noticed you haven't replied to anyone in a while. I can write the perfect response for you!\n\n[Yes please!]  [No thanks]  [Stop asking me this]",
+  },
+  {
+    id: 'nigerian-prince',
+    from: 'DR. PRINCE BABATUNDE <prince@nigeria-gov.net>',
+    subject: 'URGENT STRICTLY CONFIDENTIAL BUSINESS PROPOSAL!!!',
+    date: '04/12/1998',
+    body: "DEAR FRIEND,\n\nI AM DR. PRINCE BABATUNDE, SON OF FORMER NIGERIAN OIL MINISTER. I HAVE A MOST URGENT MATTER REQUIRING YOUR ASSISTANCE.\n\nI HAVE $47,000,000 USD TRAPPED IN AN OVERSEAS ACCOUNT. I REQUIRE YOUR BANK DETAILS TO TRANSFER THIS MONEY. YOU WILL RECEIVE 30% AS COMPENSATION.\n\nPLEASE REPLY WITH NAME, ADDRESS, AND BANK ACCOUNT NUMBER IMMEDIATELY.\n\nGOD BLESS YOU.\n\nDR. PRINCE BABATUNDE",
+  },
+  {
+    id: 'bill-gates',
+    from: 'Bill Gates <billg@microsoft.com>',
+    subject: 'FW: FW: FW: FW: YOU HAVE BEEN SELECTED!!!',
+    date: '04/10/1998',
+    body: "Forward this email to 10 friends and Bill Gates himself will send you $1000!!! This is NOT a hoax — Microsoft is tracking emails to beta test their new system!!\n\n>> Original message:\n>> I forwarded this and got $500 the next day!! IT WORKS!!\n\n>> Forward to 10 people: $100\n>> Forward to 20 people: $500\n>> Forward to 30 people: $1000\n\nDO NOT BREAK THE CHAIN!!!!!",
+  },
+  {
+    id: 'win98',
+    from: 'Microsoft Windows <upgrade@microsoft.com>',
+    subject: 'Time to upgrade to Windows 98!',
+    date: '04/08/1998',
+    body: "Dear Windows 95 User,\n\nWindows 98 is coming later this year and it's going to change everything.\n\n✓ USB support (whatever that is)\n✓ Internet Explorer 4.0 built right in!\n✓ FAT32 file system support\n✓ Crashes in exciting new ways\n\nPre-order now for only $89.99!\n\nP.S. Your computer probably can't run it anyway.",
+  },
+];
+
 const folders = [
-  { id: 'inbox', label: `Inbox (${messages.length})` },
-  { id: 'sent', label: 'Sent Items' },
-  { id: 'drafts', label: 'Drafts' },
-  { id: 'deleted', label: 'Deleted Items' },
+  { id: 'inbox', label: `Inbox (${inboxMessages.length})` },
+  { id: 'deleted', label: `Deleted Items (${deletedMessages.length})` },
 ];
 
 export default function Inbox({ instanceId }: Props) {
   const [selected, setSelected] = useState<string | null>('welcome');
   const [activeFolder, setActiveFolder] = useState('inbox');
 
-  const selectedMsg = messages.find((m) => m.id === selected) ?? null;
-  const visibleMessages = activeFolder === 'inbox' ? messages : [];
+  const allMessages = { inbox: inboxMessages, deleted: deletedMessages };
+  const visibleMessages = allMessages[activeFolder as keyof typeof allMessages] ?? [];
+  const selectedMsg = [...inboxMessages, ...deletedMessages].find((m) => m.id === selected) ?? null;
 
   const menus = [
     {
@@ -152,7 +182,7 @@ export default function Inbox({ instanceId }: Props) {
       </div>
 
       <div class="inbox-statusbar">
-        {visibleMessages.length} message{visibleMessages.length !== 1 ? 's' : ''}
+        {visibleMessages.length} message{visibleMessages.length !== 1 ? 's' : ''}{activeFolder === 'deleted' ? ' · These were in your junk folder' : ''}
       </div>
     </div>
   );
