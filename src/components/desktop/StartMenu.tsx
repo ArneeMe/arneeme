@@ -1,4 +1,5 @@
 import { apps } from '../../apps/registry';
+import { shortcuts } from '../../apps/shortcuts';
 import { openApp } from '../../stores/desktop';
 import { logOff } from '../../stores/boot';
 
@@ -11,6 +12,11 @@ export function StartMenu({ onClose }: Props) {
     const app = apps[appId];
     if (!app) return;
     openApp(app.id, app.title, app.icon, app.defaultSize, app.singleton ?? false);
+    onClose();
+  };
+
+  const openShortcut = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
     onClose();
   };
 
@@ -38,6 +44,29 @@ export function StartMenu({ onClose }: Props) {
               </button>
             ))}
         </div>
+        {Object.values(shortcuts).some((s) => s.showInStartMenu) && (
+          <>
+            <div class="start-menu-divider" />
+            <div class="start-menu-section">
+              {Object.values(shortcuts)
+                .filter((s) => s.showInStartMenu)
+                .map((sc) => (
+                  <button
+                    key={sc.id}
+                    class="start-menu-item"
+                    onClick={() => openShortcut(sc.url)}
+                  >
+                    <img
+                      src={sc.icon}
+                      alt=""
+                      style={{ width: 16, height: 16, imageRendering: 'pixelated' }}
+                    />
+                    <span>{sc.title} ↗</span>
+                  </button>
+                ))}
+            </div>
+          </>
+        )}
         <div class="start-menu-divider" />
         <div class="start-menu-section">
           <button

@@ -13,3 +13,13 @@ export interface AppDefinition {
   component: ComponentType<{ instanceId: string }>;
   props?: Record<string, unknown>;
 }
+
+export interface ShortcutDefinition {
+  id: string;
+  title: string;
+  icon: string;
+  url: string;
+  showOnDesktop?: boolean;
+  showInStartMenu?: boolean;
+  showInShortcutsFolder?: boolean;
+}

@@ -1,6 +1,7 @@
 import { desktopState, openApp } from '../../stores/desktop';
 import { bootPhase } from '../../stores/boot';
 import { apps } from '../../apps/registry';
+import { shortcuts } from '../../apps/shortcuts';
 import { WindowFrame } from './WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 import { Taskbar } from './Taskbar';
@@ -21,6 +22,7 @@ export function Desktop() {
   }, [phase]);
 
   const desktopApps = Object.values(apps).filter((a) => a.showOnDesktop);
+  const desktopShortcuts = Object.values(shortcuts).filter((s) => s.showOnDesktop);
 
   return (
     <>
@@ -28,6 +30,22 @@ export function Desktop() {
         <div class="desktop-icons">
           {desktopApps.map((app) => (
             <DesktopIcon key={app.id} app={app} />
+          ))}
+          {desktopShortcuts.map((sc) => (
+            <div
+              key={sc.id}
+              class="desktop-icon"
+              onDblClick={() => window.open(sc.url, '_blank', 'noopener,noreferrer')}
+              title={sc.title}
+            >
+              <img
+                src={sc.icon}
+                alt={sc.title}
+                style={{ width: 32, height: 32, imageRendering: 'pixelated' }}
+                draggable={false}
+              />
+              <span>{sc.title}</span>
+            </div>
           ))}
         </div>
 
