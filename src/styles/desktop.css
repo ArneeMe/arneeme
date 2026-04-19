@@ -262,6 +262,72 @@ body {
   outline: none;
 }
 
+/* Shared menubar used by Inbox, Paint, and MenuBar component */
+.explorer-menubar {
+  display: flex;
+  gap: 0;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  padding: 2px 4px;
+  position: relative;
+  z-index: 10;
+}
+
+.explorer-menubar .menu-item,
+.menu-root .menu-item {
+  background: none;
+  border: none;
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: default;
+  user-select: none;
+  color: inherit;
+}
+
+.explorer-menubar .menu-item:hover,
+.explorer-menubar .menu-item:focus,
+.explorer-menubar .menu-item.active,
+.menu-root .menu-item:hover,
+.menu-root .menu-item:focus,
+.menu-root .menu-item.active {
+  background: #000080;
+  color: #fff;
+  outline: none;
+}
+
+.menubar-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 140px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 2px 2px 0 #000;
+  z-index: 100;
+  padding: 2px 0;
+}
+
+.menubar-dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 3px 20px 3px 8px;
+  font-size: 11px;
+  cursor: default;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.menubar-dropdown-item:hover,
+.menubar-dropdown-item:focus {
+  background: #000080;
+  color: #fff;
+  outline: none;
+}
+
 .notepad-body {
   flex: 1;
   padding: 12px 16px;

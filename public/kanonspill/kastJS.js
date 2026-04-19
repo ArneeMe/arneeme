@@ -1,16 +1,3 @@
-let areYouSure = false;
-const leaveButton = document.querySelector("#leaveGameButton")
-function leaveGame(){
-    if (!areYouSure){
-        leaveButton.innerHTML = "Trykk en gang til for å forlate"
-        areYouSure = true;
-    }
-    else{
-        window.parent.postMessage({ type: 'close-app' }, '*');
-    }
-
-}
-
 //Kommentarforklaringen er ofte nederst og forklarer det som er over
 const hoydeInp = document.querySelector("#hoyde");
 const vinkelInp = document.querySelector("#vinkel");
@@ -42,10 +29,10 @@ let tyngdekraft = 0.1;
 let teller  = 0; //Teller i sammenheng med tyngdekraft "tiden"
 let antallSeier = 0;
 let antallFiender = 0; //Noen tellere for å holde oversikt
-let kuleY = 500;
+let kuleY = 340;
 let kuleX = 20; //Start posisjon til kule
-let blinkX = (Math.random()*420)+600;
-let blinkY = (Math.random()*(420))+80; //Startposisjon til blink, er delvis tilfeldig
+let blinkX = (Math.random()*300)+400;
+let blinkY = (Math.random()*(220))+60; //Startposisjon til blink, er delvis tilfeldig
 let kuleYtekst;
 let fiende;
 let fiendeArray = [];

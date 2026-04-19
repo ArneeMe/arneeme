@@ -1,3 +1,6 @@
+import { MenuBar } from '../MenuBar';
+import { closeWindow } from '../../../stores/desktop';
+
 interface Props {
   instanceId: string;
 }
@@ -8,15 +11,21 @@ const links = [
   { href: 'https://www.linkedin.com/in/arne-natsk%C3%A5r', label: 'LinkedIn', external: true },
 ];
 
-export default function AboutMe({ instanceId: _instanceId }: Props) {
+export default function AboutMe({ instanceId }: Props) {
+  const menus = [
+    {
+      label: 'File',
+      items: [{ label: 'Exit', onClick: () => closeWindow(instanceId) }],
+    },
+    {
+      label: 'Help',
+      items: [{ label: 'About Notepad...', onClick: () => alert('Notepad\nWindows 95 Edition') }],
+    },
+  ];
+
   return (
     <div class="about-me-app">
-      <div class="notepad-menubar">
-        <button class="menu-item">File</button>
-        <button class="menu-item">Edit</button>
-        <button class="menu-item">Format</button>
-        <button class="menu-item">Help</button>
-      </div>
+      <MenuBar menus={menus} />
 
       <div class="notepad-body">
         <div class="about-profile">

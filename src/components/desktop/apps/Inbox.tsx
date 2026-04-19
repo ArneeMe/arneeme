@@ -1,4 +1,6 @@
 import { useState } from 'preact/hooks';
+import { MenuBar } from '../MenuBar';
+import { closeWindow } from '../../../stores/desktop';
 
 interface Props {
   instanceId: string;
@@ -54,23 +56,27 @@ const folders = [
   { id: 'deleted', label: 'Deleted Items' },
 ];
 
-export default function Inbox({ instanceId: _instanceId }: Props) {
+export default function Inbox({ instanceId }: Props) {
   const [selected, setSelected] = useState<string | null>('welcome');
   const [activeFolder, setActiveFolder] = useState('inbox');
 
   const selectedMsg = messages.find((m) => m.id === selected) ?? null;
   const visibleMessages = activeFolder === 'inbox' ? messages : [];
 
+  const menus = [
+    {
+      label: 'File',
+      items: [{ label: 'Exit', onClick: () => closeWindow(instanceId) }],
+    },
+    {
+      label: 'Help',
+      items: [{ label: 'About Outlook Express...', onClick: () => alert('Outlook Express\nWindows 95 Edition') }],
+    },
+  ];
+
   return (
     <div class="inbox-app">
-      {/* Menu bar */}
-      <div class="explorer-menubar">
-        <button class="menu-item">File</button>
-        <button class="menu-item">Edit</button>
-        <button class="menu-item">View</button>
-        <button class="menu-item">Tools</button>
-        <button class="menu-item">Help</button>
-      </div>
+      <MenuBar menus={menus} />
 
       <div class="inbox-body">
         {/* Sidebar */}

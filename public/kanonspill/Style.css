@@ -164,7 +164,7 @@ body {
 
 /* ===== Speed slider — placed near bottom of play area ===== */
 #fart {
-  margin-top: 320px;
+  margin-top: 200px;
   width: 260px;
   max-width: 90%;
   display: block;
@@ -207,23 +207,6 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/* ===== Leave game button — amber tint to distinguish as exit action ===== */
-#leaveGameButton {
-  background: #fffbeb;
-  border-color: #fcd34d;
-  color: #92400e;
-  margin-top: 15px;
-  margin-left: 10px;
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  height: auto;
-}
-#leaveGameButton:hover {
-  background: #fef3c7;
-  border-color: #f59e0b;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-}
 
 /* ===== Select ===== */
 select.tekst {

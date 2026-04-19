@@ -1,15 +1,3 @@
-let areYouSure = false;
-const leaveButton = document.querySelector("#leaveGameButton")
-function leaveGame(){
-    if (!areYouSure){
-        leaveButton.innerHTML = "Trykk en gang til for å forlate"
-        areYouSure = true;
-    }
-    else{
-        window.parent.postMessage({ type: 'close-app' }, '*');
-    }
-
-}
 let player = document.getElementById("player"); // oppretter en variabel som refererer til div-elementet
 let sjokomelk = document.getElementById("sjokomelk");
 let moxnes = document.getElementById("moxnes");
