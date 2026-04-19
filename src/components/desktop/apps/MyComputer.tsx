@@ -1,7 +1,8 @@
 import { useState } from 'preact/hooks';
-import { openApp } from '../../../stores/desktop';
+import { openApp, closeWindow } from '../../../stores/desktop';
 import { apps } from '../../../apps/registry';
 import { shortcuts } from '../../../apps/shortcuts';
+import { MenuBar } from '../MenuBar';
 
 interface Props {
   instanceId: string;
@@ -16,7 +17,7 @@ interface FolderItem {
   action: () => void;
 }
 
-export default function MyComputer({ instanceId: _instanceId }: Props) {
+export default function MyComputer({ instanceId }: Props) {
   const [folder, setFolder] = useState<Folder>('root');
   const [history, setHistory] = useState<Folder[]>([]);
 
@@ -84,14 +85,20 @@ export default function MyComputer({ instanceId: _instanceId }: Props) {
 
   const currentItems = items[folder];
 
+  const explorerMenus = [
+    {
+      label: 'File',
+      items: [{ label: 'Close', onClick: () => closeWindow(instanceId) }],
+    },
+    {
+      label: 'Help',
+      items: [{ label: 'About My Computer...', onClick: () => alert('My Computer\nWindows 95\n\nPentium 66MHz · 16MB RAM · 1.2GB HDD') }],
+    },
+  ];
+
   return (
     <div class="explorer-app">
-      <div class="explorer-menubar">
-        <button class="menu-item">File</button>
-        <button class="menu-item">Edit</button>
-        <button class="menu-item">View</button>
-        <button class="menu-item">Help</button>
-      </div>
+      <MenuBar menus={explorerMenus} />
 
       <div class="explorer-toolbar">
         <button
