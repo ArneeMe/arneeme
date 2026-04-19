@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- page with folded corner -->
+  <path d="M6 3 L22 3 L27 8 L27 29 L6 29 Z" fill="#ffffff" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- fold -->
+  <path d="M22 3 L22 8 L27 8 Z" fill="#d0d0d0" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/>
+  <!-- PDF label -->
+  <rect x="9" y="17" width="15" height="6" fill="#cc0000" stroke="#660000" stroke-width="0.5"/>
+  <text x="16.5" y="22" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="5" fill="#ffffff">PDF</text>
+  <!-- lines -->
+  <line x1="9" y1="11" x2="20" y2="11" stroke="#666" stroke-width="1"/>
+  <line x1="9" y1="14" x2="20" y2="14" stroke="#666" stroke-width="1"/>
+  <line x1="9" y1="26" x2="22" y2="26" stroke="#666" stroke-width="1"/>
+</svg>

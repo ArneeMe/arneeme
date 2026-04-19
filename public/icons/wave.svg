@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="geometricPrecision">
+  <!-- sky background -->
+  <rect x="0" y="0" width="32" height="16" fill="#87ceeb"/>
+  <!-- sun -->
+  <circle cx="24" cy="8" r="3.5" fill="#ffdd33" stroke="#cc9900" stroke-width="0.8"/>
+  <!-- deep water -->
+  <rect x="0" y="16" width="32" height="16" fill="#1a6fb5"/>
+  <!-- wave crest 1 (back) -->
+  <path d="M0 17 Q4 14 8 17 T16 17 T24 17 T32 17 L32 20 L0 20 Z" fill="#4aa8e0" stroke="#1a6fb5" stroke-width="0.5"/>
+  <!-- wave crest 2 (front) -->
+  <path d="M0 22 Q4 19 8 22 T16 22 T24 22 T32 22 L32 25 L0 25 Z" fill="#7ac8ee" stroke="#1a6fb5" stroke-width="0.5"/>
+  <!-- foam -->
+  <path d="M0 17 Q4 14 8 17 T16 17 T24 17 T32 17" fill="none" stroke="#ffffff" stroke-width="1"/>
+  <!-- bottom wave -->
+  <path d="M0 27 Q4 25 8 27 T16 27 T24 27 T32 27" fill="none" stroke="#ffffff" stroke-width="0.8"/>
+  <!-- border -->
+  <rect x="0" y="0" width="32" height="32" fill="none" stroke="#000" stroke-width="1.5"/>
+</svg>

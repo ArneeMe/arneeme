@@ -48,7 +48,7 @@ body {
   margin-top: 8px;
   display: grid;
   grid-column-gap: 10px;
-  grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) 85px 140px minmax(150px, 200px);
+  grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) 85px 140px;
   align-items: center;
   max-width: 100%;
 }
@@ -95,16 +95,6 @@ body {
 /* ===== Individual text overrides ===== */
 #reset {
   margin-top: 10px;
-}
-
-#tekstXpos {
-  margin-top: 1px;
-  height: 0;
-}
-
-#tekstYpos {
-  margin-top: 1px;
-  height: 0;
 }
 
 #tekstHoyde {

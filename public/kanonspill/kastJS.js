@@ -9,8 +9,6 @@ const blink = document.querySelector("#blink"); // Henter ut de 3 elementene som
 const tekstVinkel= document.querySelector("#tekstVinkel");
 const tekstHoyde = document.querySelector("#tekstHoyde");
 const tekstFart = document.querySelector("#tekstFart");
-const tekstXpos = document.querySelector("#tekstXpos");
-const tekstYpos = document.querySelector("#tekstYpos");
 const tekstSeier = document.querySelector("#tekstSeier");
 const tekstTilbakemelding = document.querySelector("#tekstTilbakemelding");
 const tekstTips = document.querySelector("#tekstTips"); //Henter ut de ulike tekstene som endres
@@ -29,11 +27,10 @@ let tyngdekraft = 0.1;
 let teller  = 0; //Teller i sammenheng med tyngdekraft "tiden"
 let antallSeier = 0;
 let antallFiender = 0; //Noen tellere for å holde oversikt
-let kuleY = 340;
+let kuleY = 112;
 let kuleX = 20; //Start posisjon til kule
 let blinkX = (Math.random()*300)+400;
 let blinkY = (Math.random()*(220))+60; //Startposisjon til blink, er delvis tilfeldig
-let kuleYtekst;
 let fiende;
 let fiendeArray = [];
 let minsteAvstandArray= []; //Noen tomme arrays som blir brukt senere i koden
@@ -106,10 +103,7 @@ function skudd () { //Selve skudd-funksjonen, her oppdaterer den posisjon til ku
         kuleY = kuleY - (fartY - tyngdekraft * teller);
         kule.style.marginTop = kuleY + "px";
         kule.style.marginLeft = kuleX + "px";
-        kuleYtekst = 500 - kuleY;
-        tekstXpos.innerHTML = `X-posisjon er ${kuleX.toFixed(0)}`;
-        tekstYpos.innerHTML = `Y-posisjon er ${kuleYtekst.toFixed(0)}`;
-        //Her oppdateres posisjonsverdeiene til kule, samt oppdaterer teksten slik at bruker får kordinatene oppgitt
+        //Her oppdateres posisjonsverdeiene til kule
         regnUtKollisjon(); //Til slutt sjekker den om kule kolliderer med noe
         setTimeout(byttBilde, 500); //Bytter tilbake til bilde slik at gif-en ikke spilles av evig
         if (kollisjon === false) { //Kollisjon = true brukes til å stoppe skudd funksjonen
@@ -182,7 +176,7 @@ function regnUtKollisjon() {
 }
 function nyttSkudd() {
     //Gjør klar til nytt skudd, men resetter ikke alle verdier
-    kuleY = 500;
+    kuleY = 272;
     kuleY = kuleY - hoydeInp.value;
     kuleX = 20;
     teller = 0;
@@ -203,7 +197,7 @@ function nyttSkudd() {
 }
 function reset() {
     //Skal resette nesten alt, nesten slik som f5. Verdiene under er standard
-    kuleY = 500;
+    kuleY = 272;
     kuleX = 20;
     teller = 0;
     fart  = 0;
@@ -230,9 +224,6 @@ function reset() {
 }
 function oppdaterTekst(){
     //Gjør akkuratt det den heter. Dette er en funksjon som kjører nesten hele tiden fordi teksten oppdateres nesten hele tiden
-    kuleYtekst = 500 - kuleY;
-    tekstXpos.innerHTML = `X-posisjon er ${kuleX.toFixed(0)}`;
-    tekstYpos.innerHTML = `Y-posisjon er ${kuleYtekst.toFixed(0)}`;
     tekstHoyde.innerHTML = `Starthøyden er ${hoydeInp.value}`;
     tekstVinkel.innerHTML = `Vinkelen er ${vinkel} grader`;
     tekstSeier.innerHTML = `Antall treff: ${antallSeier}`;
@@ -247,7 +238,7 @@ function oppdaterBlink(){
 hoydeInp.onchange  = function () {
     //Endrer på starthøyden
     if(startet===false) { //Passer på at bruker ikke kan endre høyde mens kulen beveger seg
-        kuleY = 500;
+        kuleY = 272;
         kuleY = kuleY - hoydeInp.value;
         kule.style.marginTop = kuleY + "px";
         kanon.style.marginTop = (kuleY-70)  + "px";
