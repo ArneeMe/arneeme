@@ -4,6 +4,7 @@ import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
 import Paint from '../components/desktop/apps/Paint';
+import VelgTlf from '../components/desktop/apps/VelgTlf';
 
 export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
@@ -98,56 +99,15 @@ export const apps: Record<string, AppDefinition> = {
   },
   'velg-tlf': {
     id: 'velg-tlf',
-    title: 'Velg Telefonnummer',
-    icon: '/icons/file.svg',
-    defaultSize: { w: 700, h: 500 },
-    minSize: { w: 350, h: 250 },
+    title: 'Phone Dialer - Velg Telefonnummer',
+    icon: '/icons/phone.svg',
+    defaultSize: { w: 520, h: 380 },
+    minSize: { w: 440, h: 340 },
     resizable: true,
     singleton: true,
     showOnDesktop: false,
-    showInStartMenu: false,
-    component: IframeApp,
-    props: { url: '/velgTlf/velgTlfNr.html' },
+    showInStartMenu: true,
+    component: VelgTlf,
   },
 
-  // ── Legacy games (launched from My Computer > Games) ──────────────────────
-  'dog-app': {
-    id: 'dog-app',
-    title: 'The Dog App',
-    icon: '/icons/gamepad.svg',
-    defaultSize: { w: 700, h: 520 },
-    minSize: { w: 350, h: 260 },
-    resizable: true,
-    singleton: true,
-    showOnDesktop: false,
-    showInStartMenu: false,
-    component: IframeApp,
-    props: { url: '/theDogApp/index_dogapp.html' },
-  },
-  'quiz': {
-    id: 'quiz',
-    title: 'Quiz',
-    icon: '/icons/gamepad.svg',
-    defaultSize: { w: 700, h: 520 },
-    minSize: { w: 350, h: 260 },
-    resizable: true,
-    singleton: true,
-    showOnDesktop: false,
-    showInStartMenu: false,
-    component: IframeApp,
-    props: { url: '/quiz.html' },
-  },
-  'eksamen': {
-    id: 'eksamen',
-    title: 'Eksamen Oppgave 3',
-    icon: '/icons/file.svg',
-    defaultSize: { w: 700, h: 520 },
-    minSize: { w: 350, h: 260 },
-    resizable: true,
-    singleton: true,
-    showOnDesktop: false,
-    showInStartMenu: false,
-    component: IframeApp,
-    props: { url: '/eksamen/oppgave3Eksamen.html' },
-  },
 };

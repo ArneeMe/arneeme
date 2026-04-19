@@ -1,12 +1,13 @@
 import { useState } from 'preact/hooks';
 import { openApp } from '../../../stores/desktop';
 import { apps } from '../../../apps/registry';
+import { shortcuts } from '../../../apps/shortcuts';
 
 interface Props {
   instanceId: string;
 }
 
-type Folder = 'root' | 'projects' | 'games';
+type Folder = 'root' | 'projects' | 'games' | 'shortcuts';
 
 interface FolderItem {
   id: string;
@@ -42,11 +43,13 @@ export default function MyComputer({ instanceId: _instanceId }: Props) {
     root: 'My Computer',
     projects: 'My Computer > Projects',
     games: 'My Computer > Games',
+    shortcuts: 'My Computer > Shortcuts',
   };
 
   const rootItems: FolderItem[] = [
     { id: 'projects', label: 'Projects', icon: '/icons/folder.svg', action: () => navigate('projects') },
     { id: 'games', label: 'Games', icon: '/icons/gamepad.svg', action: () => navigate('games') },
+    { id: 'shortcuts', label: 'Shortcuts', icon: '/icons/globe.svg', action: () => navigate('shortcuts') },
     { id: 'about-me', label: 'About Me', icon: '/icons/notepad.svg', action: () => launch('about-me') },
     { id: 'c-drive', label: 'C:\\', icon: '/icons/drive.svg', action: () => {} },
   ];
@@ -61,16 +64,22 @@ export default function MyComputer({ instanceId: _instanceId }: Props) {
   const gameItems: FolderItem[] = [
     { id: 'kanonspill', label: 'Kanonspill', icon: '/icons/gamepad.svg', action: () => launch('kanonspill') },
     { id: 'hoksrud', label: 'Bård Hoksrud', icon: '/icons/gamepad.svg', action: () => launch('hoksrud') },
-    { id: 'velg-tlf', label: 'Velg Telefonnummer', icon: '/icons/gamepad.svg', action: () => launch('velg-tlf') },
-    { id: 'dog-app', label: 'The Dog App', icon: '/icons/gamepad.svg', action: () => launch('dog-app') },
-    { id: 'quiz', label: 'Quiz', icon: '/icons/gamepad.svg', action: () => launch('quiz') },
-    { id: 'eksamen', label: 'Eksamen Oppgave 3', icon: '/icons/gamepad.svg', action: () => launch('eksamen') },
   ];
+
+  const shortcutItems: FolderItem[] = Object.values(shortcuts)
+    .filter((s) => s.showInShortcutsFolder)
+    .map((s) => ({
+      id: s.id,
+      label: s.title,
+      icon: s.icon,
+      action: () => window.open(s.url, '_blank', 'noopener,noreferrer'),
+    }));
 
   const items: Record<Folder, FolderItem[]> = {
     root: rootItems,
     projects: projectItems,
     games: gameItems,
+    shortcuts: shortcutItems,
   };
 
   const currentItems = items[folder];
