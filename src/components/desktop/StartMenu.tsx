@@ -23,7 +23,7 @@ export function StartMenu({ onClose }: Props) {
   return (
     <div class="start-menu" onClick={(e) => e.stopPropagation()}>
       <div class="start-menu-sidebar">
-        <span>Arne Natskår</span>
+        <span>arnee.me 95</span>
       </div>
       <div class="start-menu-items">
         <div class="start-menu-section">
