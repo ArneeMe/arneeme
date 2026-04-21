@@ -147,13 +147,39 @@ export function toggleMinimize(id: string) {
   });
 }
 
+export function clampAllWindows() {
+  if (typeof window === 'undefined') return;
+  mutate((s) => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const MIN_VISIBLE = 40;
+    const TITLE_BAR_H = 24;
+    const TASKBAR_H = 30;
+    return {
+      ...s,
+      windows: s.windows.map((w) => {
+        if (w.maximized) return w;
+        const maxX = vw - MIN_VISIBLE;
+        const minX = -(w.size.w - MIN_VISIBLE);
+        const maxY = vh - TASKBAR_H - TITLE_BAR_H;
+        const x = Math.min(maxX, Math.max(minX, w.position.x));
+        const y = Math.min(maxY, Math.max(0, w.position.y));
+        if (x === w.position.x && y === w.position.y) return w;
+        return { ...w, position: { x, y } };
+      }),
+    };
+  });
+}
+
 export function toggleMaximize(id: string) {
   mutate((s) => {
     const win = s.windows.find((w) => w.id === id);
     if (!win) return s;
     if (win.maximized) {
+      const nextZ = s.nextZ + 1;
       return {
         ...s,
+        nextZ,
         windows: s.windows.map((w) =>
           w.id === id
             ? {
@@ -163,6 +189,7 @@ export function toggleMaximize(id: string) {
                 size: w.prevSize ?? w.size,
                 prevPosition: undefined,
                 prevSize: undefined,
+                zIndex: nextZ,
               }
             : w
         ),
