@@ -267,9 +267,7 @@ export default function Paint({ instanceId }: Props) {
               <img
                 src={t.icon}
                 alt={t.label}
-                width={14}
-                height={14}
-                style={{ imageRendering: 'pixelated' }}
+                style={{ width: 16, height: 16, imageRendering: 'pixelated' }}
                 draggable={false}
               />
             </button>

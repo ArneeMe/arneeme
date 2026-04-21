@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges">
-  <!-- eyedropper shaft -->
-  <rect x="9" y="2" width="3" height="7" fill="#c0c0c0" stroke="#000" stroke-width="1" transform="rotate(45 10.5 5.5)"/>
-  <!-- rubber bulb top (colored) -->
-  <rect x="10.5" y="0.5" width="3.5" height="3" fill="#e44" stroke="#000" stroke-width="1" transform="rotate(45 12.25 2)"/>
-  <!-- tip point -->
-  <polygon points="2,14 1,15 3,15 4,14" fill="#000"/>
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16'>
+  <!-- red bulb (top-right, diagonal) -->
+  <polygon points='11,1 15,5 13,7 9,3' fill='#e44' stroke='#000' stroke-width='1'/>
+  <!-- silver shaft -->
+  <polygon points='9,3 13,7 6,14 2,10' fill='#c0c0c0' stroke='#000' stroke-width='1'/>
+  <!-- dark shaft shadow -->
+  <polygon points='11,5 13,7 6,14 4,12' fill='#808080'/>
   <!-- drop -->
-  <circle cx="2.5" cy="13" r="1.2" fill="#3366cc" stroke="#000" stroke-width="0.8"/>
+  <rect x='1' y='13' width='2' height='2' fill='#3366cc' stroke='#000' stroke-width='1'/>
 </svg>

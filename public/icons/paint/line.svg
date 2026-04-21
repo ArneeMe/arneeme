@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges">
-  <!-- thick diagonal line -->
-  <line x1="2" y1="14" x2="14" y2="2" stroke="#000" stroke-width="2.5" stroke-linecap="square"/>
-  <!-- endpoint dots -->
-  <rect x="1" y="13" width="2" height="2" fill="#000"/>
-  <rect x="13" y="1" width="2" height="2" fill="#000"/>
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16'>
+  <!-- thick diagonal line as stair-stepped pixel rects -->
+  <rect x='1' y='13' width='2' height='2' fill='#000'/>
+  <rect x='3' y='11' width='2' height='2' fill='#000'/>
+  <rect x='5' y='9' width='2' height='2' fill='#000'/>
+  <rect x='7' y='7' width='2' height='2' fill='#000'/>
+  <rect x='9' y='5' width='2' height='2' fill='#000'/>
+  <rect x='11' y='3' width='2' height='2' fill='#000'/>
+  <rect x='13' y='1' width='2' height='2' fill='#000'/>
 </svg>
