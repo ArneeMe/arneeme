@@ -1,10 +1,14 @@
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='16' height='16'>
-  <!-- red bulb (top-right, diagonal) -->
-  <polygon points='11,1 15,5 13,7 9,3' fill='#e44' stroke='#000' stroke-width='1'/>
-  <!-- silver shaft -->
-  <polygon points='9,3 13,7 6,14 2,10' fill='#c0c0c0' stroke='#000' stroke-width='1'/>
-  <!-- dark shaft shadow -->
-  <polygon points='11,5 13,7 6,14 4,12' fill='#808080'/>
-  <!-- drop -->
-  <rect x='1' y='13' width='2' height='2' fill='#3366cc' stroke='#000' stroke-width='1'/>
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' width='32' height='32' shape-rendering='crispEdges'>
+  <!-- red bulb (top-right) as stepped rects -->
+  <rect x='10' y='1' width='3' height='2' fill='#e44' stroke='#000' stroke-width='1'/>
+  <rect x='11' y='3' width='3' height='2' fill='#e44' stroke='#000' stroke-width='1'/>
+  <!-- silver shaft going down-left -->
+  <rect x='9' y='4' width='2' height='2' fill='#c0c0c0' stroke='#000' stroke-width='1'/>
+  <rect x='7' y='6' width='2' height='2' fill='#c0c0c0' stroke='#000' stroke-width='1'/>
+  <rect x='5' y='8' width='2' height='2' fill='#c0c0c0' stroke='#000' stroke-width='1'/>
+  <rect x='3' y='10' width='2' height='2' fill='#c0c0c0' stroke='#000' stroke-width='1'/>
+  <!-- black tip -->
+  <rect x='1' y='12' width='2' height='2' fill='#000'/>
+  <!-- blue drop -->
+  <rect x='1' y='14' width='2' height='2' fill='#3366cc' stroke='#000' stroke-width='1'/>
 </svg>
