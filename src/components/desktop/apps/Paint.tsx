@@ -1,4 +1,3 @@
-import * as preact from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { MenuBar } from '../MenuBar';
 import { closeWindow } from '../../../stores/desktop';
@@ -220,53 +219,13 @@ export default function Paint({ instanceId }: Props) {
     e.preventDefault();
   };
 
-  const toolIcons: Record<Tool, preact.JSX.Element> = {
-    pencil: (
-      <svg viewBox="0 0 12 12" width="14" height="14">
-        <rect x="7.5" y="1" width="2.5" height="7" rx="0.4" transform="rotate(45 8.75 4.5)" fill="#333" />
-        <polygon points="2.5,9.5 1.5,11 3.5,11" fill="#333" />
-      </svg>
-    ),
-    eraser: (
-      <svg viewBox="0 0 12 12" width="14" height="14">
-        <rect x="1" y="5.5" width="10" height="4.5" rx="0.5" fill="#f99" stroke="#333" strokeWidth="0.7" />
-        <rect x="6" y="5.5" width="5" height="4.5" rx="0.5" fill="#fcc" stroke="#333" strokeWidth="0.7" />
-      </svg>
-    ),
-    line: (
-      <svg viewBox="0 0 12 12" width="14" height="14">
-        <line x1="2" y1="10" x2="10" y2="2" stroke="#333" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-    rectangle: (
-      <svg viewBox="0 0 12 12" width="14" height="14">
-        <rect x="1.5" y="2.5" width="9" height="7" stroke="#333" strokeWidth="1.2" fill="none" />
-      </svg>
-    ),
-    fill: (
-      <svg viewBox="0 0 12 12" width="14" height="14">
-        <path d="M2 8 L2 2 L7 2 L9 4 L7 6 L4 6 L4 8 Z" fill="#4af" stroke="#333" strokeWidth="0.6" />
-        <ellipse cx="9.5" cy="9.5" rx="1.8" ry="1.8" fill="#fa4" stroke="#333" strokeWidth="0.6" />
-        <line x1="7.5" y1="7.5" x2="8.2" y2="8.2" stroke="#333" strokeWidth="0.8" />
-      </svg>
-    ),
-    picker: (
-      <svg viewBox="0 0 12 12" width="14" height="14">
-        <path d="M5 8 L9 4 L10.5 5.5 L6.5 9.5 Z" fill="#ccc" stroke="#333" strokeWidth="0.6" />
-        <line x1="8" y1="2.5" x2="10.5" y2="5" stroke="#333" strokeWidth="1" strokeLinecap="round" />
-        <circle cx="3" cy="10" r="1.5" fill="#f55" stroke="#333" strokeWidth="0.5" />
-        <line x1="4.5" y1="8.5" x2="4" y2="9" stroke="#333" strokeWidth="0.7" />
-      </svg>
-    ),
-  };
-
-  const tools: { id: Tool; label: string }[] = [
-    { id: 'pencil', label: 'Pencil' },
-    { id: 'eraser', label: 'Eraser' },
-    { id: 'line', label: 'Line' },
-    { id: 'rectangle', label: 'Rectangle' },
-    { id: 'fill', label: 'Fill' },
-    { id: 'picker', label: 'Pick color' },
+  const tools: { id: Tool; label: string; icon: string }[] = [
+    { id: 'pencil', label: 'Pencil', icon: '/icons/paint/pencil.svg' },
+    { id: 'eraser', label: 'Eraser', icon: '/icons/paint/eraser.svg' },
+    { id: 'line', label: 'Line', icon: '/icons/paint/line.svg' },
+    { id: 'rectangle', label: 'Rectangle', icon: '/icons/paint/rectangle.svg' },
+    { id: 'fill', label: 'Fill', icon: '/icons/paint/fill.svg' },
+    { id: 'picker', label: 'Pick color', icon: '/icons/paint/picker.svg' },
   ];
 
   const paintMenus = [
@@ -305,7 +264,14 @@ export default function Paint({ instanceId }: Props) {
               onClick={() => setTool(t.id)}
               title={t.label}
             >
-              <span class="paint-tool-icon">{toolIcons[t.id]}</span>
+              <img
+                src={t.icon}
+                alt={t.label}
+                width={14}
+                height={14}
+                style={{ imageRendering: 'pixelated' }}
+                draggable={false}
+              />
             </button>
           ))}
           <div class="paint-brush-size">

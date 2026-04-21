@@ -1,4 +1,4 @@
-import { desktopState, openApp } from '../../stores/desktop';
+import { desktopState, openApp, clampAllWindows } from '../../stores/desktop';
 import { bootPhase } from '../../stores/boot';
 import { apps } from '../../apps/registry';
 import { shortcuts } from '../../apps/shortcuts';
@@ -20,6 +20,19 @@ export function Desktop() {
       }
     }
   }, [phase]);
+
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => clampAllWindows(), 150);
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      if (t) clearTimeout(t);
+    };
+  }, []);
 
   const desktopApps = Object.values(apps).filter((a) => a.showOnDesktop);
   const desktopShortcuts = Object.values(shortcuts).filter((s) => s.showOnDesktop);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks';
-import { taskbarWindows, toggleMinimize, focusWindow } from '../../stores/desktop';
+import { taskbarWindows, desktopState, toggleMinimize, focusWindow } from '../../stores/desktop';
 import { StartMenu } from './StartMenu';
 
 export function Taskbar() {
@@ -20,12 +20,21 @@ export function Taskbar() {
 
   const windows = taskbarWindows.value;
 
-  const handleWindowBtn = (winId: string, minimized: boolean) => {
-    if (minimized) {
+  const handleWindowBtn = (winId: string) => {
+    const state = desktopState.value;
+    const win = state.windows.find((w) => w.id === winId);
+    if (!win) return;
+    if (win.minimized) {
       focusWindow(winId);
       toggleMinimize(winId);
-    } else {
+      return;
+    }
+    const openWins = state.windows.filter((w) => !w.minimized);
+    const topZ = Math.max(...openWins.map((w) => w.zIndex));
+    if (win.zIndex === topZ) {
       toggleMinimize(winId);
+    } else {
+      focusWindow(winId);
     }
   };
 
@@ -59,7 +68,7 @@ export function Taskbar() {
             <button
               key={win.id}
               class={`taskbar-btn${!win.minimized ? ' active' : ''}`}
-              onClick={() => handleWindowBtn(win.id, win.minimized)}
+              onClick={() => handleWindowBtn(win.id)}
             >
               <img
                 src={win.icon}
