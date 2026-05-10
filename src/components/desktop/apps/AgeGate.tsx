@@ -75,12 +75,11 @@ export default function AgeGate({ instanceId }: Props) {
     setErrorMsg('');
     try {
       const { ZKPassport } = await import('@zkpassport/sdk');
-      const zkpassport = new ZKPassport('arnee.me');
+      const zkpassport = new ZKPassport();
       const builder = await zkpassport.request({
         name: 'arnee.me',
         logo: 'https://arnee.me/profile.png',
         purpose: 'Age verification (16+)',
-        scope: '16-plus',
       });
 
       const { url, requestId, onResult, onError, onReject } = builder.gte('age', 16).done();
