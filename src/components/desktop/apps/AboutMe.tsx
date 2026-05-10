@@ -30,7 +30,6 @@ export default function AboutMe({ instanceId }: Props) {
       <div class="notepad-body">
         <div class="about-info">
           <h1>Arne Natskår</h1>
-          <p class="about-role">Sikkerhetsutvikler</p>
         </div>
 
         <div class="notepad-text">

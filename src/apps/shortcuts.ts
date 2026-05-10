@@ -3,9 +3,9 @@ import type { ShortcutDefinition } from './types';
 export const shortcuts: Record<string, ShortcutDefinition> = {
   'kommune': {
     id: 'kommune',
-    title: 'Arne Kommune',
+    title: 'Arne Kommulde',
     icon: '/icons/globe.svg',
-    url: 'https://kommune.arnee.me',
+    url: 'https://kommulde.no',
     showOnDesktop: true,
     showInStartMenu: true,
     showInShortcutsFolder: true,
