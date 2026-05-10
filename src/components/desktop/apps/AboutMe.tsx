@@ -28,16 +28,9 @@ export default function AboutMe({ instanceId }: Props) {
       <MenuBar menus={menus} />
 
       <div class="notepad-body">
-        <div class="about-profile">
-          <img
-            src="/profile.png"
-            alt="Arne Natskår"
-            class="about-avatar"
-          />
-          <div class="about-info">
-            <h1>Arne Natskår</h1>
-            <p class="about-role">Security Developer</p>
-          </div>
+        <div class="about-info">
+          <h1>Arne Natskår</h1>
+          <p class="about-role">Security Developer</p>
         </div>
 
         <div class="notepad-text">
