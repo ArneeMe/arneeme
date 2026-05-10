@@ -79,7 +79,7 @@ export default function AgeGate({ instanceId }: Props) {
       const builder = await zkpassport.request({
         name: 'arnee.me',
         logo: 'https://arnee.me/profile.png',
-        purpose: 'Aldersbegrensning (over 16 år)',
+        purpose: 'Age verification (16+)',
         scope: '16-plus',
       });
 
