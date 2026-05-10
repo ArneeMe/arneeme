@@ -124,14 +124,39 @@ export default function AgeGate({ instanceId }: Props) {
     }
   }
 
+  function resetVerification() {
+    localStorage.removeItem(STORAGE_KEY);
+    setState('idle');
+  }
+
   function showAbout() {
-    alert('16+ Verification\nPowered by ZKPassport\nPrivacy-preserving age check.');
+    alert(
+      '16+ Aldersbekreftelse — powered by ZKPassport\n' +
+      '─────────────────────────────────────\n\n' +
+      'App å installere:\n' +
+      '"ZKPassport" — App Store eller Google Play.\n\n' +
+      'Slik fungerer det:\n' +
+      'Appen leser NFC-brikken i passet ditt og lager\n' +
+      'et matematisk bevis (zero-knowledge proof) på at\n' +
+      'du er over 16. Kun beviset sendes — ikke passdataene.\n\n' +
+      'Hva dette nettstedet lærer:\n' +
+      '  ✓ At du er over 16\n\n' +
+      'Hva dette nettstedet IKKE lærer:\n' +
+      '  ✗ Navn eller fødselsdato\n' +
+      '  ✗ Passnummer eller nasjonalitet\n' +
+      '  ✗ Om du har vært her før\n\n' +
+      'Ingen data lagres på server.\n' +
+      'Bekreftelsen er gyldig i 24 timer.'
+    );
   }
 
   const menus = [
     {
       label: 'File',
-      items: [{ label: 'Exit', onClick: () => closeWindow(instanceId) }],
+      items: [
+        { label: 'Reset verification', onClick: resetVerification },
+        { label: 'Exit', onClick: () => closeWindow(instanceId) },
+      ],
     },
     {
       label: 'Help',
@@ -161,6 +186,9 @@ export default function AgeGate({ instanceId }: Props) {
           <div class="age-gate-success-icon">✓</div>
           <h2 class="age-gate-title">Du er over 16.</h2>
           <p class="age-gate-text">Velkommen.</p>
+          <button class="explorer-btn age-gate-reset-btn" onClick={resetVerification}>
+            Tilbakestill
+          </button>
         </div>
       );
     }

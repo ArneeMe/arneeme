@@ -1265,6 +1265,12 @@ body {
   gap: 4px;
 }
 
+.age-gate-reset-btn {
+  margin-top: 8px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
 .age-gate-muted {
   font-size: 11px;
   color: #404040;
