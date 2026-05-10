@@ -152,15 +152,15 @@ export default function AgeGate({ instanceId }: Props) {
 
   const menus = [
     {
-      label: 'File',
+      label: 'Fil',
       items: [
-        { label: 'Reset verification', onClick: resetVerification },
-        { label: 'Exit', onClick: () => closeWindow(instanceId) },
+        { label: 'Tilbakestill verifisering', onClick: resetVerification },
+        { label: 'Avslutt', onClick: () => closeWindow(instanceId) },
       ],
     },
     {
-      label: 'Help',
-      items: [{ label: 'About 16+...', onClick: showAbout }],
+      label: 'Hjelp',
+      items: [{ label: 'Om 16+...', onClick: showAbout }],
     },
   ];
 

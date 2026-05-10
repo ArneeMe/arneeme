@@ -71,9 +71,9 @@ export function WindowFrame({ win, app, children }: Props) {
           {win.title}
         </div>
         <div class="title-bar-controls">
-          <button aria-label="Minimize" onClick={() => toggleMinimize(win.id)} />
-          <button aria-label="Maximize" onClick={() => toggleMaximize(win.id)} />
-          <button aria-label="Close" onClick={() => closeWindow(win.id)} />
+          <button aria-label="Minimer" onClick={() => toggleMinimize(win.id)} />
+          <button aria-label="Maksimer" onClick={() => toggleMaximize(win.id)} />
+          <button aria-label="Lukk" onClick={() => closeWindow(win.id)} />
         </div>
       </div>
 

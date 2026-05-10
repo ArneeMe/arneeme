@@ -11,7 +11,7 @@ export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
   'about-me': {
     id: 'about-me',
-    title: 'About Me - Notepad',
+    title: 'Om meg - Notepad',
     icon: '/icons/notepad.svg',
     defaultSize: { w: 520, h: 400 },
     minSize: { w: 300, h: 200 },
@@ -113,7 +113,7 @@ export const apps: Record<string, AppDefinition> = {
   },
   'velg-tlf': {
     id: 'velg-tlf',
-    title: 'Phone Dialer - Velg Telefonnummer',
+    title: 'Velg Telefonnummer',
     icon: '/icons/phone.svg',
     defaultSize: { w: 520, h: 380 },
     minSize: { w: 440, h: 340 },

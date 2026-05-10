@@ -14,18 +14,18 @@ export function LoginDialog() {
     <div class="boot-overlay login-phase">
       <form class="window login-dialog" onSubmit={onSubmit}>
         <div class="title-bar">
-          <div class="title-bar-text">Enter Network Password</div>
+          <div class="title-bar-text">Skriv inn nettverkspassord</div>
           <div class="title-bar-controls">
-            <button type="button" aria-label="Close" onClick={() => advanceBoot('desktop')} />
+            <button type="button" aria-label="Lukk" onClick={() => advanceBoot('desktop')} />
           </div>
         </div>
         <div class="window-body login-body">
           <div class="login-icon">🔑</div>
           <div class="login-fields">
-            <p class="login-prompt">Enter your network password for Microsoft Networking.</p>
+            <p class="login-prompt">Skriv inn nettverkspassordet ditt for Microsoft-nettverk.</p>
 
             <div class="field-row-stacked">
-              <label for="login-user">User name:</label>
+              <label for="login-user">Brukernavn:</label>
               <input
                 id="login-user"
                 type="text"
@@ -35,7 +35,7 @@ export function LoginDialog() {
             </div>
 
             <div class="field-row-stacked">
-              <label for="login-pass">Password:</label>
+              <label for="login-pass">Passord:</label>
               <input
                 id="login-pass"
                 type="password"
@@ -47,7 +47,7 @@ export function LoginDialog() {
         </div>
         <div class="login-actions">
           <button type="submit">OK</button>
-          <button type="button" onClick={() => advanceBoot('desktop')}>Cancel</button>
+          <button type="button" onClick={() => advanceBoot('desktop')}>Avbryt</button>
         </div>
       </form>
     </div>

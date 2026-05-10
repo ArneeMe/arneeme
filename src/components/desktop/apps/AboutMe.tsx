@@ -14,12 +14,12 @@ const links = [
 export default function AboutMe({ instanceId }: Props) {
   const menus = [
     {
-      label: 'File',
-      items: [{ label: 'Exit', onClick: () => closeWindow(instanceId) }],
+      label: 'Fil',
+      items: [{ label: 'Avslutt', onClick: () => closeWindow(instanceId) }],
     },
     {
-      label: 'Help',
-      items: [{ label: 'About Notepad...', onClick: () => alert('Notepad\nWindows 95 Edition') }],
+      label: 'Hjelp',
+      items: [{ label: 'Om Notepad...', onClick: () => alert('Notepad\nWindows 95-utgave') }],
     },
   ];
 
@@ -30,18 +30,13 @@ export default function AboutMe({ instanceId }: Props) {
       <div class="notepad-body">
         <div class="about-info">
           <h1>Arne Natskår</h1>
-          <p class="about-role">Security Developer</p>
+          <p class="about-role">Sikkerhetsutvikler</p>
         </div>
 
         <div class="notepad-text">
           <p>
-            Hi! I'm a Security Developer based in Norway. I build things
-            for the web — from security tooling to small interactive
-            experiments.
-          </p>
-          <p>
-            Double-click the icons on the desktop to explore my work,
-            or use the Start menu to navigate.
+            Heisann! Titt rundt på nettsiden til en sikkerhetsutvikler.
+            Ta kontakt hvis du lurer på noe som helst.
           </p>
 
           <div class="about-links">

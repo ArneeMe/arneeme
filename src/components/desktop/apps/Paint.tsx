@@ -220,33 +220,33 @@ export default function Paint({ instanceId }: Props) {
   };
 
   const tools: { id: Tool; label: string; icon: string }[] = [
-    { id: 'pencil', label: 'Pencil', icon: '/icons/paint/pencil.svg' },
-    { id: 'eraser', label: 'Eraser', icon: '/icons/paint/eraser.svg' },
-    { id: 'line', label: 'Line', icon: '/icons/paint/line.svg' },
-    { id: 'rectangle', label: 'Rectangle', icon: '/icons/paint/rectangle.svg' },
-    { id: 'fill', label: 'Fill', icon: '/icons/paint/fill.svg' },
-    { id: 'picker', label: 'Pick color', icon: '/icons/paint/picker.svg' },
+    { id: 'pencil', label: 'Blyant', icon: '/icons/paint/pencil.svg' },
+    { id: 'eraser', label: 'Viskelær', icon: '/icons/paint/eraser.svg' },
+    { id: 'line', label: 'Linje', icon: '/icons/paint/line.svg' },
+    { id: 'rectangle', label: 'Rektangel', icon: '/icons/paint/rectangle.svg' },
+    { id: 'fill', label: 'Fyll', icon: '/icons/paint/fill.svg' },
+    { id: 'picker', label: 'Velg farge', icon: '/icons/paint/picker.svg' },
   ];
 
   const paintMenus = [
     {
-      label: 'File',
+      label: 'Fil',
       items: [
-        { label: 'New', onClick: clearCanvas },
-        { label: 'Save', onClick: saveImage },
-        { label: 'Exit', onClick: () => closeWindow(instanceId) },
+        { label: 'Ny', onClick: clearCanvas },
+        { label: 'Lagre', onClick: saveImage },
+        { label: 'Avslutt', onClick: () => closeWindow(instanceId) },
       ],
     },
     {
-      label: 'Edit',
+      label: 'Rediger',
       items: [
-        { label: 'Undo', onClick: doUndo },
+        { label: 'Angre', onClick: doUndo },
       ],
     },
     {
-      label: 'Help',
+      label: 'Hjelp',
       items: [
-        { label: 'About MS Paint...', onClick: () => alert('MS Paint\nWindows 95 Edition\n\nDraw something nice!') },
+        { label: 'Om MS Paint...', onClick: () => alert('MS Paint\nWindows 95-utgave\n\nTegn noe fint!') },
       ],
     },
   ];
@@ -278,7 +278,7 @@ export default function Paint({ instanceId }: Props) {
                 key={b}
                 class={`paint-brush-btn${brush === b ? ' active' : ''}`}
                 onClick={() => setBrush(b)}
-                title={`Size ${b}`}
+                title={`Størrelse ${b}`}
               >
                 <span class="paint-brush-dot" style={{ width: b * 2, height: b * 2 }} />
               </button>
@@ -303,7 +303,7 @@ export default function Paint({ instanceId }: Props) {
       </div>
 
       <div class="paint-palette-row">
-        <div class="paint-active-colors" title="Left-click palette: foreground. Right-click: background">
+        <div class="paint-active-colors" title="Venstreklikk på paletten: forgrunn. Høyreklikk: bakgrunn">
           <span class="paint-swatch fg" style={{ background: fgColor }} />
           <span class="paint-swatch bg" style={{ background: bgColor }} />
         </div>

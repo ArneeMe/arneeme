@@ -63,7 +63,7 @@ export default function Verifier() {
         if (verified) {
           setState('success');
         } else {
-          setErrorMsg('Verification failed. Try again.');
+          setErrorMsg('Bekreftelsen feilet. Prøv igjen.');
           setState('error');
         }
       };
@@ -73,13 +73,13 @@ export default function Verifier() {
 
       onErrorReal(() => {});
       onErrorDev(() => {
-        setErrorMsg('Something went wrong during verification. Try again.');
+        setErrorMsg('Noe gikk galt under verifiseringen. Prøv igjen.');
         setState('error');
       });
 
       onRejectReal(() => {});
       onRejectDev(() => {
-        setErrorMsg('The request was rejected.');
+        setErrorMsg('Forespørselen ble avslått.');
         setState('error');
       });
 
@@ -87,7 +87,7 @@ export default function Verifier() {
       setDevDeepLink(urlDev);
       setState('qr');
     } catch {
-      setErrorMsg('Could not start ZKPassport. Try again.');
+      setErrorMsg('Kunne ikke starte ZKPassport. Prøv igjen.');
       setState('error');
     }
   }
@@ -104,7 +104,7 @@ export default function Verifier() {
   return (
     <div class="window zkp-window">
       <div class="title-bar">
-        <div class="title-bar-text">16+ Verification</div>
+        <div class="title-bar-text">16+ Verifisering</div>
       </div>
       <div class="window-body">{renderBody()}</div>
     </div>
@@ -115,14 +115,14 @@ export default function Verifier() {
       return (
         <div class="age-gate-center">
           <div class="age-gate-success-icon">✓</div>
-          <h2 class="age-gate-title">Verified · over 16</h2>
+          <h2 class="age-gate-title">Verifisert · over 16</h2>
           <p class="age-gate-text">
-            A zero-knowledge proof was checked.
+            Et zero-knowledge-bevis ble kontrollert.
             <br />
-            Nothing else was learned about you.
+            Ingenting annet ble lært om deg.
           </p>
           <button class="explorer-btn" onClick={reset}>
-            Verify again
+            Verifiser på nytt
           </button>
         </div>
       );
@@ -131,9 +131,9 @@ export default function Verifier() {
     if (state === 'error') {
       return (
         <div class="age-gate-center">
-          <p class="age-gate-error">{errorMsg || 'Something went wrong.'}</p>
+          <p class="age-gate-error">{errorMsg || 'Noe gikk galt.'}</p>
           <button class="explorer-btn" onClick={reset}>
-            Try again
+            Prøv igjen
           </button>
         </div>
       );
@@ -145,22 +145,22 @@ export default function Verifier() {
           <div class="age-gate-qr-row">
             <div class="age-gate-qr-col">
               <canvas ref={canvasRef} class="age-gate-qr" width={160} height={160} />
-              <p class="age-gate-muted">Real passport</p>
+              <p class="age-gate-muted">Ekte pass</p>
               {isMobile && deepLink && (
-                <a href={deepLink} class="about-link">Open app</a>
+                <a href={deepLink} class="about-link">Åpne app</a>
               )}
             </div>
             <div class="age-gate-qr-col">
               <canvas ref={canvasDevRef} class="age-gate-qr" width={160} height={160} />
               <p class="age-gate-muted">Dev / test</p>
               {isMobile && devDeepLink && (
-                <a href={devDeepLink} class="about-link">Open app (dev)</a>
+                <a href={devDeepLink} class="about-link">Åpne app (dev)</a>
               )}
             </div>
           </div>
-          <p class="age-gate-muted">Waiting for confirmation…</p>
+          <p class="age-gate-muted">Venter på bekreftelse…</p>
           <button class="explorer-btn" onClick={reset}>
-            Cancel
+            Avbryt
           </button>
         </div>
       );
@@ -169,42 +169,43 @@ export default function Verifier() {
     // idle or starting
     return (
       <div class="age-gate-center">
-        <h2 class="age-gate-title">ZKPassport demo</h2>
+        <h2 class="age-gate-title">ZKPassport-demo</h2>
         <p class="age-gate-text">
-          Prove you're over 16 with your passport — without revealing
+          Bevis at du er over 16 med passet ditt — uten å avsløre
           <br />
-          who you are. A zero-knowledge proof, made visible.
+          hvem du er. Et zero-knowledge-bevis, gjort synlig.
         </p>
         <button
           class="explorer-btn"
           onClick={startVerification}
           disabled={state === 'starting'}
         >
-          {state === 'starting' ? 'Starting…' : 'Verify age'}
+          {state === 'starting' ? 'Starter…' : 'Verifiser alder'}
         </button>
         <details class="age-gate-details">
-          <summary>How does this work?</summary>
+          <summary>Hvordan fungerer dette?</summary>
           <div class="age-gate-explainer">
             <p>
-              <strong>App to install:</strong> "ZKPassport" — App Store or
-              Google Play. The app reads your passport's NFC chip.
+              <strong>App å installere:</strong> "ZKPassport" — App Store
+              eller Google Play. Appen leser NFC-brikken i passet ditt.
             </p>
             <p>
-              <strong>What happens:</strong> Your phone produces a mathematical
-              proof that your passport says you're over 16. Only the proof is
-              sent — never the passport data.
+              <strong>Hva som skjer:</strong> Telefonen din lager et
+              matematisk bevis på at passet ditt sier at du er over 16.
+              Bare beviset sendes — aldri passdataene.
             </p>
             <p>
-              <strong>What this site learns:</strong> That you're over 16. That's it.
+              <strong>Hva dette nettstedet lærer:</strong> At du er over 16.
+              Det er det.
             </p>
             <p>
-              <strong>What it doesn't learn:</strong> Name, date of birth,
-              passport number, nationality, or whether you've been here before.
+              <strong>Hva det ikke lærer:</strong> Navn, fødselsdato,
+              passnummer, nasjonalitet eller om du har vært her før.
             </p>
             <p>
-              <strong>Two QR codes?</strong> The left one is for a real
-              passport. The right one is the dev/test mode — useful if you
-              don't have one handy.
+              <strong>To QR-koder?</strong> Den til venstre er for et ekte
+              pass. Den til høyre er dev/test-modus — nyttig hvis du ikke
+              har et pass for hånden.
             </p>
           </div>
         </details>

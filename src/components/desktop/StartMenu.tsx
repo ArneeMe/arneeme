@@ -77,7 +77,7 @@ export function StartMenu({ onClose }: Props) {
             }}
           >
             <img src="/icons/shutdown.svg" alt="" style={{ width: 16, height: 16, imageRendering: 'pixelated' }} />
-            <span>Log Off...</span>
+            <span>Logg av...</span>
           </button>
         </div>
       </div>
