@@ -75,15 +75,12 @@ export default function AgeGate({ instanceId }: Props) {
     setErrorMsg('');
     try {
       const { ZKPassport } = await import('@zkpassport/sdk');
-      const devMode = import.meta.env.PUBLIC_ZKPASSPORT_DEV_MODE === 'true';
-
       const zkpassport = new ZKPassport('arnee.me');
       const builder = await zkpassport.request({
         name: 'arnee.me',
         logo: 'https://arnee.me/profile.png',
         purpose: 'Aldersbegrensning (over 16 år)',
         scope: '16-plus',
-        devMode,
       });
 
       const { url, requestId, onResult, onError, onReject } = builder.gte('age', 16).done();
