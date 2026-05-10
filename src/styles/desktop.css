@@ -1148,21 +1148,28 @@ body {
 
 /* ── Age Gate app ─────────────────────────────────────────────────────────── */
 
-.age-gate-body {
+.age-gate-app {
   display: flex;
   flex-direction: column;
   height: 100%;
-  position: relative;
-  overflow: hidden;
   background: #c0c0c0;
 }
 
+.age-gate-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
 .age-gate-center {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  text-align: center;
+  height: 100%;
   padding: 16px;
+  text-align: center;
 }
 
 .age-gate-preview {
@@ -1181,14 +1188,14 @@ body {
 }
 
 .age-gate-overlay {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 24px 20px;
   height: 100%;
-  position: relative;
+  padding: 20px 16px;
   text-align: center;
 }
 
@@ -1198,30 +1205,10 @@ body {
   margin: 0;
 }
 
-.age-gate-body-text {
+.age-gate-text {
   font-size: 11px;
   margin: 0;
   line-height: 1.5;
-}
-
-.age-gate-btn {
-  margin-top: 4px;
-  padding: 4px 16px;
-  font-size: 11px;
-  border: 2px solid;
-  border-color: #ffffff #808080 #808080 #ffffff;
-  background: #c0c0c0;
-  cursor: default;
-  font-family: inherit;
-}
-
-.age-gate-btn:active:not(:disabled) {
-  border-color: #808080 #ffffff #ffffff #808080;
-}
-
-.age-gate-btn:disabled {
-  color: #808080;
-  cursor: default;
 }
 
 .age-gate-details {
@@ -1240,7 +1227,7 @@ body {
 }
 
 .age-gate-explainer {
-  margin-top: 8px;
+  margin-top: 6px;
   padding: 8px;
   background: #ffffff;
   border: 1px solid #808080;
@@ -1256,25 +1243,18 @@ body {
   margin-bottom: 0;
 }
 
-.age-gate-label {
-  font-size: 11px;
-  margin: 0;
-}
-
 .age-gate-qr {
   display: block;
   image-rendering: pixelated;
-  border: 2px solid #808080;
-}
-
-.age-gate-deep-link {
-  font-size: 11px;
-  color: #000080;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  padding: 4px;
 }
 
 .age-gate-muted {
   font-size: 11px;
-  color: #808080;
+  color: #404040;
   margin: 0;
 }
 
@@ -1285,8 +1265,15 @@ body {
 }
 
 .age-gate-success-icon {
-  font-size: 32px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
   color: #008000;
-  line-height: 1;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
 }
 

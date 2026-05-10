@@ -5,7 +5,7 @@ import preact from '@astrojs/preact';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
-  output: 'server',
+  output: 'static',
 
   integrations: [preact()],
 
