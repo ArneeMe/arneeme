@@ -35,9 +35,11 @@ function writeStoredVerification() {
 export default function AgeGate({ instanceId }: Props) {
   const [state, setState] = useState<GateState>('checking');
   const [deepLink, setDeepLink] = useState<string>('');
+  const [devDeepLink, setDevDeepLink] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isMobile, setIsMobile] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasDevRef = useRef<HTMLCanvasElement>(null);
   const cancelRequestRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -52,47 +54,43 @@ export default function AgeGate({ instanceId }: Props) {
   }, []);
 
   useEffect(() => {
-    if (state !== 'qr' || !deepLink || !canvasRef.current) return;
+    if (state !== 'qr') return;
     let cancelled = false;
     import('qrcode').then(({ default: QRCode }) => {
-      if (cancelled || !canvasRef.current) return;
-      QRCode.toCanvas(canvasRef.current, deepLink, {
-        width: 192,
-        margin: 1,
-        color: { dark: '#000000', light: '#ffffff' },
-      }).catch(() => {
-        setErrorMsg('Kunne ikke vise QR-koden.');
-        setState('error');
-      });
+      if (cancelled) return;
+      const opts = { width: 160, margin: 1, color: { dark: '#000000', light: '#ffffff' } };
+      if (deepLink && canvasRef.current) {
+        QRCode.toCanvas(canvasRef.current, deepLink, opts).catch(() => {});
+      }
+      if (devDeepLink && canvasDevRef.current) {
+        QRCode.toCanvas(canvasDevRef.current, devDeepLink, opts).catch(() => {});
+      }
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [state, deepLink]);
+    return () => { cancelled = true; };
+  }, [state, deepLink, devDeepLink]);
 
   async function startVerification() {
     setState('starting');
     setErrorMsg('');
     try {
       const { ZKPassport } = await import('@zkpassport/sdk');
-      const zkpassport = new ZKPassport();
-      const builder = await zkpassport.request({
-        name: 'arnee.me',
-        logo: 'https://arnee.me/profile.png',
-        purpose: 'Age verification (16+)',
-      });
+      const zkReal = new ZKPassport();
+      const zkDev = new ZKPassport();
 
-      const { url, requestId, onResult, onError, onReject } = builder.gte('age', 16).done();
+      const [builderReal, builderDev] = await Promise.all([
+        zkReal.request({ name: 'arnee.me', logo: 'https://arnee.me/profile.png', purpose: 'Age verification (16+)' }),
+        zkDev.request({ name: 'arnee.me', logo: 'https://arnee.me/profile.png', purpose: 'Age verification (16+)', devMode: true }),
+      ]);
+
+      const { url: urlReal, requestId: idReal, onResult: onResultReal, onError: onErrorReal, onReject: onRejectReal } = builderReal.gte('age', 16).done();
+      const { url: urlDev, requestId: idDev, onResult: onResultDev, onError: onErrorDev, onReject: onRejectDev } = builderDev.gte('age', 16).done();
 
       cancelRequestRef.current = () => {
-        try {
-          zkpassport.cancelRequest(requestId);
-        } catch {
-          // ignore — request may have already settled
-        }
+        try { zkReal.cancelRequest(idReal); } catch {}
+        try { zkDev.cancelRequest(idDev); } catch {}
       };
 
-      onResult(({ verified }) => {
+      const handleVerified = (verified: boolean) => {
         if (verified) {
           writeStoredVerification();
           setState('success');
@@ -100,19 +98,25 @@ export default function AgeGate({ instanceId }: Props) {
           setErrorMsg('Bekreftelsen feilet. Prøv igjen.');
           setState('error');
         }
-      });
+      };
 
-      onError(() => {
+      onResultReal(({ verified }) => handleVerified(verified));
+      onResultDev(({ verified }) => handleVerified(verified));
+
+      onErrorReal(() => {});
+      onErrorDev(() => {
         setErrorMsg('Noe gikk galt under verifiseringen. Prøv igjen.');
         setState('error');
       });
 
-      onReject(() => {
+      onRejectReal(() => {});
+      onRejectDev(() => {
         setErrorMsg('Forespørselen ble avslått.');
         setState('error');
       });
 
-      setDeepLink(url);
+      setDeepLink(urlReal);
+      setDevDeepLink(urlDev);
       setState('qr');
     } catch {
       setErrorMsg('Kunne ikke starte ZKPassport. Prøv igjen.');
@@ -175,13 +179,22 @@ export default function AgeGate({ instanceId }: Props) {
     if (state === 'qr') {
       return (
         <div class="age-gate-center">
-          <p class="age-gate-text">Scan med ZKPassport-appen</p>
-          <canvas ref={canvasRef} class="age-gate-qr" width={192} height={192} />
-          {isMobile && deepLink && (
-            <a href={deepLink} class="about-link">
-              Åpne ZKPassport-appen
-            </a>
-          )}
+          <div class="age-gate-qr-row">
+            <div class="age-gate-qr-col">
+              <canvas ref={canvasRef} class="age-gate-qr" width={160} height={160} />
+              <p class="age-gate-muted">Ekte pass</p>
+              {isMobile && deepLink && (
+                <a href={deepLink} class="about-link">Åpne app</a>
+              )}
+            </div>
+            <div class="age-gate-qr-col">
+              <canvas ref={canvasDevRef} class="age-gate-qr" width={160} height={160} />
+              <p class="age-gate-muted">Dev / test</p>
+              {isMobile && devDeepLink && (
+                <a href={devDeepLink} class="about-link">Åpne app (dev)</a>
+              )}
+            </div>
+          </div>
           <p class="age-gate-muted">Venter på bekreftelse…</p>
         </div>
       );
