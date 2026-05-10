@@ -5,6 +5,7 @@ import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
 import Paint from '../components/desktop/apps/Paint';
 import VelgTlf from '../components/desktop/apps/VelgTlf';
+import AgeGate from '../components/desktop/apps/AgeGate';
 
 export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
@@ -55,6 +56,19 @@ export const apps: Record<string, AppDefinition> = {
     showOnDesktop: true,
     showInStartMenu: true,
     component: Paint,
+  },
+
+  'age-gate': {
+    id: 'age-gate',
+    title: '16+',
+    icon: '/icons/16plus-32.svg',
+    defaultSize: { w: 360, h: 460 },
+    minSize: { w: 300, h: 380 },
+    resizable: false,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    component: AgeGate,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
