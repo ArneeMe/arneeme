@@ -24,7 +24,7 @@ export function BootScreen() {
         </div>
         <h1>Microsoft<sup>®</sup></h1>
         <h2>Windows<span class="splash-95">95</span></h2>
-        <p class="splash-hint">Klikk hvor som helst for å fortsette</p>
+        <p class="splash-hint">Click anywhere to continue</p>
       </div>
     </div>
   );

@@ -230,23 +230,23 @@ export default function Paint({ instanceId }: Props) {
 
   const paintMenus = [
     {
-      label: 'Fil',
+      label: 'File',
       items: [
-        { label: 'Ny', onClick: clearCanvas },
-        { label: 'Lagre', onClick: saveImage },
-        { label: 'Avslutt', onClick: () => closeWindow(instanceId) },
+        { label: 'New', onClick: clearCanvas },
+        { label: 'Save', onClick: saveImage },
+        { label: 'Exit', onClick: () => closeWindow(instanceId) },
       ],
     },
     {
-      label: 'Rediger',
+      label: 'Edit',
       items: [
-        { label: 'Angre', onClick: doUndo },
+        { label: 'Undo', onClick: doUndo },
       ],
     },
     {
-      label: 'Hjelp',
+      label: 'Help',
       items: [
-        { label: 'Om MS Paint...', onClick: () => alert('MS Paint\nWindows 95-utgave\n\nTegn noe fint!') },
+        { label: 'About MS Paint...', onClick: () => alert('MS Paint\nWindows 95 Edition\n\nDraw something nice!') },
       ],
     },
   ];

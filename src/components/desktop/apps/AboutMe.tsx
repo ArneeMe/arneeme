@@ -14,12 +14,12 @@ const links = [
 export default function AboutMe({ instanceId }: Props) {
   const menus = [
     {
-      label: 'Fil',
-      items: [{ label: 'Avslutt', onClick: () => closeWindow(instanceId) }],
+      label: 'File',
+      items: [{ label: 'Exit', onClick: () => closeWindow(instanceId) }],
     },
     {
-      label: 'Hjelp',
-      items: [{ label: 'Om Notepad...', onClick: () => alert('Notepad\nWindows 95-utgave') }],
+      label: 'Help',
+      items: [{ label: 'About Notepad...', onClick: () => alert('Notepad\nWindows 95 Edition') }],
     },
   ];
 
