@@ -158,6 +158,8 @@ body {
   display: flex;
   flex-direction: row;
   width: 200px;
+  max-width: 100vw;
+  max-height: calc(100vh - 28px);
   background: #c0c0c0;
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
@@ -186,6 +188,8 @@ body {
   display: flex;
   flex-direction: column;
   padding: 2px 0;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .start-menu-section {
