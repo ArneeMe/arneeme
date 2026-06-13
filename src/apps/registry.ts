@@ -6,6 +6,7 @@ import IframeApp from '../components/desktop/apps/IframeApp';
 import Paint from '../components/desktop/apps/Paint';
 import VelgTlf from '../components/desktop/apps/VelgTlf';
 import AgeGate from '../components/desktop/apps/AgeGate';
+import LoanCalculator from '../components/desktop/apps/LoanCalculator';
 
 export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
@@ -69,6 +70,19 @@ export const apps: Record<string, AppDefinition> = {
     showOnDesktop: true,
     showInStartMenu: true,
     component: AgeGate,
+  },
+
+  'loan-calc': {
+    id: 'loan-calc',
+    title: 'Lånekalkulator',
+    icon: '/icons/calculator.svg',
+    defaultSize: { w: 560, h: 620 },
+    minSize: { w: 460, h: 480 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    component: LoanCalculator,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────

@@ -1323,3 +1323,158 @@ body {
   text-align: center;
 }
 
+/* ── Loan Calculator app ──────────────────────────────────────────────────── */
+
+.loan-calc-app {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  font-size: 11px;
+}
+
+.loan-calc-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+}
+
+.loan-calc-subtitle {
+  font-size: 11px;
+  color: #555;
+  margin-top: -6px;
+}
+
+.loan-calc-fieldset {
+  border: 1px solid #808080;
+  padding: 8px 10px 10px;
+  margin: 0;
+}
+
+.loan-calc-fieldset legend {
+  padding: 0 4px;
+  font-weight: bold;
+}
+
+.loan-calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.loan-calc-grid label {
+  font-size: 11px;
+}
+
+.loan-calc-input {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.loan-calc-warning {
+  background: #ffffe1;
+  border: 1px solid #808080;
+  padding: 6px 8px;
+  color: #555;
+}
+
+.loan-calc-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.loan-calc-col {
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.loan-calc-col-head {
+  font-weight: bold;
+  color: #000080;
+  border-bottom: 1px solid #c0c0c0;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.loan-calc-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.loan-calc-row-label {
+  color: #444;
+}
+
+.loan-calc-row-value {
+  font-weight: bold;
+  text-align: right;
+}
+
+.loan-calc-savings {
+  background: #d4e8d4;
+  border: 1px solid #408040;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.loan-calc-chart {
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.loan-calc-chart svg {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+.loan-calc-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+}
+
+.loan-calc-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loan-calc-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 4px;
+}
+
+.loan-calc-controls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.loan-calc-btn {
+  padding: 4px 14px;
+  min-width: 72px;
+  cursor: pointer;
+}
+
