@@ -361,7 +361,7 @@ function BalanceChart({
       .join(' ');
   };
 
-  const yTicks = [0, maxBalance / 2, maxBalance];
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => f * maxBalance);
   const xTicks = [0, maxYears / 2, maxYears];
 
   return (
