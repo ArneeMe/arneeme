@@ -7,6 +7,7 @@ import Paint from '../components/desktop/apps/Paint';
 import VelgTlf from '../components/desktop/apps/VelgTlf';
 import AgeGate from '../components/desktop/apps/AgeGate';
 import LoanCalculator from '../components/desktop/apps/LoanCalculator';
+import Budsjett from '../components/desktop/apps/Budsjett';
 
 export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
@@ -83,6 +84,19 @@ export const apps: Record<string, AppDefinition> = {
     showOnDesktop: true,
     showInStartMenu: true,
     component: LoanCalculator,
+  },
+
+  'budsjett': {
+    id: 'budsjett',
+    title: 'Budsjett',
+    icon: '/icons/budsjett.svg',
+    defaultSize: { w: 600, h: 760 },
+    minSize: { w: 480, h: 520 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    component: Budsjett,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
