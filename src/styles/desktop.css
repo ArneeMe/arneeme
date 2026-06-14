@@ -1473,3 +1473,277 @@ body {
   fill: #444;
 }
 
+.budsjett-app {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  font-size: 11px;
+}
+
+.budsjett-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000080;
+}
+
+.budsjett-subtitle {
+  font-size: 11px;
+  color: #555;
+  margin-top: -6px;
+}
+
+.budsjett-fieldset {
+  border: 1px solid #808080;
+  padding: 8px 10px 10px;
+  margin: 0;
+}
+
+.budsjett-fieldset legend {
+  padding: 0 4px;
+  font-weight: bold;
+}
+
+.budsjett-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.budsjett-grid label {
+  font-size: 11px;
+}
+
+.budsjett-input {
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.budsjett-radios {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.budsjett-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.budsjett-radio input {
+  margin: 0;
+}
+
+.budsjett-readout {
+  font-weight: bold;
+  padding: 2px 4px;
+}
+
+.budsjett-sublabel {
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  color: #000080;
+}
+
+.budsjett-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.budsjett-line {
+  display: grid;
+  grid-template-columns: 1fr 110px 22px;
+  gap: 4px;
+  align-items: center;
+}
+
+.budsjett-line-label {
+  /* inherits .budsjett-input */
+}
+
+.budsjett-remove {
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0;
+  width: 22px;
+  height: 22px;
+  background: #c0c0c0;
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  cursor: pointer;
+}
+
+.budsjett-remove:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.budsjett-add {
+  align-self: flex-start;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px 10px;
+  margin-top: 4px;
+  background: #c0c0c0;
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  cursor: pointer;
+}
+
+.budsjett-add:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.budsjett-empty {
+  font-style: italic;
+  color: #777;
+  padding: 2px 0;
+}
+
+.budsjett-summary {
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.budsjett-summary-head {
+  font-weight: bold;
+  color: #000080;
+  border-bottom: 1px solid #c0c0c0;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.budsjett-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 2px 0;
+  align-items: baseline;
+}
+
+.budsjett-row-label {
+  color: #444;
+}
+
+.budsjett-row-value {
+  font-weight: bold;
+  text-align: right;
+}
+
+.budsjett-row-yearly {
+  color: #555;
+}
+
+.budsjett-row-sub {
+  font-weight: normal;
+  color: #777;
+  font-size: 10px;
+}
+
+.budsjett-row-strong .budsjett-row-value {
+  color: #000080;
+}
+
+.budsjett-rate {
+  border-top: 1px solid #c0c0c0;
+  margin-top: 4px;
+  padding-top: 6px;
+}
+
+.budsjett-rate .budsjett-row-value {
+  grid-column: 2 / 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.budsjett-rate-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #00000044;
+}
+
+.budsjett-rate-tag {
+  font-weight: normal;
+  font-size: 10px;
+  margin-left: 2px;
+}
+
+.budsjett-chart {
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  padding: 8px;
+}
+
+.budsjett-chart-head {
+  font-weight: bold;
+  color: #000080;
+  border-bottom: 1px solid #c0c0c0;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.budsjett-chart-body {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.budsjett-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 180px;
+  font-size: 10px;
+}
+
+.budsjett-legend li {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.budsjett-legend-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #00000033;
+}
+
+.budsjett-legend-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.budsjett-legend-value {
+  color: #555;
+  white-space: nowrap;
+}
+
