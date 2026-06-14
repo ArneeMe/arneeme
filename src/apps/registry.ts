@@ -76,7 +76,7 @@ export const apps: Record<string, AppDefinition> = {
     id: 'loan-calc',
     title: 'Lånekalkulator',
     icon: '/icons/calculator.svg',
-    defaultSize: { w: 560, h: 620 },
+    defaultSize: { w: 560, h: 720 },
     minSize: { w: 460, h: 480 },
     resizable: true,
     singleton: true,

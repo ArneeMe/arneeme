@@ -141,6 +141,48 @@ function numberInput(
   );
 }
 
+function RateInput({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (n: number) => void;
+}) {
+  const format = (n: number) =>
+    Number.isFinite(n) ? n.toFixed(2).replace('.', ',') : '0,00';
+  const [draft, setDraft] = useState(() => format(value));
+  const [focused, setFocused] = useState(false);
+
+  useEffect(() => {
+    if (!focused) setDraft(format(value));
+  }, [value, focused]);
+
+  return (
+    <input
+      type="text"
+      inputMode="decimal"
+      class="loan-calc-input"
+      value={draft}
+      onFocus={() => setFocused(true)}
+      onBlur={() => {
+        setFocused(false);
+        setDraft(format(value));
+      }}
+      onInput={(e) => {
+        const raw = (e.target as HTMLInputElement).value;
+        setDraft(raw);
+        const normalized = raw.replace(/\s/g, '').replace(',', '.');
+        if (normalized === '' || normalized === '.') {
+          onChange(0);
+          return;
+        }
+        const n = parseFloat(normalized);
+        if (Number.isFinite(n)) onChange(n);
+      }}
+    />
+  );
+}
+
 export default function LoanCalculator({ instanceId: _instanceId }: Props) {
   const [inputs, setInputs] = useState<Inputs>(() => loadInputs());
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -176,8 +218,6 @@ export default function LoanCalculator({ instanceId: _instanceId }: Props) {
   const update = (key: keyof Inputs) => (n: number) =>
     setInputs((prev) => ({ ...prev, [key]: n }));
 
-  const reset = () => setInputs(DEFAULTS);
-
   return (
     <div class="loan-calc-app">
       <div class="loan-calc-title">Lånekalkulator</div>
@@ -192,7 +232,7 @@ export default function LoanCalculator({ instanceId: _instanceId }: Props) {
           {numberInput(inputs.amount, update('amount'), 10000)}
 
           <label>Rente (% per år)</label>
-          {numberInput(inputs.ratePct, update('ratePct'), 0.05)}
+          <RateInput value={inputs.ratePct} onChange={update('ratePct')} />
 
           <label>Nedbetalingstid (år)</label>
           {numberInput(inputs.years, update('years'), 1, 1)}
@@ -251,13 +291,13 @@ export default function LoanCalculator({ instanceId: _instanceId }: Props) {
             </div>
           )}
 
-          <BalanceChart baseline={baseline} withExtras={withExtras} />
+          <BalanceChart
+            baseline={baseline}
+            withExtras={withExtras}
+            principal={inputs.amount}
+          />
         </>
       )}
-
-      <div class="loan-calc-controls">
-        <button class="loan-calc-btn" onClick={reset}>Nullstill</button>
-      </div>
     </div>
   );
 }
@@ -271,38 +311,115 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   );
 }
 
+function formatKrShort(n: number): string {
+  if (n >= 1_000_000) {
+    return `${(n / 1_000_000).toFixed(1).replace('.', ',')}M kr`;
+  }
+  if (n >= 1_000) {
+    return `${Math.round(n / 1000)}k kr`;
+  }
+  return `${Math.round(n)} kr`;
+}
+
 function BalanceChart({
   baseline,
   withExtras,
+  principal,
 }: {
   baseline: SimResult;
   withExtras: SimResult;
+  principal: number;
 }) {
-  const W = 300;
-  const H = 140;
-  const PAD = 8;
+  const W = 340;
+  const H = 180;
+  const PAD_L = 52;
+  const PAD_R = 8;
+  const PAD_T = 8;
+  const PAD_B = 22;
+  const plotW = W - PAD_L - PAD_R;
+  const plotH = H - PAD_T - PAD_B;
+  const xRight = PAD_L + plotW;
+  const yBottom = PAD_T + plotH;
+
   const maxBalance = Math.max(
     baseline.balanceSeries[0] ?? 0,
     withExtras.balanceSeries[0] ?? 0,
+    principal,
     1,
   );
   const maxMonths = Math.max(baseline.months, withExtras.months, 1);
+  const maxYears = maxMonths / 12;
 
   const toPath = (series: number[]) => {
     if (series.length === 0) return '';
     return series
       .map((b, i) => {
-        const x = PAD + (i / maxMonths) * (W - PAD * 2);
-        const y = PAD + (1 - b / maxBalance) * (H - PAD * 2);
+        const x = PAD_L + (i / maxMonths) * plotW;
+        const y = PAD_T + (1 - b / maxBalance) * plotH;
         return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
       })
       .join(' ');
   };
 
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map((f) => f * maxBalance);
+  const xTicks = [0, maxYears / 2, maxYears];
+
   return (
     <div class="loan-calc-chart">
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         <rect x={0} y={0} width={W} height={H} fill="#ffffff" />
+
+        {yTicks.map((v) => {
+          const y = PAD_T + (1 - v / maxBalance) * plotH;
+          return (
+            <>
+              <line
+                x1={PAD_L - 3}
+                x2={xRight}
+                y1={y}
+                y2={y}
+                stroke="#e0e0e0"
+                stroke-width="1"
+              />
+              <text
+                class="loan-calc-axis-text"
+                x={PAD_L - 5}
+                y={y + 3}
+                text-anchor="end"
+              >
+                {formatKrShort(v)}
+              </text>
+            </>
+          );
+        })}
+
+        {xTicks.map((v) => {
+          const x = PAD_L + (v / maxYears) * plotW;
+          return (
+            <>
+              <line
+                x1={x}
+                x2={x}
+                y1={PAD_T}
+                y2={yBottom + 3}
+                stroke="#e0e0e0"
+                stroke-width="1"
+              />
+              <text
+                class="loan-calc-axis-text"
+                x={x}
+                y={yBottom + 13}
+                text-anchor="middle"
+              >
+                {v === 0 ? '0' : `${Math.round(v)} år`}
+              </text>
+            </>
+          );
+        })}
+
+        <line x1={PAD_L} y1={PAD_T} x2={PAD_L} y2={yBottom} stroke="#808080" stroke-width="1" />
+        <line x1={PAD_L} y1={yBottom} x2={xRight} y2={yBottom} stroke="#808080" stroke-width="1" />
+
         <path d={toPath(baseline.balanceSeries)} stroke="#a00000" stroke-width="1.5" fill="none" />
         <path d={toPath(withExtras.balanceSeries)} stroke="#000080" stroke-width="1.5" fill="none" />
       </svg>
