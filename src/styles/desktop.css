@@ -1467,14 +1467,9 @@ body {
   height: 4px;
 }
 
-.loan-calc-controls {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.loan-calc-btn {
-  padding: 4px 14px;
-  min-width: 72px;
-  cursor: pointer;
+.loan-calc-axis-text {
+  font-size: 9px;
+  font-family: inherit;
+  fill: #444;
 }
 
