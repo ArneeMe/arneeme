@@ -1,5 +1,7 @@
 import type { AppDefinition } from './types';
 import AboutMe from '../components/desktop/apps/AboutMe';
+import Notater from '../components/desktop/apps/Notater';
+import Oppgaver from '../components/desktop/apps/Oppgaver';
 import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
@@ -108,6 +110,36 @@ export const apps: Record<string, AppDefinition> = {
     showOnMobile: true,
     tileColor: '#208020',
     component: Budsjett,
+  },
+
+  'notater': {
+    id: 'notater',
+    title: 'Notisblokk',
+    icon: '/icons/notepad.svg',
+    defaultSize: { w: 480, h: 380 },
+    minSize: { w: 300, h: 200 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#b06000',
+    component: Notater,
+  },
+
+  'oppgaver': {
+    id: 'oppgaver',
+    title: 'Oppgaver',
+    icon: '/icons/todo.svg',
+    defaultSize: { w: 340, h: 420 },
+    minSize: { w: 280, h: 280 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#d04010',
+    component: Oppgaver,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
