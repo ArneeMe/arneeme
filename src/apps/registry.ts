@@ -3,6 +3,7 @@ import AboutMe from '../components/desktop/apps/AboutMe';
 import Notater from '../components/desktop/apps/Notater';
 import Oppgaver from '../components/desktop/apps/Oppgaver';
 import DisplayProperties from '../components/desktop/apps/DisplayProperties';
+import Terminal from '../components/desktop/apps/Terminal';
 import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
@@ -154,6 +155,19 @@ export const apps: Record<string, AppDefinition> = {
     showOnDesktop: false,
     showInStartMenu: true,
     component: DisplayProperties,
+  },
+
+  'terminal': {
+    id: 'terminal',
+    title: 'MS-DOS Prompt',
+    icon: '/icons/terminal.svg',
+    defaultSize: { w: 560, h: 360 },
+    minSize: { w: 360, h: 220 },
+    resizable: true,
+    singleton: false,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    component: Terminal,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
