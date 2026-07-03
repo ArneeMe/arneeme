@@ -1,0 +1,162 @@
+/* ===== Windows Phone (Metro) mobile shell =======================
+   Flat tile UI shown instead of the Win95 desktop on phones.
+   Everything is namespaced under `.metro` so it never touches the
+   desktop styles in desktop.css. */
+
+.metro {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background: #1f1f1f;
+  color: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+/* ── Start screen ── */
+.metro-start {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.metro-start-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 24px 16px 8px;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.5px;
+}
+
+.metro-start-name-dim {
+  color: #9a9a9a;
+}
+
+.metro-tilegrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 8px 12px 32px;
+  align-content: start;
+}
+
+/* ── Tile ── */
+.metro-tile {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  border: none;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.metro-tile:active {
+  transform: scale(0.97);
+}
+
+.metro-tile-wide {
+  grid-column: span 2;
+  aspect-ratio: 2 / 1;
+}
+
+.metro-tile-icon {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+}
+
+.metro-tile-label {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Full-screen app view ── */
+.metro-appview {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.metro-appbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #000000;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.metro-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.metro-back:active {
+  color: #b0b0b0;
+}
+
+.metro-apptitle {
+  font-size: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metro-appbody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: #ffffff;
+  color: #000000;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Reused apps render on a light surface so 98.css widgets read correctly. */
+.metro-appbody > * {
+  min-height: 100%;
+}
+
+/* ── Short / landscape phones ── */
+@media (max-height: 480px) {
+  .metro-start-header {
+    padding-top: 12px;
+    font-size: 22px;
+  }
+  .metro-tile {
+    padding: 8px;
+  }
+  .metro-tile-icon {
+    width: 32px;
+    height: 32px;
+  }
+}

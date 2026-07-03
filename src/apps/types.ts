@@ -10,6 +10,12 @@ export interface AppDefinition {
   singleton?: boolean;
   showOnDesktop?: boolean;
   showInStartMenu?: boolean;
+  /** Show this app as a tile on the mobile (Windows Phone) Start screen. */
+  showOnMobile?: boolean;
+  /** Solid accent color for the mobile Metro tile. */
+  tileColor?: string;
+  /** Render the mobile tile at double width. */
+  tileWide?: boolean;
   component: ComponentType<{ instanceId: string }>;
   props?: Record<string, unknown>;
 }
@@ -22,4 +28,6 @@ export interface ShortcutDefinition {
   showOnDesktop?: boolean;
   showInStartMenu?: boolean;
   showInShortcutsFolder?: boolean;
+  /** Solid accent color for the mobile Metro tile. */
+  tileColor?: string;
 }

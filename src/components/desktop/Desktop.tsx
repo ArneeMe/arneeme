@@ -1,14 +1,23 @@
 import { desktopState, openApp, clampAllWindows } from '../../stores/desktop';
 import { bootPhase } from '../../stores/boot';
+import { isMobile } from '../../stores/viewport';
 import { apps } from '../../apps/registry';
 import { shortcuts } from '../../apps/shortcuts';
 import { WindowFrame } from './WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 import { Taskbar } from './Taskbar';
 import { BootScreen } from './BootScreen';
+import { MobileShell } from '../mobile/MobileShell';
 import { useEffect } from 'preact/hooks';
 
 export function Desktop() {
+  // Branch before any desktop hooks run, so the window/taskbar/boot machinery
+  // never mounts on phones. Each subtree keeps its own stable hook order.
+  if (isMobile.value) return <MobileShell />;
+  return <DesktopShell />;
+}
+
+function DesktopShell() {
   const state = desktopState.value;
   const phase = bootPhase.value;
 

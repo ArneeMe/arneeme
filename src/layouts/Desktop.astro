@@ -1,5 +1,6 @@
 ---
 import '../styles/desktop.css';
+import '../styles/mobile.css';
 import '98.css';
 
 interface Props {
@@ -19,16 +20,5 @@ const { title } = Astro.props;
   </head>
   <body>
     <slot />
-
-    <div class="mobile-gate">
-      <h2>🖥️ Krever skrivebord</h2>
-      <p>
-        Dette nettstedet er en Windows 95-skrivebordsopplevelse — det
-        ser best ut på en større skjerm.
-      </p>
-      <p style="margin-top: 12px;">
-        <a href="https://github.com/ArneeMe">Se GitHub-profilen min →</a>
-      </p>
-    </div>
   </body>
 </html>

@@ -9,6 +9,7 @@ export const shortcuts: Record<string, ShortcutDefinition> = {
     showOnDesktop: true,
     showInStartMenu: true,
     showInShortcutsFolder: true,
+    tileColor: '#c06030',
   },
   'attester': {
     id: 'attester',
@@ -18,6 +19,7 @@ export const shortcuts: Record<string, ShortcutDefinition> = {
     showOnDesktop: true,
     showInStartMenu: true,
     showInShortcutsFolder: true,
+    tileColor: '#406090',
   },
   'badeklubben': {
     id: 'badeklubben',
@@ -27,5 +29,6 @@ export const shortcuts: Record<string, ShortcutDefinition> = {
     showOnDesktop: true,
     showInStartMenu: true,
     showInShortcutsFolder: true,
+    tileColor: '#0099bc',
   },
 };

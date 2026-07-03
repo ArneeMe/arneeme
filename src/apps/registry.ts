@@ -21,6 +21,9 @@ export const apps: Record<string, AppDefinition> = {
     singleton: true,
     showOnDesktop: true,
     showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#008080',
+    tileWide: true,
     component: AboutMe,
   },
   'my-computer': {
@@ -45,6 +48,8 @@ export const apps: Record<string, AppDefinition> = {
     singleton: true,
     showOnDesktop: true,
     showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#a00000',
     component: Inbox,
   },
   'paint': {
@@ -70,6 +75,8 @@ export const apps: Record<string, AppDefinition> = {
     singleton: true,
     showOnDesktop: true,
     showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#804080',
     component: AgeGate,
   },
 
@@ -83,6 +90,8 @@ export const apps: Record<string, AppDefinition> = {
     singleton: true,
     showOnDesktop: true,
     showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#000080',
     component: LoanCalculator,
   },
 
@@ -96,6 +105,8 @@ export const apps: Record<string, AppDefinition> = {
     singleton: true,
     showOnDesktop: true,
     showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#208020',
     component: Budsjett,
   },
 
