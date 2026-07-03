@@ -4,6 +4,7 @@ import Notater from '../components/desktop/apps/Notater';
 import Oppgaver from '../components/desktop/apps/Oppgaver';
 import DisplayProperties from '../components/desktop/apps/DisplayProperties';
 import Terminal from '../components/desktop/apps/Terminal';
+import Vaer from '../components/desktop/apps/Vaer';
 import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
@@ -168,6 +169,21 @@ export const apps: Record<string, AppDefinition> = {
     showOnDesktop: true,
     showInStartMenu: true,
     component: Terminal,
+  },
+
+  'vaer': {
+    id: 'vaer',
+    title: 'Vær',
+    icon: '/icons/weather.svg',
+    defaultSize: { w: 420, h: 400 },
+    minSize: { w: 340, h: 320 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#0078c8',
+    component: Vaer,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
