@@ -47,8 +47,8 @@ export default function Verifier() {
       const zkDev = new ZKPassport();
 
       const [builderReal, builderDev] = await Promise.all([
-        zkReal.request({ name: 'arnee.me', logo: 'https://arnee.me/profile.png', purpose: 'Age verification (16+)' }),
-        zkDev.request({ name: 'arnee.me', logo: 'https://arnee.me/profile.png', purpose: 'Age verification (16+)', devMode: true }),
+        zkReal.request({ name: 'arnee.me', logo: 'https://arnee.me/icons/16plus-32.svg', purpose: 'Age verification (16+)' }),
+        zkDev.request({ name: 'arnee.me', logo: 'https://arnee.me/icons/16plus-32.svg', purpose: 'Age verification (16+)', devMode: true }),
       ]);
 
       const { url: urlReal, requestId: idReal, onResult: onResultReal, onError: onErrorReal, onReject: onRejectReal } = builderReal.gte('age', 16).done();

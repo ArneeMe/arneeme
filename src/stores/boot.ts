@@ -1,6 +1,6 @@
 import { signal } from '@preact/signals';
 
-export type BootPhase = 'splash' | 'desktop';
+export type BootPhase = 'splash' | 'login' | 'desktop';
 
 const STORAGE_KEY = 'arneeme:boot:v1';
 
