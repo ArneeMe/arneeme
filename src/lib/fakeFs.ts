@@ -20,7 +20,12 @@ function programNodes(filter: (id: string) => boolean): FsNode[] {
 
 const LEGACY = ['bysykkel', 'kanonspill', 'hoksrud'];
 
-export const fakeRoot: FsNode = {
+// Bygges lazily: registry importerer Terminal som importerer denne fila,
+// så `apps` er ikke initialisert ennå når modulen evalueres.
+let cachedRoot: FsNode | null = null;
+
+function buildRoot(): FsNode {
+  return {
   name: 'C:',
   type: 'dir',
   children: [
@@ -46,7 +51,13 @@ export const fakeRoot: FsNode = {
     { name: 'AUTOEXEC.BAT', type: 'file' },
     { name: 'CONFIG.SYS', type: 'file' },
   ],
-};
+  };
+}
+
+function fakeRoot(): FsNode {
+  if (!cachedRoot) cachedRoot = buildRoot();
+  return cachedRoot;
+}
 
 /** Resolve a DOS-ish path argument relative to cwd (array of dir names, starting with 'C:'). */
 export function resolvePath(cwd: string[], arg: string): { node: FsNode; path: string[] } | null {
@@ -74,7 +85,7 @@ export function resolvePath(cwd: string[], arg: string): { node: FsNode; path: s
 }
 
 export function nodeAt(path: string[]): FsNode | null {
-  let node: FsNode = fakeRoot;
+  let node: FsNode = fakeRoot();
   for (const part of path.slice(1)) {
     const child = node.children?.find((c) => c.name === part);
     if (!child) return null;

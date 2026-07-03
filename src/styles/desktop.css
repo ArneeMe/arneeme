@@ -1895,8 +1895,11 @@ body {
 
 .display-swatch {
   width: 24px;
+  min-width: 24px; /* 98.css setter min-width: 75px på button */
   height: 18px;
+  min-height: 18px;
   padding: 0;
+  box-sizing: border-box;
   border: 1px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
   cursor: pointer;

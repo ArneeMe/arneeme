@@ -289,7 +289,17 @@ export default function Terminal({ instanceId }: Props) {
   };
 
   return (
-    <div class="terminal-app" onMouseDown={() => inputRef.current?.focus()}>
+    <div
+      class="terminal-app"
+      onMouseDown={(e) => {
+        // preventDefault, ellers flytter nettleseren fokus tilbake til
+        // klikkmålet rett etter focus()-kallet.
+        if (e.target !== inputRef.current) {
+          e.preventDefault();
+          inputRef.current?.focus();
+        }
+      }}
+    >
       <div class="terminal-output" ref={outputRef}>
         {lines.map((l, i) => (
           <div key={i} class="terminal-line">
