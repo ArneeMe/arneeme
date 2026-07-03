@@ -1,13 +1,16 @@
 import { desktopState, openApp, clampAllWindows } from '../../stores/desktop';
 import { bootPhase } from '../../stores/boot';
 import { isMobile } from '../../stores/viewport';
+import { displaySettings, previewScreensaver, PATTERN_CSS } from '../../stores/display';
 import { apps } from '../../apps/registry';
 import { shortcuts } from '../../apps/shortcuts';
 import { WindowFrame } from './WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 import { Taskbar } from './Taskbar';
 import { BootScreen } from './BootScreen';
+import { Screensaver } from './Screensaver';
 import { MobileShell } from '../mobile/MobileShell';
+import { useIdle } from './hooks/useIdle';
 import { useEffect } from 'preact/hooks';
 
 export function Desktop() {
@@ -20,6 +23,12 @@ export function Desktop() {
 function DesktopShell() {
   const state = desktopState.value;
   const phase = bootPhase.value;
+  const display = displaySettings.value;
+  const pattern = PATTERN_CSS[display.pattern];
+  const idle = useIdle(
+    display.screensaver.timeoutMin * 60_000,
+    display.screensaver.enabled && phase === 'desktop',
+  );
 
   useEffect(() => {
     if (phase === 'desktop' && state.windows.length === 0) {
@@ -48,7 +57,14 @@ function DesktopShell() {
 
   return (
     <>
-      <div class="win95-desktop">
+      <div
+        class="win95-desktop"
+        style={{
+          backgroundColor: display.bgColor,
+          backgroundImage: pattern.image,
+          backgroundSize: pattern.size,
+        }}
+      >
         <div class="desktop-icons">
           {desktopApps.map((app) => (
             <DesktopIcon key={app.id} app={app} />
@@ -86,6 +102,8 @@ function DesktopShell() {
       </div>
 
       {phase !== 'desktop' && <BootScreen />}
+
+      {(idle || previewScreensaver.value) && <Screensaver />}
     </>
   );
 }

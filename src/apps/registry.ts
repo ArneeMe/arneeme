@@ -2,6 +2,7 @@ import type { AppDefinition } from './types';
 import AboutMe from '../components/desktop/apps/AboutMe';
 import Notater from '../components/desktop/apps/Notater';
 import Oppgaver from '../components/desktop/apps/Oppgaver';
+import DisplayProperties from '../components/desktop/apps/DisplayProperties';
 import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
@@ -140,6 +141,19 @@ export const apps: Record<string, AppDefinition> = {
     showOnMobile: true,
     tileColor: '#d04010',
     component: Oppgaver,
+  },
+
+  'skjerm': {
+    id: 'skjerm',
+    title: 'Skjerminnstillinger',
+    icon: '/icons/display.svg',
+    defaultSize: { w: 380, h: 460 },
+    minSize: { w: 380, h: 460 },
+    resizable: false,
+    singleton: true,
+    showOnDesktop: false,
+    showInStartMenu: true,
+    component: DisplayProperties,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
