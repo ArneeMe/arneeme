@@ -6,7 +6,14 @@ interface Props {
   instanceId: string;
 }
 
-type Tool = 'pencil' | 'eraser' | 'line' | 'rectangle' | 'fill' | 'picker';
+type Tool = 'pencil' | 'eraser' | 'line' | 'rectangle' | 'ellipse' | 'fill' | 'picker' | 'select';
+
+interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
 
 const PALETTE: string[] = [
   '#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080',
@@ -17,6 +24,10 @@ const PALETTE: string[] = [
 
 const CANVAS_W = 560;
 const CANVAS_H = 360;
+// Åpnede bilder skaleres ned til dette; undo-stakken holder hele bildekopier.
+const MAX_W = 1024;
+const MAX_H = 768;
+const MAX_UNDO = 12;
 
 function hexToRgba(hex: string): [number, number, number, number] {
   const h = hex.replace('#', '');
@@ -60,32 +71,50 @@ function floodFill(ctx: CanvasRenderingContext2D, x: number, y: number, fillColo
   ctx.putImageData(imageData, 0, 0);
 }
 
+function normalizeRect(a: { x: number; y: number }, b: { x: number; y: number }): Rect {
+  return {
+    x: Math.min(a.x, b.x),
+    y: Math.min(a.y, b.y),
+    w: Math.abs(b.x - a.x),
+    h: Math.abs(b.y - a.y),
+  };
+}
+
 export default function Paint({ instanceId }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const previewRef = useRef<HTMLCanvasElement>(null);
   const snapshotRef = useRef<ImageData | null>(null);
   const undoRef = useRef<ImageData[]>([]);
   const downloadRef = useRef<HTMLAnchorElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Bilde som skal tegnes etter at canvas har byttet størrelse (attributt-
+  // endring tømmer canvasen, så tegningen må skje i effekten under).
+  const pendingRef = useRef<ImageData | null>(null);
 
   const [tool, setTool] = useState<Tool>('pencil');
   const [fgColor, setFgColor] = useState('#000000');
   const [bgColor, setBgColor] = useState('#ffffff');
   const [brush, setBrush] = useState(2);
   const [coords, setCoords] = useState<{ x: number; y: number } | null>(null);
+  const [canvasSize, setCanvasSize] = useState({ w: CANVAS_W, h: CANVAS_H });
+  const [selection, setSelection] = useState<Rect | null>(null);
 
   const isDrawing = useRef(false);
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
   const startPoint = useRef<{ x: number; y: number } | null>(null);
 
-  // Initialize canvas with white background
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, []);
+    if (pendingRef.current) {
+      ctx.putImageData(pendingRef.current, 0, 0);
+      pendingRef.current = null;
+    } else {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  }, [canvasSize]);
 
   const saveUndoSnapshot = () => {
     const canvas = canvasRef.current;
@@ -94,16 +123,43 @@ export default function Paint({ instanceId }: Props) {
     if (!ctx) return;
     const snap = ctx.getImageData(0, 0, canvas.width, canvas.height);
     undoRef.current.push(snap);
-    if (undoRef.current.length > 20) undoRef.current.shift();
+    if (undoRef.current.length > MAX_UNDO) undoRef.current.shift();
+  };
+
+  /** Tegn et bilde på canvasen, og bytt canvas-størrelse om nødvendig. */
+  const applyImage = (data: ImageData) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    if (data.width === canvas.width && data.height === canvas.height) {
+      canvas.getContext('2d')?.putImageData(data, 0, 0);
+    } else {
+      pendingRef.current = data;
+      setCanvasSize({ w: data.width, h: data.height });
+    }
   };
 
   const doUndo = () => {
+    const prev = undoRef.current.pop();
+    if (prev) {
+      setSelection(null);
+      applyImage(prev);
+    }
+  };
+
+  const newCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const prev = undoRef.current.pop();
-    if (prev) ctx.putImageData(prev, 0, 0);
+    undoRef.current = [];
+    setSelection(null);
+    if (canvas.width === CANVAS_W && canvas.height === CANVAS_H) {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else {
+      pendingRef.current = null;
+      setCanvasSize({ w: CANVAS_W, h: CANVAS_H });
+    }
   };
 
   const clearCanvas = () => {
@@ -112,6 +168,7 @@ export default function Paint({ instanceId }: Props) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     saveUndoSnapshot();
+    setSelection(null);
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
@@ -125,12 +182,88 @@ export default function Paint({ instanceId }: Props) {
     a.click();
   };
 
+  const openImageFile = (file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, MAX_W / img.width, MAX_H / img.height);
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const off = document.createElement('canvas');
+      off.width = w;
+      off.height = h;
+      const octx = off.getContext('2d');
+      if (!octx) return;
+      // Hvit bunn så gjennomsiktige PNG-er kan viskes/fylles som i MS Paint.
+      octx.fillStyle = '#ffffff';
+      octx.fillRect(0, 0, w, h);
+      octx.drawImage(img, 0, 0, w, h);
+      saveUndoSnapshot();
+      setSelection(null);
+      applyImage(octx.getImageData(0, 0, w, h));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      alert('Kunne ikke åpne bildet.');
+    };
+    img.src = url;
+  };
+
+  const cropToSelection = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !selection || selection.w < 1 || selection.h < 1) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const data = ctx.getImageData(selection.x, selection.y, selection.w, selection.h);
+    saveUndoSnapshot();
+    setSelection(null);
+    applyImage(data);
+  };
+
+  const deleteSelection = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !selection) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    saveUndoSnapshot();
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(selection.x, selection.y, selection.w, selection.h);
+    setSelection(null);
+  };
+
+  const resizeImage = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const raw = prompt('Ny størrelse i prosent (10–500):', '100');
+    if (raw === null) return;
+    const pct = parseInt(raw, 10);
+    if (!Number.isFinite(pct) || pct < 10 || pct > 500) {
+      alert('Angi et tall mellom 10 og 500.');
+      return;
+    }
+    if (pct === 100) return;
+    const w = Math.min(MAX_W * 2, Math.max(1, Math.round(canvas.width * (pct / 100))));
+    const h = Math.min(MAX_H * 2, Math.max(1, Math.round(canvas.height * (pct / 100))));
+    const off = document.createElement('canvas');
+    off.width = w;
+    off.height = h;
+    const octx = off.getContext('2d');
+    if (!octx) return;
+    octx.imageSmoothingEnabled = pct < 100;
+    octx.drawImage(canvas, 0, 0, w, h);
+    saveUndoSnapshot();
+    setSelection(null);
+    applyImage(octx.getImageData(0, 0, w, h));
+  };
+
   const getPoint = (e: MouseEvent): { x: number; y: number } => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
     return {
-      x: Math.round((e.clientX - rect.left) * (canvas.width / rect.width)),
-      y: Math.round((e.clientY - rect.top) * (canvas.height / rect.height)),
+      x: Math.max(0, Math.min(canvas.width - 1, Math.round((e.clientX - rect.left) * (canvas.width / rect.width)))),
+      y: Math.max(0, Math.min(canvas.height - 1, Math.round((e.clientY - rect.top) * (canvas.height / rect.height)))),
     };
   };
 
@@ -154,6 +287,8 @@ export default function Paint({ instanceId }: Props) {
     const isRight = e.button === 2;
     const color = isRight ? bgColor : fgColor;
 
+    if (tool !== 'select') setSelection(null);
+
     if (tool === 'picker') {
       const data = ctx.getImageData(point.x, point.y, 1, 1).data;
       const picked = `#${[data[0], data[1], data[2]].map((c) => c.toString(16).padStart(2, '0')).join('')}`;
@@ -168,6 +303,13 @@ export default function Paint({ instanceId }: Props) {
       return;
     }
 
+    if (tool === 'select') {
+      isDrawing.current = true;
+      startPoint.current = point;
+      setSelection({ x: point.x, y: point.y, w: 0, h: 0 });
+      return;
+    }
+
     saveUndoSnapshot();
     isDrawing.current = true;
     startPoint.current = point;
@@ -176,7 +318,7 @@ export default function Paint({ instanceId }: Props) {
     if (tool === 'pencil' || tool === 'eraser') {
       const drawColor = tool === 'eraser' ? bgColor : color;
       drawLine(ctx, point, point, drawColor);
-    } else if (tool === 'line' || tool === 'rectangle') {
+    } else if (tool === 'line' || tool === 'rectangle' || tool === 'ellipse') {
       snapshotRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
   };
@@ -190,25 +332,47 @@ export default function Paint({ instanceId }: Props) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    if (tool === 'select' && startPoint.current) {
+      setSelection(normalizeRect(startPoint.current, point));
+      return;
+    }
+
     if (tool === 'pencil' || tool === 'eraser') {
       const drawColor = tool === 'eraser' ? bgColor : fgColor;
       if (lastPoint.current) drawLine(ctx, lastPoint.current, point, drawColor);
       lastPoint.current = point;
-    } else if ((tool === 'line' || tool === 'rectangle') && snapshotRef.current && startPoint.current) {
+    } else if ((tool === 'line' || tool === 'rectangle' || tool === 'ellipse') && snapshotRef.current && startPoint.current) {
       ctx.putImageData(snapshotRef.current, 0, 0);
+      const sx = startPoint.current.x;
+      const sy = startPoint.current.y;
       if (tool === 'line') {
         drawLine(ctx, startPoint.current, point, fgColor);
+      } else if (tool === 'rectangle') {
+        ctx.strokeStyle = fgColor;
+        ctx.lineWidth = brush;
+        ctx.strokeRect(Math.min(sx, point.x), Math.min(sy, point.y), Math.abs(point.x - sx), Math.abs(point.y - sy));
       } else {
         ctx.strokeStyle = fgColor;
         ctx.lineWidth = brush;
-        const sx = startPoint.current.x;
-        const sy = startPoint.current.y;
-        ctx.strokeRect(Math.min(sx, point.x), Math.min(sy, point.y), Math.abs(point.x - sx), Math.abs(point.y - sy));
+        ctx.beginPath();
+        ctx.ellipse(
+          (sx + point.x) / 2,
+          (sy + point.y) / 2,
+          Math.abs(point.x - sx) / 2,
+          Math.abs(point.y - sy) / 2,
+          0,
+          0,
+          Math.PI * 2,
+        );
+        ctx.stroke();
       }
     }
   };
 
   const onMouseUp = () => {
+    if (tool === 'select' && isDrawing.current) {
+      setSelection((sel) => (sel && sel.w > 1 && sel.h > 1 ? sel : null));
+    }
     isDrawing.current = false;
     lastPoint.current = null;
     startPoint.current = null;
@@ -219,11 +383,19 @@ export default function Paint({ instanceId }: Props) {
     e.preventDefault();
   };
 
+  const onDrop = (e: DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    if (file) openImageFile(file);
+  };
+
   const tools: { id: Tool; label: string; icon: string }[] = [
+    { id: 'select', label: 'Merk område', icon: '/icons/paint/select.svg' },
     { id: 'pencil', label: 'Blyant', icon: '/icons/paint/pencil.svg' },
     { id: 'eraser', label: 'Viskelær', icon: '/icons/paint/eraser.svg' },
     { id: 'line', label: 'Linje', icon: '/icons/paint/line.svg' },
     { id: 'rectangle', label: 'Rektangel', icon: '/icons/paint/rectangle.svg' },
+    { id: 'ellipse', label: 'Ellipse', icon: '/icons/paint/ellipse.svg' },
     { id: 'fill', label: 'Fyll', icon: '/icons/paint/fill.svg' },
     { id: 'picker', label: 'Velg farge', icon: '/icons/paint/picker.svg' },
   ];
@@ -232,7 +404,8 @@ export default function Paint({ instanceId }: Props) {
     {
       label: 'File',
       items: [
-        { label: 'New', onClick: clearCanvas },
+        { label: 'New', onClick: newCanvas },
+        { label: 'Open...', onClick: () => fileInputRef.current?.click() },
         { label: 'Save', onClick: saveImage },
         { label: 'Exit', onClick: () => closeWindow(instanceId) },
       ],
@@ -241,12 +414,22 @@ export default function Paint({ instanceId }: Props) {
       label: 'Edit',
       items: [
         { label: 'Undo', onClick: doUndo },
+        { label: 'Delete Selection', onClick: deleteSelection },
+        { label: 'Select None', onClick: () => setSelection(null) },
+      ],
+    },
+    {
+      label: 'Image',
+      items: [
+        { label: 'Crop to Selection', onClick: cropToSelection },
+        { label: 'Resize...', onClick: resizeImage },
+        { label: 'Clear Image', onClick: clearCanvas },
       ],
     },
     {
       label: 'Help',
       items: [
-        { label: 'About MS Paint...', onClick: () => alert('MS Paint\nWindows 95 Edition\n\nDraw something nice!') },
+        { label: 'About MS Paint...', onClick: () => alert('MS Paint\nWindows 95 Edition\n\nDraw something nice!\nTips: dra og slipp et bilde på lerretet for å åpne det.') },
       ],
     },
   ];
@@ -286,19 +469,31 @@ export default function Paint({ instanceId }: Props) {
           </div>
         </div>
 
-        <div class="paint-canvas-wrap">
-          <canvas
-            ref={canvasRef}
-            width={CANVAS_W}
-            height={CANVAS_H}
-            class="paint-canvas"
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-            onMouseLeave={onMouseUp}
-            onContextMenu={onContextMenu}
-          />
-          <canvas ref={previewRef} width={CANVAS_W} height={CANVAS_H} style={{ display: 'none' }} />
+        <div class="paint-canvas-wrap" onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
+          <div class="paint-canvas-holder">
+            <canvas
+              ref={canvasRef}
+              width={canvasSize.w}
+              height={canvasSize.h}
+              class="paint-canvas"
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={onMouseUp}
+              onMouseLeave={onMouseUp}
+              onContextMenu={onContextMenu}
+            />
+            {selection && selection.w > 0 && selection.h > 0 && (
+              <div
+                class="paint-selection"
+                style={{
+                  left: `${(selection.x / canvasSize.w) * 100}%`,
+                  top: `${(selection.y / canvasSize.h) * 100}%`,
+                  width: `${(selection.w / canvasSize.w) * 100}%`,
+                  height: `${(selection.h / canvasSize.h) * 100}%`,
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
 
@@ -326,10 +521,25 @@ export default function Paint({ instanceId }: Props) {
 
       <div class="paint-statusbar">
         <span>{coords ? `${coords.x}, ${coords.y}` : ''}</span>
-        <span>{CANVAS_W} x {CANVAS_H}</span>
+        <span>
+          {selection && selection.w > 0 ? `Utvalg: ${selection.w} x ${selection.h} · ` : ''}
+          {canvasSize.w} x {canvasSize.h}
+        </span>
       </div>
 
       <a ref={downloadRef} style={{ display: 'none' }} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const input = e.target as HTMLInputElement;
+          const file = input.files?.[0];
+          if (file) openImageFile(file);
+          input.value = '';
+        }}
+      />
     </div>
   );
 }

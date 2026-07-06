@@ -748,7 +748,9 @@ body {
 
 .paint-tool {
   width: 26px;
+  min-width: 26px;
   height: 26px;
+  min-height: 26px;
   background: #c0c0c0;
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
@@ -773,7 +775,9 @@ body {
 }
 
 .paint-brush-btn {
+  min-width: 0;
   height: 22px;
+  min-height: 22px;
   background: #ffffff;
   border: 2px solid;
   border-color: #808080 #ffffff #ffffff #808080;
@@ -861,7 +865,9 @@ body {
 
 .paint-palette-swatch {
   width: 16px;
+  min-width: 16px;
   height: 16px;
+  min-height: 16px;
   border: 1px solid #000;
   cursor: pointer;
   padding: 0;
@@ -2080,4 +2086,17 @@ body {
   border-top: 2px solid;
   border-color: #808080 #ffffff #ffffff #808080;
   background: #c0c0c0;
+}
+
+.paint-canvas-holder {
+  position: relative;
+  line-height: 0;
+}
+
+.paint-selection {
+  position: absolute;
+  border: 1px dashed #000;
+  outline: 1px dashed #fff;
+  outline-offset: -2px;
+  pointer-events: none;
 }
