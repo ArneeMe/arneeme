@@ -1,5 +1,6 @@
 // 2025 norske skattesatser. Juster ved skifte av år.
 // Kilde: Skatteetaten — satser for personinntekt/lønn 2025.
+// TODO(2026): oppdater satser fra Skatteetaten.
 // Dette er en forenklet beregning og dekker ikke alle fradrag/særtilfeller.
 
 const MINSTEFRADRAG_RATE = 0.46;

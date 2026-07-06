@@ -1,5 +1,10 @@
 import type { AppDefinition } from './types';
 import AboutMe from '../components/desktop/apps/AboutMe';
+import Notater from '../components/desktop/apps/Notater';
+import Oppgaver from '../components/desktop/apps/Oppgaver';
+import DisplayProperties from '../components/desktop/apps/DisplayProperties';
+import Terminal from '../components/desktop/apps/Terminal';
+import Vaer from '../components/desktop/apps/Vaer';
 import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
@@ -108,6 +113,77 @@ export const apps: Record<string, AppDefinition> = {
     showOnMobile: true,
     tileColor: '#208020',
     component: Budsjett,
+  },
+
+  'notater': {
+    id: 'notater',
+    title: 'Notisblokk',
+    icon: '/icons/notepad.svg',
+    defaultSize: { w: 480, h: 380 },
+    minSize: { w: 300, h: 200 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#b06000',
+    component: Notater,
+  },
+
+  'oppgaver': {
+    id: 'oppgaver',
+    title: 'Oppgaver',
+    icon: '/icons/todo.svg',
+    defaultSize: { w: 340, h: 420 },
+    minSize: { w: 280, h: 280 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#d04010',
+    component: Oppgaver,
+  },
+
+  'skjerm': {
+    id: 'skjerm',
+    title: 'Skjerminnstillinger',
+    icon: '/icons/display.svg',
+    defaultSize: { w: 380, h: 460 },
+    minSize: { w: 380, h: 460 },
+    resizable: false,
+    singleton: true,
+    showOnDesktop: false,
+    showInStartMenu: true,
+    component: DisplayProperties,
+  },
+
+  'terminal': {
+    id: 'terminal',
+    title: 'MS-DOS Prompt',
+    icon: '/icons/terminal.svg',
+    defaultSize: { w: 560, h: 360 },
+    minSize: { w: 360, h: 220 },
+    resizable: true,
+    singleton: false,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    component: Terminal,
+  },
+
+  'vaer': {
+    id: 'vaer',
+    title: 'Vær',
+    icon: '/icons/weather.svg',
+    defaultSize: { w: 420, h: 400 },
+    minSize: { w: 340, h: 320 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#0078c8',
+    component: Vaer,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
