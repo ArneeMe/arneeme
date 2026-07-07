@@ -1,13 +1,20 @@
 import { useState } from 'preact/hooks';
 import { advanceBoot } from '../../stores/boot';
+import { playSound } from '../../lib/sounds';
 
 export function LoginDialog() {
   const [username, setUsername] = useState('Arne');
   const [password, setPassword] = useState('');
 
+  // Klikket er en brukerhandling, så nettleseren tillater lyd her.
+  const enterDesktop = () => {
+    playSound('startup');
+    advanceBoot('desktop');
+  };
+
   const onSubmit = (e: Event) => {
     e.preventDefault();
-    advanceBoot('desktop');
+    enterDesktop();
   };
 
   return (
@@ -16,7 +23,7 @@ export function LoginDialog() {
         <div class="title-bar">
           <div class="title-bar-text">Enter Network Password</div>
           <div class="title-bar-controls">
-            <button type="button" aria-label="Close" onClick={() => advanceBoot('desktop')} />
+            <button type="button" aria-label="Close" onClick={enterDesktop} />
           </div>
         </div>
         <div class="window-body login-body">
@@ -47,7 +54,7 @@ export function LoginDialog() {
         </div>
         <div class="login-actions">
           <button type="submit">OK</button>
-          <button type="button" onClick={() => advanceBoot('desktop')}>Cancel</button>
+          <button type="button" onClick={enterDesktop}>Cancel</button>
         </div>
       </form>
     </div>

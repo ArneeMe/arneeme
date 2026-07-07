@@ -5,6 +5,8 @@ export interface FsNode {
   type: 'dir' | 'file';
   /** Registered app launched when this "program" is started. */
   appId?: string;
+  /** Lines printed by TYPE in the terminal. */
+  content?: string[];
   children?: FsNode[];
 }
 
@@ -33,9 +35,46 @@ function buildRoot(): FsNode {
       name: 'WINDOWS',
       type: 'dir',
       children: [
-        { name: 'WIN.COM', type: 'file' },
-        { name: 'SYSTEM.INI', type: 'file' },
-        { name: 'CLIPPY.DLL', type: 'file' },
+        {
+          name: 'WIN.COM',
+          type: 'file',
+          content: ['MZ▓▒░@╬ÉПЯ$#&%!... ', 'Dette er en binærfil. Det visste du egentlig.'],
+        },
+        {
+          name: 'SYSTEM.INI',
+          type: 'file',
+          content: [
+            '[boot]',
+            'shell=arnee.me',
+            'mood=nostalgisk',
+            '',
+            '[386Enh]',
+            'device=kaffe.386',
+            'MinTimeslice=fredag',
+          ],
+        },
+        {
+          name: 'CLIPPY.DLL',
+          type: 'file',
+          content: [
+            'Det ser ut som du prøver å lese en DLL-fil.',
+            'Vil du ha hjelp med det?',
+            '',
+            '  ( ) Ja',
+            '  ( ) Nei',
+            '  (•) Aldri spør meg igjen',
+          ],
+        },
+        {
+          name: 'HEMMELIG.TXT',
+          type: 'file',
+          content: [
+            'Gratulerer, du fant den skjulte filen!',
+            '',
+            'Premie: prøv kommandoen MATRIX. Eller HACK, hvis du tør.',
+            'PS: FORMAT C: er også trygt. Antakeligvis.',
+          ],
+        },
       ],
     },
     {
@@ -48,8 +87,27 @@ function buildRoot(): FsNode {
       type: 'dir',
       children: programNodes((id) => LEGACY.includes(id)),
     },
-    { name: 'AUTOEXEC.BAT', type: 'file' },
-    { name: 'CONFIG.SYS', type: 'file' },
+    {
+      name: 'AUTOEXEC.BAT',
+      type: 'file',
+      content: [
+        '@ECHO OFF',
+        'PATH C:\\WINDOWS;C:\\PROGRAMMER',
+        'SET BLASTER=A220 I5 D1',
+        'REM Ikke rør denne linjen. Ingen husker hvorfor den er her.',
+        'LH C:\\WINDOWS\\NOSTALGI.EXE',
+      ],
+    },
+    {
+      name: 'CONFIG.SYS',
+      type: 'file',
+      content: [
+        'DEVICE=C:\\WINDOWS\\HIMEM.SYS',
+        'DOS=HIGH,UMB',
+        'FILES=42',
+        'BUFFERS=du store min',
+      ],
+    },
   ],
   };
 }

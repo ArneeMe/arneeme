@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'preact/hooks';
 import { openApp, closeWindow } from '../../../stores/desktop';
 import { apps } from '../../../apps/registry';
 import { resolvePath, formatPath, nodeAt } from '../../../lib/fakeFs';
+import { playSound } from '../../../lib/sounds';
 
 interface Props {
   instanceId: string;
@@ -71,6 +72,27 @@ const COMMANDS: Record<string, { help: string; run: (ctx: CmdCtx) => void }> = {
       ctx.setCwd(resolved.path);
     },
   },
+  type: {
+    help: 'Viser innholdet i en fil, f.eks. TYPE AUTOEXEC.BAT.',
+    run: (ctx) => {
+      const arg = ctx.args[0];
+      if (!arg) {
+        ctx.print('Angi filen som skal vises, f.eks. TYPE AUTOEXEC.BAT');
+        return;
+      }
+      const resolved = resolvePath(ctx.cwd, arg);
+      if (!resolved || resolved.node.type !== 'file') {
+        ctx.print('Finner ikke filen angitt.');
+        return;
+      }
+      if (resolved.node.appId) {
+        ctx.print(`'${resolved.node.name}' er en programfil. Bruk START ${resolved.node.name}.`);
+        return;
+      }
+      ctx.print(resolved.node.content ?? ['(tom fil)']);
+      ctx.print('');
+    },
+  },
   start: {
     help: 'Starter et program. START uten argument gir liste.',
     run: (ctx) => {
@@ -126,7 +148,10 @@ const COMMANDS: Record<string, { help: string; run: (ctx: CmdCtx) => void }> = {
       }
       ctx.confirm(
         'ADVARSEL: ALLE DATA PÅ STASJON C: GÅR TAPT!\nFortsette med formatering (J/N)?',
-        () => ctx.print(['', 'Tilgang nektet. Filene dine er trygge. :-)', '']),
+        () => {
+          playSound('ding');
+          ctx.print(['', 'Tilgang nektet. Filene dine er trygge. :-)', '']);
+        },
       );
     },
   },

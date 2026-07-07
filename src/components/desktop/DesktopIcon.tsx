@@ -12,7 +12,15 @@ export function DesktopIcon({ app }: Props) {
   return (
     <div
       class="desktop-icon"
+      role="button"
+      tabIndex={0}
       onDblClick={launch}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          launch();
+        }
+      }}
       title={app.title}
     >
       <img

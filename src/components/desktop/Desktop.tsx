@@ -1,4 +1,5 @@
-import { desktopState, openApp, clampAllWindows } from '../../stores/desktop';
+import { desktopState, openApp, clampAllWindows, pruneWindows } from '../../stores/desktop';
+import { playSound } from '../../lib/sounds';
 import { bootPhase } from '../../stores/boot';
 import { isMobile } from '../../stores/viewport';
 import { displaySettings, previewScreensaver, PATTERN_CSS } from '../../stores/display';
@@ -12,6 +13,10 @@ import { Screensaver } from './Screensaver';
 import { MobileShell } from '../mobile/MobileShell';
 import { useIdle } from './hooks/useIdle';
 import { useEffect, useState } from 'preact/hooks';
+
+// Persisterte vinduer kan referere til apper som er fjernet fra registeret
+// siden forrige besøk – rydd dem bort før første render.
+pruneWindows(Object.keys(apps));
 
 export function Desktop() {
   // Branch before any desktop hooks run, so the window/taskbar/boot machinery
@@ -61,11 +66,22 @@ function DesktopShell() {
     // Bare på selve skrivebordet – vinduer og taskbar beholder sin oppførsel.
     if ((e.target as Element).closest('.window, .taskbar, .start-menu')) return;
     e.preventDefault();
+    playSound('click');
     setCtxMenu({
       x: Math.min(e.clientX, window.innerWidth - 180),
       y: Math.min(e.clientY, window.innerHeight - 190),
     });
   };
+
+  // Alltid registrert, ikke per meny-åpning: en effekt som registreres først
+  // etter render kan tape kappløpet mot et Esc-trykk rett etter åpning.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setCtxMenu(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const launchFromCtx = (appId: string) => {
     const app = apps[appId];
@@ -92,7 +108,15 @@ function DesktopShell() {
             <div
               key={sc.id}
               class="desktop-icon"
+              role="button"
+              tabIndex={0}
               onDblClick={() => window.open(sc.url, '_blank', 'noopener,noreferrer')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  window.open(sc.url, '_blank', 'noopener,noreferrer');
+                }
+              }}
               title={sc.title}
             >
               <img
@@ -122,7 +146,7 @@ function DesktopShell() {
         {ctxMenu && (
           <>
             <div
-              style={{ position: 'fixed', inset: 0, zIndex: 9996 }}
+              style={{ position: 'fixed', inset: 0, zIndex: 10000 }}
               onMouseDown={() => setCtxMenu(null)}
               onContextMenu={(e) => {
                 e.preventDefault();
