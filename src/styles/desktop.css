@@ -2100,3 +2100,43 @@ body {
   outline-offset: -2px;
   pointer-events: none;
 }
+
+/* ===== Desktop context menu ===================================== */
+
+.desktop-context-menu {
+  position: fixed;
+  z-index: 9997;
+  min-width: 160px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  padding: 2px;
+}
+
+.desktop-context-menu button {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  box-shadow: none; /* 98.css tegner knapper med box-shadow */
+  padding: 4px 16px;
+  font-size: 11px;
+  cursor: default;
+  color: #000;
+}
+
+.desktop-context-menu button:hover {
+  background: #000080;
+  color: #fff;
+}
+
+.desktop-context-divider {
+  height: 1px;
+  margin: 2px 4px;
+  background: #808080;
+  border-bottom: 1px solid #ffffff;
+}

@@ -11,7 +11,7 @@ import { BootScreen } from './BootScreen';
 import { Screensaver } from './Screensaver';
 import { MobileShell } from '../mobile/MobileShell';
 import { useIdle } from './hooks/useIdle';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 export function Desktop() {
   // Branch before any desktop hooks run, so the window/taskbar/boot machinery
@@ -55,6 +55,24 @@ function DesktopShell() {
   const desktopApps = Object.values(apps).filter((a) => a.showOnDesktop);
   const desktopShortcuts = Object.values(shortcuts).filter((s) => s.showOnDesktop);
 
+  const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
+
+  const onDesktopContextMenu = (e: MouseEvent) => {
+    // Bare på selve skrivebordet – vinduer og taskbar beholder sin oppførsel.
+    if ((e.target as Element).closest('.window, .taskbar, .start-menu')) return;
+    e.preventDefault();
+    setCtxMenu({
+      x: Math.min(e.clientX, window.innerWidth - 180),
+      y: Math.min(e.clientY, window.innerHeight - 190),
+    });
+  };
+
+  const launchFromCtx = (appId: string) => {
+    const app = apps[appId];
+    if (app) openApp(app.id, app.title, app.icon, app.defaultSize, app.singleton ?? false);
+    setCtxMenu(null);
+  };
+
   return (
     <>
       <div
@@ -64,6 +82,7 @@ function DesktopShell() {
           backgroundImage: pattern.image,
           backgroundSize: pattern.size,
         }}
+        onContextMenu={onDesktopContextMenu}
       >
         <div class="desktop-icons">
           {desktopApps.map((app) => (
@@ -99,6 +118,28 @@ function DesktopShell() {
         })}
 
         <Taskbar />
+
+        {ctxMenu && (
+          <>
+            <div
+              style={{ position: 'fixed', inset: 0, zIndex: 9996 }}
+              onMouseDown={() => setCtxMenu(null)}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setCtxMenu(null);
+              }}
+            />
+            <div class="desktop-context-menu" style={{ left: ctxMenu.x, top: ctxMenu.y }}>
+              <button onClick={() => window.location.reload()}>Oppdater</button>
+              <div class="desktop-context-divider" />
+              <button onClick={() => launchFromCtx('notater')}>Nytt notat</button>
+              <button onClick={() => launchFromCtx('oppgaver')}>Ny oppgave</button>
+              <button onClick={() => launchFromCtx('paint')}>Nytt bilde</button>
+              <div class="desktop-context-divider" />
+              <button onClick={() => launchFromCtx('skjerm')}>Egenskaper</button>
+            </div>
+          </>
+        )}
       </div>
 
       {phase !== 'desktop' && <BootScreen />}

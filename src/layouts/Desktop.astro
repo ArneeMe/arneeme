@@ -16,6 +16,18 @@ const { title } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
+    <meta
+      name="description"
+      content="Arne Natskårs personlige hjemmeside – et Windows 95-skrivebord i nettleseren med små apper, spill og verktøy."
+    />
+    <meta name="theme-color" content="#008080" />
+    <meta property="og:title" content={title} />
+    <meta
+      property="og:description"
+      content="Et Windows 95-skrivebord i nettleseren – med små apper, spill og verktøy."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://arnee.me/" />
     <link rel="icon" type="image/svg+xml" href="/icons/computer.svg" />
   </head>
   <body>
