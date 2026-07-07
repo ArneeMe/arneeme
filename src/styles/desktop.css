@@ -33,6 +33,19 @@ body {
   z-index: 1;
 }
 
+/* Høyre klynge: spill, kreativt og snarveier. Ekstra kolonner vokser
+   innover (wrap-reverse), og Papirkurv skyves ned i hjørnet. */
+.desktop-icons-right {
+  left: auto;
+  right: 8px;
+  flex-wrap: wrap-reverse;
+  align-content: flex-start;
+}
+
+.desktop-icon-pin-bottom {
+  margin-top: auto;
+}
+
 .desktop-icon {
   display: flex;
   flex-direction: column;

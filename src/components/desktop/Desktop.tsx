@@ -5,6 +5,7 @@ import { isMobile } from '../../stores/viewport';
 import { displaySettings, previewScreensaver, PATTERN_CSS } from '../../stores/display';
 import { apps } from '../../apps/registry';
 import { shortcuts } from '../../apps/shortcuts';
+import type { ShortcutDefinition } from '../../apps/types';
 import { WindowFrame } from './WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 import { Taskbar } from './Taskbar';
@@ -17,6 +18,33 @@ import { useEffect, useState } from 'preact/hooks';
 // Persisterte vinduer kan referere til apper som er fjernet fra registeret
 // siden forrige besøk – rydd dem bort før første render.
 pruneWindows(Object.keys(apps));
+
+function ShortcutIcon({ sc }: { sc: ShortcutDefinition }) {
+  const open = () => window.open(sc.url, '_blank', 'noopener,noreferrer');
+  return (
+    <div
+      class="desktop-icon"
+      role="button"
+      tabIndex={0}
+      onDblClick={open}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      }}
+      title={sc.title}
+    >
+      <img
+        src={sc.icon}
+        alt={sc.title}
+        style={{ width: 32, height: 32, imageRendering: 'pixelated' }}
+        draggable={false}
+      />
+      <span>{sc.title}</span>
+    </div>
+  );
+}
 
 export function Desktop() {
   // Branch before any desktop hooks run, so the window/taskbar/boot machinery
@@ -60,6 +88,16 @@ function DesktopShell() {
   const desktopApps = Object.values(apps).filter((a) => a.showOnDesktop);
   const desktopShortcuts = Object.values(shortcuts).filter((s) => s.showOnDesktop);
 
+  // Venstre side: kjerneappene. Høyre side: spill, kreativt og eksterne
+  // snarveier – med Papirkurv nederst i hjørnet, slik skikken er.
+  const leftApps = desktopApps.filter((a) => a.desktopArea !== 'right');
+  const rightApps = desktopApps.filter(
+    (a) => a.desktopArea === 'right' && a.id !== 'papirkurv',
+  );
+  const trashApp = desktopApps.find((a) => a.id === 'papirkurv');
+  const leftShortcuts = desktopShortcuts.filter((s) => s.desktopArea !== 'right');
+  const rightShortcuts = desktopShortcuts.filter((s) => s.desktopArea === 'right');
+
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
 
   const onDesktopContextMenu = (e: MouseEvent) => {
@@ -101,33 +139,26 @@ function DesktopShell() {
         onContextMenu={onDesktopContextMenu}
       >
         <div class="desktop-icons">
-          {desktopApps.map((app) => (
+          {leftApps.map((app) => (
             <DesktopIcon key={app.id} app={app} />
           ))}
-          {desktopShortcuts.map((sc) => (
-            <div
-              key={sc.id}
-              class="desktop-icon"
-              role="button"
-              tabIndex={0}
-              onDblClick={() => window.open(sc.url, '_blank', 'noopener,noreferrer')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  window.open(sc.url, '_blank', 'noopener,noreferrer');
-                }
-              }}
-              title={sc.title}
-            >
-              <img
-                src={sc.icon}
-                alt={sc.title}
-                style={{ width: 32, height: 32, imageRendering: 'pixelated' }}
-                draggable={false}
-              />
-              <span>{sc.title}</span>
-            </div>
+          {leftShortcuts.map((sc) => (
+            <ShortcutIcon key={sc.id} sc={sc} />
           ))}
+        </div>
+
+        <div class="desktop-icons desktop-icons-right">
+          {rightApps.map((app) => (
+            <DesktopIcon key={app.id} app={app} />
+          ))}
+          {rightShortcuts.map((sc) => (
+            <ShortcutIcon key={sc.id} sc={sc} />
+          ))}
+          {trashApp && (
+            <div class="desktop-icon-pin-bottom">
+              <DesktopIcon app={trashApp} />
+            </div>
+          )}
         </div>
 
         {state.windows.map((win) => {
