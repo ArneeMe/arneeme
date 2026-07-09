@@ -111,10 +111,10 @@ export default function Minesveiper(_props: Props) {
     }
 
     if (cell.mine) {
-      // Tapt: vis alle miner, marker den som smalt.
+      // Tapt: vis uflaggede miner; korrekt plasserte flagg blir stående.
       for (const row of next) {
         for (const cl of row) {
-          if (cl.mine) cl.revealed = true;
+          if (cl.mine && !cl.flagged) cl.revealed = true;
         }
       }
       setBoard(next);
@@ -124,11 +124,21 @@ export default function Minesveiper(_props: Props) {
     }
 
     floodReveal(next, r, c);
-    setBoard(next);
     if (checkWin(next)) {
+      // Vunnet i det siste trygge feltet åpnes – som i klassisk Minesveiper
+      // flagges gjenværende miner automatisk, ellers ville det siste flagget
+      // vært umulig å sette (spillet er jo allerede over).
+      for (const row of next) {
+        for (const cl of row) {
+          if (cl.mine) cl.flagged = true;
+        }
+      }
+      setBoard(next);
       setGame('won');
       playSound('win');
+      return;
     }
+    setBoard(next);
   };
 
   const toggleFlag = (r: number, c: number) => {
