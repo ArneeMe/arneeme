@@ -13,6 +13,8 @@ import VelgTlf from '../components/desktop/apps/VelgTlf';
 import AgeGate from '../components/desktop/apps/AgeGate';
 import LoanCalculator from '../components/desktop/apps/LoanCalculator';
 import Budsjett from '../components/desktop/apps/Budsjett';
+import Minesveiper from '../components/desktop/apps/Minesveiper';
+import Papirkurv from '../components/desktop/apps/Papirkurv';
 
 export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
@@ -66,6 +68,7 @@ export const apps: Record<string, AppDefinition> = {
     resizable: true,
     singleton: false,
     showOnDesktop: true,
+    desktopArea: 'right',
     showInStartMenu: true,
     component: Paint,
   },
@@ -79,6 +82,7 @@ export const apps: Record<string, AppDefinition> = {
     resizable: false,
     singleton: true,
     showOnDesktop: true,
+    desktopArea: 'right',
     showInStartMenu: true,
     showOnMobile: true,
     tileColor: '#804080',
@@ -145,6 +149,36 @@ export const apps: Record<string, AppDefinition> = {
     component: Oppgaver,
   },
 
+  'minesveiper': {
+    id: 'minesveiper',
+    title: 'Minesveiper',
+    icon: '/icons/mine.svg',
+    defaultSize: { w: 246, h: 356 },
+    minSize: { w: 246, h: 356 },
+    resizable: false,
+    singleton: true,
+    showOnDesktop: true,
+    desktopArea: 'right',
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#606060',
+    component: Minesveiper,
+  },
+
+  'papirkurv': {
+    id: 'papirkurv',
+    title: 'Papirkurv',
+    icon: '/icons/recycle.svg',
+    defaultSize: { w: 480, h: 360 },
+    minSize: { w: 320, h: 240 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    desktopArea: 'right',
+    showInStartMenu: false,
+    component: Papirkurv,
+  },
+
   'skjerm': {
     id: 'skjerm',
     title: 'Skjerminnstillinger',
@@ -167,6 +201,7 @@ export const apps: Record<string, AppDefinition> = {
     resizable: true,
     singleton: false,
     showOnDesktop: true,
+    desktopArea: 'right',
     showInStartMenu: true,
     component: Terminal,
   },

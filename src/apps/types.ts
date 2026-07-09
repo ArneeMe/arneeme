@@ -9,6 +9,8 @@ export interface AppDefinition {
   resizable?: boolean;
   singleton?: boolean;
   showOnDesktop?: boolean;
+  /** Which side of the desktop the icon sits on. Default 'left'. */
+  desktopArea?: 'left' | 'right';
   showInStartMenu?: boolean;
   /** Show this app as a tile on the mobile (Windows Phone) Start screen. */
   showOnMobile?: boolean;
@@ -26,6 +28,8 @@ export interface ShortcutDefinition {
   icon: string;
   url: string;
   showOnDesktop?: boolean;
+  /** Which side of the desktop the icon sits on. Default 'left'. */
+  desktopArea?: 'left' | 'right';
   showInStartMenu?: boolean;
   showInShortcutsFolder?: boolean;
   /** Solid accent color for the mobile Metro tile. */

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'preact/hooks';
 import { apps } from '../../apps/registry';
 import { shortcuts } from '../../apps/shortcuts';
 import { openApp } from '../../stores/desktop';
@@ -8,6 +9,31 @@ interface Props {
 }
 
 export function StartMenu({ onClose }: Props) {
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Piltast-navigasjon mellom menyelementene; Enter aktiverer (native knapp).
+  useEffect(() => {
+    const el = menuRef.current;
+    if (!el) return;
+    const items = () =>
+      Array.from(el.querySelectorAll<HTMLButtonElement>('.start-menu-item'));
+    items()[0]?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      e.preventDefault();
+      const list = items();
+      if (list.length === 0) return;
+      const idx = list.indexOf(document.activeElement as HTMLButtonElement);
+      const next =
+        e.key === 'ArrowDown'
+          ? (idx + 1) % list.length
+          : (idx - 1 + list.length) % list.length;
+      list[next]?.focus();
+    };
+    el.addEventListener('keydown', onKey);
+    return () => el.removeEventListener('keydown', onKey);
+  }, []);
+
   const launch = (appId: string) => {
     const app = apps[appId];
     if (!app) return;
@@ -21,7 +47,7 @@ export function StartMenu({ onClose }: Props) {
   };
 
   return (
-    <div class="start-menu" onClick={(e) => e.stopPropagation()}>
+    <div class="start-menu" ref={menuRef} onClick={(e) => e.stopPropagation()}>
       <div class="start-menu-sidebar">
         <span>arnee.me 95</span>
       </div>

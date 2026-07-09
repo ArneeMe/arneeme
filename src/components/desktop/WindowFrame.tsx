@@ -60,6 +60,10 @@ export function WindowFrame({ win, app, children }: Props) {
       <div
         class="title-bar"
         onMouseDown={(e) => startDrag(e as MouseEvent, win.position.x, win.position.y, win.size.w)}
+        onDblClick={(e) => {
+          if ((e.target as Element).closest('.title-bar-controls')) return;
+          if (app.resizable !== false) toggleMaximize(win.id);
+        }}
         style={{ cursor: win.maximized ? 'default' : 'move', userSelect: 'none' }}
       >
         <div class="title-bar-text">

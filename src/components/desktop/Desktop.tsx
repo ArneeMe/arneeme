@@ -1,9 +1,11 @@
-import { desktopState, openApp, clampAllWindows } from '../../stores/desktop';
+import { desktopState, openApp, clampAllWindows, pruneWindows } from '../../stores/desktop';
+import { playSound } from '../../lib/sounds';
 import { bootPhase } from '../../stores/boot';
 import { isMobile } from '../../stores/viewport';
 import { displaySettings, previewScreensaver, PATTERN_CSS } from '../../stores/display';
 import { apps } from '../../apps/registry';
 import { shortcuts } from '../../apps/shortcuts';
+import type { ShortcutDefinition } from '../../apps/types';
 import { WindowFrame } from './WindowFrame';
 import { DesktopIcon } from './DesktopIcon';
 import { Taskbar } from './Taskbar';
@@ -11,7 +13,38 @@ import { BootScreen } from './BootScreen';
 import { Screensaver } from './Screensaver';
 import { MobileShell } from '../mobile/MobileShell';
 import { useIdle } from './hooks/useIdle';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+
+// Persisterte vinduer kan referere til apper som er fjernet fra registeret
+// siden forrige besøk – rydd dem bort før første render.
+pruneWindows(Object.keys(apps));
+
+function ShortcutIcon({ sc }: { sc: ShortcutDefinition }) {
+  const open = () => window.open(sc.url, '_blank', 'noopener,noreferrer');
+  return (
+    <div
+      class="desktop-icon"
+      role="button"
+      tabIndex={0}
+      onDblClick={open}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      }}
+      title={sc.title}
+    >
+      <img
+        src={sc.icon}
+        alt={sc.title}
+        style={{ width: 32, height: 32, imageRendering: 'pixelated' }}
+        draggable={false}
+      />
+      <span>{sc.title}</span>
+    </div>
+  );
+}
 
 export function Desktop() {
   // Branch before any desktop hooks run, so the window/taskbar/boot machinery
@@ -55,6 +88,45 @@ function DesktopShell() {
   const desktopApps = Object.values(apps).filter((a) => a.showOnDesktop);
   const desktopShortcuts = Object.values(shortcuts).filter((s) => s.showOnDesktop);
 
+  // Venstre side: kjerneappene. Høyre side: spill, kreativt og eksterne
+  // snarveier – med Papirkurv nederst i hjørnet, slik skikken er.
+  const leftApps = desktopApps.filter((a) => a.desktopArea !== 'right');
+  const rightApps = desktopApps.filter(
+    (a) => a.desktopArea === 'right' && a.id !== 'papirkurv',
+  );
+  const trashApp = desktopApps.find((a) => a.id === 'papirkurv');
+  const leftShortcuts = desktopShortcuts.filter((s) => s.desktopArea !== 'right');
+  const rightShortcuts = desktopShortcuts.filter((s) => s.desktopArea === 'right');
+
+  const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
+
+  const onDesktopContextMenu = (e: MouseEvent) => {
+    // Bare på selve skrivebordet – vinduer og taskbar beholder sin oppførsel.
+    if ((e.target as Element).closest('.window, .taskbar, .start-menu')) return;
+    e.preventDefault();
+    playSound('click');
+    setCtxMenu({
+      x: Math.min(e.clientX, window.innerWidth - 180),
+      y: Math.min(e.clientY, window.innerHeight - 190),
+    });
+  };
+
+  // Alltid registrert, ikke per meny-åpning: en effekt som registreres først
+  // etter render kan tape kappløpet mot et Esc-trykk rett etter åpning.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setCtxMenu(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const launchFromCtx = (appId: string) => {
+    const app = apps[appId];
+    if (app) openApp(app.id, app.title, app.icon, app.defaultSize, app.singleton ?? false);
+    setCtxMenu(null);
+  };
+
   return (
     <>
       <div
@@ -64,27 +136,29 @@ function DesktopShell() {
           backgroundImage: pattern.image,
           backgroundSize: pattern.size,
         }}
+        onContextMenu={onDesktopContextMenu}
       >
         <div class="desktop-icons">
-          {desktopApps.map((app) => (
+          {leftApps.map((app) => (
             <DesktopIcon key={app.id} app={app} />
           ))}
-          {desktopShortcuts.map((sc) => (
-            <div
-              key={sc.id}
-              class="desktop-icon"
-              onDblClick={() => window.open(sc.url, '_blank', 'noopener,noreferrer')}
-              title={sc.title}
-            >
-              <img
-                src={sc.icon}
-                alt={sc.title}
-                style={{ width: 32, height: 32, imageRendering: 'pixelated' }}
-                draggable={false}
-              />
-              <span>{sc.title}</span>
-            </div>
+          {leftShortcuts.map((sc) => (
+            <ShortcutIcon key={sc.id} sc={sc} />
           ))}
+        </div>
+
+        <div class="desktop-icons desktop-icons-right">
+          {rightApps.map((app) => (
+            <DesktopIcon key={app.id} app={app} />
+          ))}
+          {rightShortcuts.map((sc) => (
+            <ShortcutIcon key={sc.id} sc={sc} />
+          ))}
+          {trashApp && (
+            <div class="desktop-icon-pin-bottom">
+              <DesktopIcon app={trashApp} />
+            </div>
+          )}
         </div>
 
         {state.windows.map((win) => {
@@ -99,6 +173,28 @@ function DesktopShell() {
         })}
 
         <Taskbar />
+
+        {ctxMenu && (
+          <>
+            <div
+              style={{ position: 'fixed', inset: 0, zIndex: 10000 }}
+              onMouseDown={() => setCtxMenu(null)}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setCtxMenu(null);
+              }}
+            />
+            <div class="desktop-context-menu" style={{ left: ctxMenu.x, top: ctxMenu.y }}>
+              <button onClick={() => window.location.reload()}>Oppdater</button>
+              <div class="desktop-context-divider" />
+              <button onClick={() => launchFromCtx('notater')}>Nytt notat</button>
+              <button onClick={() => launchFromCtx('oppgaver')}>Ny oppgave</button>
+              <button onClick={() => launchFromCtx('paint')}>Nytt bilde</button>
+              <div class="desktop-context-divider" />
+              <button onClick={() => launchFromCtx('skjerm')}>Egenskaper</button>
+            </div>
+          </>
+        )}
       </div>
 
       {phase !== 'desktop' && <BootScreen />}

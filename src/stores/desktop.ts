@@ -20,14 +20,30 @@ interface DesktopState {
 }
 
 const STORAGE_KEY = 'arneeme:desktop:v1';
+const BASE_Z = 10;
+
+/**
+ * nextZ persisteres og vokser for hvert fokus, så uten dette ville tellere
+ * fra gamle økter til slutt passert menyer/overlays (z-index ~9990+).
+ * Komprimer z-verdiene til BASE_Z..BASE_Z+n ved innlasting, men behold
+ * stablingsrekkefølgen og vindusrekkefølgen (taskbar-rekkefølge).
+ */
+function normalizeZ(state: DesktopState): DesktopState {
+  const byZ = [...state.windows].sort((a, b) => a.zIndex - b.zIndex);
+  const rank = new Map(byZ.map((w, i) => [w.id, BASE_Z + i]));
+  return {
+    windows: state.windows.map((w) => ({ ...w, zIndex: rank.get(w.id) ?? BASE_Z })),
+    nextZ: BASE_Z + state.windows.length,
+  };
+}
 
 function loadState(): DesktopState {
-  if (typeof localStorage === 'undefined') return { windows: [], nextZ: 10 };
+  if (typeof localStorage === 'undefined') return { windows: [], nextZ: BASE_Z };
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as DesktopState;
+    if (raw) return normalizeZ(JSON.parse(raw) as DesktopState);
   } catch {}
-  return { windows: [], nextZ: 10 };
+  return { windows: [], nextZ: BASE_Z };
 }
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -166,6 +182,87 @@ export function clampAllWindows() {
         const y = Math.min(maxY, Math.max(0, w.position.y));
         if (x === w.position.x && y === w.position.y) return w;
         return { ...w, position: { x, y } };
+      }),
+    };
+  });
+}
+
+/** Fjern persisterte vinduer hvis app ikke lenger finnes i registeret. */
+export function pruneWindows(validAppIds: string[]) {
+  const valid = new Set(validAppIds);
+  if (desktopState.value.windows.every((w) => valid.has(w.appId))) return;
+  mutate((s) => ({ ...s, windows: s.windows.filter((w) => valid.has(w.appId)) }));
+}
+
+export function minimizeAll() {
+  mutate((s) => ({
+    ...s,
+    windows: s.windows.map((w) => ({ ...w, minimized: true })),
+  }));
+}
+
+export function cascadeWindows() {
+  if (typeof window === 'undefined') return;
+  mutate((s) => {
+    const open = [...s.windows]
+      .filter((w) => !w.minimized)
+      .sort((a, b) => a.zIndex - b.zIndex);
+    let nextZ = s.nextZ;
+    const placed = new Map<string, { x: number; y: number; z: number }>();
+    open.forEach((w, i) => {
+      nextZ += 1;
+      placed.set(w.id, { x: 16 + i * 26, y: 16 + i * 26, z: nextZ });
+    });
+    return {
+      ...s,
+      nextZ,
+      windows: s.windows.map((w) => {
+        const p = placed.get(w.id);
+        if (!p) return w;
+        return {
+          ...w,
+          maximized: false,
+          prevPosition: undefined,
+          prevSize: undefined,
+          position: { x: p.x, y: p.y },
+          zIndex: p.z,
+        };
+      }),
+    };
+  });
+}
+
+export function tileWindows() {
+  if (typeof window === 'undefined') return;
+  mutate((s) => {
+    const open = [...s.windows]
+      .filter((w) => !w.minimized)
+      .sort((a, b) => a.zIndex - b.zIndex);
+    if (open.length === 0) return s;
+    const TASKBAR_H = 30;
+    const cols = Math.ceil(Math.sqrt(open.length));
+    const rows = Math.ceil(open.length / cols);
+    const cellW = Math.floor(window.innerWidth / cols);
+    const cellH = Math.floor((window.innerHeight - TASKBAR_H) / rows);
+    const placed = new Map<string, { x: number; y: number; w: number; h: number }>();
+    open.forEach((w, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      placed.set(w.id, { x: col * cellW, y: row * cellH, w: cellW, h: cellH });
+    });
+    return {
+      ...s,
+      windows: s.windows.map((w) => {
+        const g = placed.get(w.id);
+        if (!g) return w;
+        return {
+          ...w,
+          maximized: false,
+          prevPosition: undefined,
+          prevSize: undefined,
+          position: { x: g.x, y: g.y },
+          size: { w: g.w, h: g.h },
+        };
       }),
     };
   });

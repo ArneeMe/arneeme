@@ -5,6 +5,7 @@ import preact from '@astrojs/preact';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
+  site: 'https://arnee.me',
   output: 'static',
 
   integrations: [preact()],

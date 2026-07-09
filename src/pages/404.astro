@@ -1,0 +1,87 @@
+---
+// Win95 "blåskjerm" som 404-side. Wrangler serverer dist/404.html for
+// ukjente stier via assets.not_found_handling.
+---
+
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fatal exception – arnee.me</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/icons/computer.svg" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #0000aa;
+        color: #ffffff;
+        font-family: 'Courier New', monospace;
+        font-size: 16px;
+        cursor: default;
+      }
+      .bsod {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100%;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .bsod-inner {
+        max-width: 640px;
+        line-height: 1.5;
+      }
+      .bsod-title {
+        background: #aaaaaa;
+        color: #0000aa;
+        padding: 0 8px;
+        display: block;
+        width: fit-content;
+        margin: 0 auto 24px;
+        font-weight: bold;
+      }
+      .bsod-blink {
+        animation: blink 1s steps(1) infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      a {
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bsod">
+      <div class="bsod-inner">
+        <span class="bsod-title">arnee.me</span>
+        <p>
+          A fatal exception 404 has occurred at 0028:C0044F1E. The page you
+          requested has been terminated.
+        </p>
+        <p>* The address may have been mistyped, or the page has been moved.</p>
+        <p>
+          * Press any key to return to <a href="/">C:\arnee.me</a>. Press
+          CTRL+ALT+DEL again to restart your computer. You will lose any
+          unsaved information in all applications.
+        </p>
+        <p style="text-align: center; margin-top: 32px;">
+          Press any key to continue <span class="bsod-blink">_</span>
+        </p>
+      </div>
+    </div>
+    <script>
+      const goHome = () => {
+        window.location.href = '/';
+      };
+      window.addEventListener('keydown', goHome);
+      window.addEventListener('pointerdown', goHome);
+    </script>
+  </body>
+</html>
