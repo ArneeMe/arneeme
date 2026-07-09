@@ -2288,6 +2288,13 @@ body {
   color: #404040;
 }
 
+/* På berøringsskjermer finnes ikke høyreklikk – der er flaggmodus veien. */
+@media (pointer: coarse) {
+  .mines-hint {
+    display: none;
+  }
+}
+
 /* ===== Papirkurv ================================================= */
 
 .trash-empty {

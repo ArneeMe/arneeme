@@ -48,11 +48,12 @@ const COMMANDS: Record<string, { help: string; run: (ctx: CmdCtx) => void }> = {
         return;
       }
       ctx.print([` Innhold i ${formatPath(ctx.cwd)}`, '']);
-      for (const c of node.children) {
+      const visible = node.children.filter((c) => !c.hidden);
+      for (const c of visible) {
         const size = c.type === 'dir' ? '<DIR>'.padEnd(9) : `${(c.name.length * 1337) % 48000}`.padStart(9);
         ctx.print(`12.08.95  09:5${c.name.length % 10}    ${size}  ${c.name}`);
       }
-      const files = node.children.filter((c) => c.type === 'file').length;
+      const files = visible.filter((c) => c.type === 'file').length;
       ctx.print(['', `        ${files} fil(er)`, '']);
     },
   },

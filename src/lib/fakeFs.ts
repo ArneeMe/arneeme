@@ -7,6 +7,8 @@ export interface FsNode {
   appId?: string;
   /** Lines printed by TYPE in the terminal. */
   content?: string[];
+  /** Skjult for DIR, men kan leses med TYPE hvis man kjenner navnet. */
+  hidden?: boolean;
   children?: FsNode[];
 }
 
@@ -63,11 +65,14 @@ function buildRoot(): FsNode {
             '  ( ) Ja',
             '  ( ) Nei',
             '  (•) Aldri spør meg igjen',
+            '',
+            'PS fra Clippy: DIR viser ikke alt. Noen filer er HEMMELIG(e).TXT...',
           ],
         },
         {
           name: 'HEMMELIG.TXT',
           type: 'file',
+          hidden: true,
           content: [
             'Gratulerer, du fant den skjulte filen!',
             '',
