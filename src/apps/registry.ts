@@ -5,6 +5,7 @@ import Oppgaver from '../components/desktop/apps/Oppgaver';
 import DisplayProperties from '../components/desktop/apps/DisplayProperties';
 import Terminal from '../components/desktop/apps/Terminal';
 import Vaer from '../components/desktop/apps/Vaer';
+import QrGenerator from '../components/desktop/apps/QrGenerator';
 import MyComputer from '../components/desktop/apps/MyComputer';
 import Inbox from '../components/desktop/apps/Inbox';
 import IframeApp from '../components/desktop/apps/IframeApp';
@@ -219,6 +220,21 @@ export const apps: Record<string, AppDefinition> = {
     showOnMobile: true,
     tileColor: '#0078c8',
     component: Vaer,
+  },
+
+  'qr': {
+    id: 'qr',
+    title: 'QR-generator',
+    icon: '/icons/qr.svg',
+    defaultSize: { w: 340, h: 520 },
+    minSize: { w: 300, h: 440 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#c00060',
+    component: QrGenerator,
   },
 
   // ── Legacy projects (launched from My Computer > Projects) ────────────────
