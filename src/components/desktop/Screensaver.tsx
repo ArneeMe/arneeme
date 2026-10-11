@@ -8,6 +8,8 @@ interface Star {
 }
 
 const STAR_COUNT = 250;
+// Mørkegrå i stedet for svart: helsvart skjerm ble ofte tolket som at siden hadde krasjet.
+const BG_COLOR = '#6b6b6b';
 
 /**
  * Fullscreen starfield. Idle-triggered mounts unmount by themselves when
@@ -41,7 +43,7 @@ export function Screensaver() {
     const frame = () => {
       const cx = canvas.width / 2;
       const cy = canvas.height / 2;
-      ctx.fillStyle = '#000';
+      ctx.fillStyle = BG_COLOR;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#fff';
 
@@ -60,8 +62,8 @@ export function Screensaver() {
           s.z = 1;
           continue;
         }
-        const size = (1 - s.z) * 2.5;
-        ctx.globalAlpha = Math.min(1, 1.2 - s.z);
+        const size = 2 + (1 - s.z) * 6;
+        ctx.globalAlpha = Math.min(1, Math.max(0.45, 1.2 - s.z));
         ctx.fillRect(sx, sy, size, size);
       }
       ctx.globalAlpha = 1;

@@ -1962,7 +1962,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 100000;
-  background: #000;
+  background: #6b6b6b;
   cursor: none;
 }
 
