@@ -17,6 +17,7 @@ export default function Presentasjoner({ instanceId }: Props) {
       label: 'File',
       items: [
         { label: 'Åpne oversikt i ny fane', onClick: () => apne('/presentasjoner/') },
+        { label: 'Forhåndsvis lokal fil…', onClick: () => apne('/presentasjoner/forhandsvis/') },
         { label: 'Close', onClick: () => closeWindow(instanceId) },
       ],
     },

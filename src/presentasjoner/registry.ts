@@ -3,6 +3,7 @@
 // Presentasjonene lages utenfor plattformen som selvstendige HTML-filer og
 // legges i public/presentasjoner/filer/. Legg til en oppføring her for å få
 // dem på oversikten og en egen URL: /presentasjoner/<slug>.
+// Test en fil før den committes på /presentasjoner/forhandsvis/.
 //
 // `kilde` er en union slik at en senere editor kan lagre presentasjoner i et
 // annet format (f.eks. { type: 'dokument', ... }) uten at resten av modellen
@@ -11,7 +12,7 @@
 export type PresentasjonKilde = { type: 'html'; fil: string };
 
 export interface Presentasjon {
-  /** Brukes i URL-en. Kun a-z, 0-9 og bindestrek. «filer» er reservert. */
+  /** Brukes i URL-en. Kun a-z, 0-9 og bindestrek. «filer» og «forhandsvis» er reservert. */
   slug: string;
   tittel: string;
   beskrivelse: string;

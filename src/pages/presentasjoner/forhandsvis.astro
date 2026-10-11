@@ -1,0 +1,231 @@
+---
+// Forhåndsvisning av en lokal HTML-fil i samme visning som publiserte
+// presentasjoner, så den kan testes før den committes. Fila leses bare i
+// nettleseren og lastes ikke opp noe sted.
+//
+// I Chromium-baserte nettlesere brukes File System Access API, slik at fila
+// lastes inn på nytt automatisk når den endres på disk. Andre nettlesere får
+// en vanlig filvelger og knappen «Last inn på nytt».
+import Visning from '../../components/presentasjoner/Visning.astro';
+---
+
+<Visning tittel="Forhåndsvis presentasjon" noindex>
+  <button slot="bar" type="button" id="fv-velg">Velg fil…</button>
+  <button slot="bar" type="button" id="fv-last" hidden>Last inn på nytt</button>
+
+  <div class="fv-start" id="fv-start">
+    <div class="fv-vindu">
+      <div class="fv-tittellinje">Forhåndsvis presentasjon</div>
+      <div class="fv-innhold">
+        <p>
+          Velg en HTML-fil på maskinen din, eller dra den inn hit. Den vises akkurat som en
+          publisert presentasjon. Fila leses bare i nettleseren din og lastes ikke opp noe sted.
+        </p>
+        <p id="fv-auto-hint" hidden>Endringer du lagrer i fila, lastes inn automatisk.</p>
+        <p id="fv-manuell-hint" hidden>
+          Trykk «Last inn på nytt» i verktøylinja etter at du har lagret endringer.
+        </p>
+        <button type="button" id="fv-velg-start">Velg fil…</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fv-slipp" id="fv-slipp" hidden>Slipp HTML-fila her</div>
+  <input type="file" id="fv-input" accept=".html,.htm,text/html" hidden />
+</Visning>
+
+<style is:global>
+  .fv-start {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: #008080;
+    font: 11px 'Pixelated MS Sans Serif', Arial, sans-serif;
+  }
+  .fv-start[hidden],
+  .fv-slipp[hidden] {
+    display: none;
+  }
+  .fv-vindu {
+    width: 100%;
+    max-width: 380px;
+    padding: 3px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    box-shadow: 1px 1px 0 #000;
+  }
+  .fv-tittellinje {
+    padding: 3px 4px;
+    color: #fff;
+    font-weight: bold;
+    background: linear-gradient(90deg, #000080, #1084d0);
+  }
+  .fv-innhold {
+    padding: 8px 10px 10px;
+    line-height: 1.4;
+  }
+  .fv-innhold p {
+    margin: 0 0 8px;
+  }
+  .fv-innhold button {
+    font: inherit;
+    padding: 4px 14px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    cursor: pointer;
+  }
+  .fv-innhold button:active {
+    border-color: #808080 #fff #fff #808080;
+  }
+  .fv-slipp {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font: bold 20px 'Pixelated MS Sans Serif', Arial, sans-serif;
+    background: rgba(0, 0, 128, 0.75);
+    border: 4px dashed #fff;
+  }
+</style>
+
+<script>
+  const frame = document.getElementById('pres-frame') as HTMLIFrameElement;
+  const tittelEl = document.getElementById('pres-bar-tittel') as HTMLElement;
+  const start = document.getElementById('fv-start') as HTMLElement;
+  const slipp = document.getElementById('fv-slipp') as HTMLElement;
+  const input = document.getElementById('fv-input') as HTMLInputElement;
+  const lastBtn = document.getElementById('fv-last') as HTMLButtonElement;
+
+  // File System Access API finnes bare i Chromium-baserte nettlesere og
+  // mangler i TypeScript sin DOM-typing.
+  type Handle = { getFile(): Promise<File> };
+  const vindu = window as unknown as {
+    showOpenFilePicker?: (o: unknown) => Promise<Handle[]>;
+  };
+  const harHandle = typeof vindu.showOpenFilePicker === 'function';
+  (document.getElementById(harHandle ? 'fv-auto-hint' : 'fv-manuell-hint') as HTMLElement).hidden =
+    false;
+
+  let handle: Handle | undefined;
+  let fil: File | undefined;
+  let blobUrl: string | undefined;
+  let sistEndret = 0;
+
+  const erHtml = (f: File) => /\.html?$/i.test(f.name) || f.type === 'text/html';
+
+  async function vis(f: File) {
+    const tekst = await f.text();
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
+    // Blob-URL-en har samme origin som siden, så presentasjonen får
+    // localStorage, fullskjerm og tastaturvideresending som ellers.
+    blobUrl = URL.createObjectURL(new Blob([tekst], { type: 'text/html' }));
+    fil = f;
+    sistEndret = f.lastModified;
+    frame.src = blobUrl;
+    tittelEl.textContent = f.name;
+    start.hidden = true;
+    lastBtn.hidden = false;
+  }
+
+  async function bruk(h: Handle | undefined, f: File) {
+    if (!erHtml(f)) {
+      alert(`«${f.name}» ser ikke ut som en HTML-fil.`);
+      return;
+    }
+    handle = h;
+    await vis(f);
+  }
+
+  async function velg() {
+    if (!harHandle) {
+      input.click();
+      return;
+    }
+    try {
+      const [h] = await vindu.showOpenFilePicker!({
+        types: [{ description: 'HTML', accept: { 'text/html': ['.html', '.htm'] } }],
+      });
+      await bruk(h, await h.getFile());
+    } catch (e) {
+      if ((e as DOMException)?.name !== 'AbortError') input.click();
+    }
+  }
+
+  async function lastPaNytt() {
+    try {
+      if (handle) await vis(await handle.getFile());
+      else if (fil) await vis(fil);
+    } catch {
+      // Fila er endret eller flyttet og kan ikke leses fra det gamle
+      // File-objektet (vanlig uten File System Access API). Be om den igjen.
+      velg();
+    }
+  }
+
+  input.addEventListener('change', () => {
+    const f = input.files?.[0];
+    input.value = '';
+    if (f) bruk(undefined, f);
+  });
+  document.getElementById('fv-velg')!.addEventListener('click', velg);
+  document.getElementById('fv-velg-start')!.addEventListener('click', velg);
+  lastBtn.addEventListener('click', lastPaNytt);
+
+  // ── Automatisk innlasting når fila endres på disk ──────────────────────
+  setInterval(async () => {
+    if (!handle || document.hidden) return;
+    try {
+      const f = await handle.getFile();
+      if (f.lastModified !== sistEndret) await vis(f);
+    } catch {}
+  }, 1000);
+
+  // ── Dra og slipp ────────────────────────────────────────────────────────
+  const harFiler = (e: DragEvent) => !!e.dataTransfer?.types.includes('Files');
+  const visSlipp = (e: DragEvent) => {
+    if (!harFiler(e)) return;
+    e.preventDefault();
+    slipp.hidden = false;
+  };
+  window.addEventListener('dragenter', visSlipp);
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  // Over presentasjonen havner dra-hendelsene i iframen. Samme origin lar oss
+  // lytte der og legge slippflaten over.
+  frame.addEventListener('load', () => {
+    try {
+      frame.contentDocument?.addEventListener('dragenter', visSlipp);
+      const t = frame.contentDocument?.title;
+      if (t && fil) tittelEl.textContent = t;
+    } catch {}
+  });
+  slipp.addEventListener('dragover', (e) => e.preventDefault());
+  slipp.addEventListener('dragleave', (e) => {
+    if (e.target === slipp) slipp.hidden = true;
+  });
+  slipp.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    slipp.hidden = true;
+    const item = e.dataTransfer?.items[0] as
+      | (DataTransferItem & { getAsFileSystemHandle?: () => Promise<unknown> })
+      | undefined;
+    const f = e.dataTransfer?.files[0];
+    if (!f) return;
+    // Må hentes synkront i drop-handleren, før første await.
+    const handleLover = item?.getAsFileSystemHandle?.();
+    let h: Handle | undefined;
+    try {
+      const kandidat = (await handleLover) as (Handle & { kind?: string }) | undefined;
+      if (kandidat?.kind === 'file') h = kandidat;
+    } catch {}
+    bruk(h, f);
+  });
+</script>
