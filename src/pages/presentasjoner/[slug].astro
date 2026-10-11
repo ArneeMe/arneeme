@@ -1,14 +1,14 @@
 ---
-// Visningsside for én presentasjon fra registeret.
+// Visningsside for én presentasjon (se src/presentasjoner/registry.ts).
 import Visning from '../../components/presentasjoner/Visning.astro';
-import { presentasjoner, kildeUrl, type Presentasjon } from '../../presentasjoner/registry';
+import { presentasjoner, type Presentasjon } from '../../presentasjoner/registry';
 
 export function getStaticPaths() {
   return presentasjoner.map((p) => ({ params: { slug: p.slug }, props: { p } }));
 }
 
 const { p } = Astro.props as { p: Presentasjon };
-const src = kildeUrl(p);
+const src = p.fil;
 ---
 
 <Visning tittel={p.tittel} beskrivelse={p.beskrivelse} src={src}>

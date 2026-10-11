@@ -1,8 +1,6 @@
 ---
 import '98.css';
-import { sortertePresentasjoner, formaterDato } from '../../presentasjoner/registry';
-
-const liste = sortertePresentasjoner();
+import { presentasjoner as liste, formaterDato } from '../../presentasjoner/registry';
 ---
 
 <!doctype html>
@@ -101,10 +99,12 @@ const liste = sortertePresentasjoner();
                     <img src="/icons/presentasjon.svg" alt="" />
                     <div>
                       <div class="pres-tittel">{p.tittel}</div>
-                      <div class="pres-dato">
-                        <time datetime={p.dato}>{formaterDato(p.dato)}</time>
-                      </div>
-                      <div class="pres-beskrivelse">{p.beskrivelse}</div>
+                      {p.dato && (
+                        <div class="pres-dato">
+                          <time datetime={p.dato}>{formaterDato(p.dato)}</time>
+                        </div>
+                      )}
+                      {p.beskrivelse && <div class="pres-beskrivelse">{p.beskrivelse}</div>}
                     </div>
                   </a>
                 </li>

@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'preact/hooks';
 import { closeWindow } from '../../../stores/desktop';
 import { isMobile } from '../../../stores/viewport';
-import { sortertePresentasjoner, formaterDato } from '../../../presentasjoner/registry';
+import { formaterDato, type Presentasjon } from '../../../presentasjoner/felles';
 import { MenuBar } from '../MenuBar';
 
 interface Props {
@@ -10,7 +11,16 @@ interface Props {
 const apne = (url: string) => window.open(url, '_blank', 'noopener,noreferrer');
 
 export default function Presentasjoner({ instanceId }: Props) {
-  const liste = sortertePresentasjoner();
+  // Lista bygges fra filene ved bygging og hentes her, så HTML-filene ikke
+  // havner i JS-bunten.
+  const [liste, setListe] = useState<Presentasjon[] | null>(null);
+  const [feil, setFeil] = useState(false);
+  useEffect(() => {
+    fetch('/presentasjoner/liste.json')
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(setListe)
+      .catch(() => setFeil(true));
+  }, []);
 
   const menus = [
     {
@@ -34,7 +44,8 @@ export default function Presentasjoner({ instanceId }: Props) {
 
       <div class="explorer-body">
         <div class="explorer-icons">
-          {liste.map((p) => {
+          {feil && <span>Kunne ikke hente presentasjonene.</span>}
+          {liste?.map((p) => {
             const open = () => apne(`/presentasjoner/${p.slug}/`);
             return (
               <div
@@ -47,7 +58,7 @@ export default function Presentasjoner({ instanceId }: Props) {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') open();
                 }}
-                title={`${p.tittel}\n${formaterDato(p.dato)}\n\n${p.beskrivelse}`}
+                title={[p.tittel, formaterDato(p.dato), p.beskrivelse].filter(Boolean).join('\n')}
               >
                 <img
                   src="/icons/presentasjon.svg"
@@ -62,7 +73,7 @@ export default function Presentasjoner({ instanceId }: Props) {
         </div>
 
         <div class="explorer-statusbar">
-          {liste.length} objekt{liste.length !== 1 ? 'er' : ''}
+          {liste ? `${liste.length} objekt${liste.length !== 1 ? 'er' : ''}` : 'Henter…'}
         </div>
       </div>
     </div>
