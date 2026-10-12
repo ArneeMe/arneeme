@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <!-- projektorlerret -->
+  <rect x="15" y="2" width="2" height="3" fill="#404040"/>
+  <rect x="3" y="5" width="26" height="17" fill="#ffffff" stroke="#000" stroke-width="1"/>
+  <rect x="3" y="5" width="26" height="3" fill="#000080"/>
+  <!-- stolpediagram -->
+  <rect x="8" y="15" width="3" height="5" fill="#cc0000"/>
+  <rect x="13" y="12" width="3" height="8" fill="#008000"/>
+  <rect x="18" y="10" width="3" height="10" fill="#ffcc00"/>
+  <rect x="23" y="13" width="3" height="7" fill="#0078c8"/>
+  <!-- stativ -->
+  <rect x="15" y="22" width="2" height="6" fill="#404040"/>
+  <rect x="10" y="28" width="12" height="2" fill="#404040"/>
+</svg>

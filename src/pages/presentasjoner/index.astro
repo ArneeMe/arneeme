@@ -1,0 +1,125 @@
+---
+import '98.css';
+import { presentasjoner as liste, formaterDato } from '../../presentasjoner/registry';
+---
+
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presentasjoner · arnee.me</title>
+    <link rel="icon" type="image/svg+xml" href="/icons/presentasjon.svg" />
+    <meta name="description" content="Presentasjoner på arnee.me." />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #008080;
+        font-family: 'Pixelated MS Sans Serif', Arial, sans-serif;
+        font-size: 11px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 12px;
+        box-sizing: border-box;
+        gap: 16px;
+      }
+      .pres-window {
+        width: 100%;
+        max-width: 640px;
+      }
+      .pres-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .pres-item a {
+        display: flex;
+        gap: 10px;
+        padding: 8px;
+        color: #000;
+        text-decoration: none;
+        background: #fff;
+        border: 2px solid;
+        border-color: #808080 #fff #fff #808080;
+      }
+      .pres-item a:hover,
+      .pres-item a:focus-visible {
+        background: #000080;
+        color: #fff;
+        outline: none;
+      }
+      .pres-item img {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        image-rendering: pixelated;
+      }
+      .pres-tittel {
+        font-size: 13px;
+        font-weight: bold;
+      }
+      .pres-dato {
+        opacity: 0.75;
+        margin: 2px 0 4px;
+      }
+      .pres-beskrivelse {
+        line-height: 1.4;
+      }
+      .pres-tom {
+        padding: 12px;
+      }
+      footer {
+        display: flex;
+        gap: 16px;
+      }
+      footer a {
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="window pres-window">
+      <div class="title-bar">
+        <div class="title-bar-text">C:\Presentasjoner</div>
+      </div>
+      <div class="window-body">
+        {
+          liste.length === 0 ? (
+            <p class="pres-tom">Ingen presentasjoner ennå.</p>
+          ) : (
+            <ul class="pres-list">
+              {liste.map((p) => (
+                <li class="pres-item">
+                  <a href={`/presentasjoner/${p.slug}/`}>
+                    <img src="/icons/presentasjon.svg" alt="" />
+                    <div>
+                      <div class="pres-tittel">{p.tittel}</div>
+                      {p.dato && (
+                        <div class="pres-dato">
+                          <time datetime={p.dato}>{formaterDato(p.dato)}</time>
+                        </div>
+                      )}
+                      {p.beskrivelse && <div class="pres-beskrivelse">{p.beskrivelse}</div>}
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+      <div class="status-bar">
+        <p class="status-bar-field">{liste.length} objekt{liste.length === 1 ? '' : 'er'}</p>
+      </div>
+    </div>
+    <footer>
+      <a href="/presentasjoner/forhandsvis/">Forhåndsvis lokal fil…</a>
+      <a href="/">← tilbake til arnee.me</a>
+    </footer>
+  </body>
+</html>

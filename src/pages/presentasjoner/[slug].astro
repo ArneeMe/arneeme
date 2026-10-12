@@ -1,0 +1,16 @@
+---
+// Visningsside for én presentasjon (se src/presentasjoner/registry.ts).
+import Visning from '../../components/presentasjoner/Visning.astro';
+import { presentasjoner, type Presentasjon } from '../../presentasjoner/registry';
+
+export function getStaticPaths() {
+  return presentasjoner.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props as { p: Presentasjon };
+const src = p.fil;
+---
+
+<Visning tittel={p.tittel} beskrivelse={p.beskrivelse} src={src}>
+  <a slot="bar" href={src} target="_blank" rel="noopener">Åpne fil</a>
+</Visning>

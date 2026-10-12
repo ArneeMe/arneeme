@@ -16,6 +16,7 @@ import LoanCalculator from '../components/desktop/apps/LoanCalculator';
 import Budsjett from '../components/desktop/apps/Budsjett';
 import Minesveiper from '../components/desktop/apps/Minesveiper';
 import Papirkurv from '../components/desktop/apps/Papirkurv';
+import Presentasjoner from '../components/desktop/apps/Presentasjoner';
 
 export const apps: Record<string, AppDefinition> = {
   // ── Visible desktop apps ──────────────────────────────────────────────────
@@ -164,6 +165,21 @@ export const apps: Record<string, AppDefinition> = {
     showOnMobile: true,
     tileColor: '#606060',
     component: Minesveiper,
+  },
+
+  'presentasjoner': {
+    id: 'presentasjoner',
+    title: 'Presentasjoner',
+    icon: '/icons/folder.svg',
+    defaultSize: { w: 480, h: 340 },
+    minSize: { w: 300, h: 220 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#c08000',
+    component: Presentasjoner,
   },
 
   'papirkurv': {
