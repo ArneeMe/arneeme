@@ -1,0 +1,13 @@
+{
+  "name": "arneeme-nyheter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "jsdom": "^26.1.0",
+    "jszip": "^3.10.1"
+  }
+}

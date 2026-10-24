@@ -1,0 +1,53 @@
+# Bygger NRK-utgaven til lesebrettet hver time og legger den i
+# releasen `nrk-siste`. arnee.me/api/nrk.epub videresender den.
+# På PR bygges den bare, uten å publisere.
+name: Nyheter
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  pull_request:
+    paths: ['nyheter/**', '.github/workflows/nyheter.yml']
+
+concurrency:
+  group: nyheter-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  nrk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+        working-directory: nyheter
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: nyheter/package-lock.json
+
+      - run: npm ci
+
+      - name: Bygg EPUB
+        run: |
+          npm run build 2>&1 | tee bygg.log
+          echo "::notice title=NRK::$(cat ut/nrk.json)"
+          grep '^hoppet over' bygg.log | head -20 | sed 's/^/::warning::/' || true
+
+      - name: Publiser
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view nrk-siste >/dev/null 2>&1 || \
+            gh release create nrk-siste --prerelease --latest=false \
+              --title 'NRK siste' --notes 'Bygges hver time av nyheter.yml. Hentes via arnee.me/api/nrk.epub.'
+          gh release upload nrk-siste ut/nrk.epub ut/nrk.json --clobber

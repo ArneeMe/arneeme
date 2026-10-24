@@ -1,0 +1,226 @@
+// Lager en EPUB med alle toppsakene fra NRK, til lesebrettet.
+// Kjøres hver time av .github/workflows/nyheter.yml, som legger
+// nrk.epub og nrk.json i GitHub-releasen `nrk-siste`.
+// arnee.me/api/nrk.epub og /api/nrk.json videresender derfra.
+//
+// Lokalt: cd nyheter && npm install && npm run build  →  ut/nrk.epub
+
+import { mkdir, writeFile } from 'node:fs/promises';
+import { JSDOM, VirtualConsole } from 'jsdom';
+import { Readability } from '@mozilla/readability';
+import JSZip from 'jszip';
+
+const RSS = 'https://www.nrk.no/toppsaker.rss';
+const UA = 'arnee.me-nyheter/1.0 (personlig lesebrett; https://arnee.me)';
+const SAMTIDIG = 4;
+const MIN_TEGN = 300; // kortere enn dette er video, liveblogg o.l.
+const UT = new URL('./ut/', import.meta.url);
+
+const stille = new VirtualConsole();
+
+async function hent(url) {
+  for (let forsok = 1; ; forsok++) {
+    try {
+      const res = await fetch(url, {
+        headers: { 'User-Agent': UA },
+        signal: AbortSignal.timeout(20_000),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.text();
+    } catch (e) {
+      if (forsok >= 2) throw e;
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+  }
+}
+
+function lesRss(xml) {
+  const doc = new JSDOM(xml, { contentType: 'text/xml' }).window.document;
+  const tekst = (el, tag) => el.getElementsByTagName(tag)[0]?.textContent?.trim() ?? '';
+  return [...doc.getElementsByTagName('item')].map((item) => ({
+    tittel: tekst(item, 'title'),
+    lenke: tekst(item, 'link'),
+    ingress: tekst(item, 'description'),
+    dato: new Date(tekst(item, 'pubDate')),
+  }));
+}
+
+// --- HTML til gyldig XHTML ---------------------------------------------------
+
+const BEHOLD = new Set(['p', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'blockquote', 'em', 'strong', 'b', 'i', 'br']);
+const FJERN = new Set(['script', 'style', 'noscript', 'iframe', 'svg', 'figure', 'img', 'picture', 'video', 'audio', 'button', 'nav', 'form', 'aside', 'footer']);
+const SOM = { h1: 'h2', h5: 'h4', h6: 'h4' };
+
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+function xhtml(node) {
+  if (node.nodeType === 3) return esc(node.textContent);
+  if (node.nodeType !== 1) return '';
+  const tag = node.localName;
+  if (FJERN.has(tag)) return '';
+  const inni = [...node.childNodes].map(xhtml).join('');
+  const ny = SOM[tag] ?? tag;
+  if (ny === 'br') return '<br/>';
+  if (!BEHOLD.has(ny)) return inni; // pakk ut: behold teksten, dropp taggen
+  if (!inni.trim()) return '';
+  return `<${ny}>${inni}</${ny}>`;
+}
+
+// --- Artikler -----------------------------------------------------------------
+
+async function lesArtikkel(sak) {
+  const url = new URL(sak.lenke);
+  if (url.hostname !== 'www.nrk.no') return null; // tv.nrk.no, radio.nrk.no osv.
+  const html = await hent(sak.lenke);
+  const dom = new JSDOM(html, { url: sak.lenke, virtualConsole: stille });
+  try {
+    const art = new Readability(dom.window.document).parse();
+    if (!art || (art.length ?? 0) < MIN_TEGN) return null;
+    const innhold = new JSDOM(`<body>${art.content}</body>`).window.document.body;
+    const brodtekst = xhtml(innhold).replace(/(<br\/>\s*){2,}/g, '<br/>');
+    return { ...sak, byline: art.byline?.trim() ?? '', brodtekst, tekst: innhold.textContent };
+  } finally {
+    dom.window.close();
+  }
+}
+
+async function iParallell(liste, n, fn) {
+  const svar = new Array(liste.length);
+  let neste = 0;
+  await Promise.all(
+    Array.from({ length: n }, async () => {
+      while (neste < liste.length) {
+        const i = neste++;
+        try {
+          svar[i] = await fn(liste[i]);
+        } catch (e) {
+          console.warn(`hoppet over ${liste[i].lenke}: ${e.message}`);
+          svar[i] = null;
+        }
+      }
+    }),
+  );
+  return svar;
+}
+
+// --- EPUB ---------------------------------------------------------------------
+
+const oslo = (d, opt) => d.toLocaleString('nb-NO', { timeZone: 'Europe/Oslo', ...opt });
+const klokke = (d) => oslo(d, { hour: '2-digit', minute: '2-digit' });
+
+function side(tittel, body) {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="nb" lang="nb">
+<head><meta charset="utf-8"/><title>${esc(tittel)}</title><link rel="stylesheet" href="stil.css"/></head>
+<body>
+${body}
+</body>
+</html>
+`;
+}
+
+function artikkelSide(a) {
+  const meta = [a.byline, `${oslo(a.dato, { weekday: 'short', day: 'numeric', month: 'short' })} kl ${klokke(a.dato)}`]
+    .filter(Boolean)
+    .map(esc)
+    .join(' · ');
+  // Readability tar ofte med ingressen selv. Vis RSS-ingressen bare når den mangler.
+  const start = a.tekst.replace(/\s+/g, ' ').trim().slice(0, 300);
+  const ingress = a.ingress && !start.includes(a.ingress.slice(0, 60)) ? `<p class="ingress">${esc(a.ingress)}</p>` : '';
+  return side(a.tittel, `<h1>${esc(a.tittel)}</h1>\n<p class="meta">${meta}</p>\n${ingress}\n${a.brodtekst}`);
+}
+
+async function lagEpub(tittel, artikler, bygd) {
+  const zip = new JSZip();
+  zip.file('mimetype', 'application/epub+zip', { compression: 'STORE' });
+  zip.file(
+    'META-INF/container.xml',
+    `<?xml version="1.0" encoding="utf-8"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+<rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles>
+</container>
+`,
+  );
+
+  const filer = artikler.map((a, i) => ({ ...a, fil: `s${String(i + 1).padStart(3, '0')}.xhtml` }));
+  const id = `urn:arnee.me:nrk:${bygd.toISOString().slice(0, 13)}`;
+
+  zip.file(
+    'OEBPS/stil.css',
+    `body { margin: 0 0.5em; }
+h1 { font-size: 1.4em; margin: 0.6em 0 0.2em; }
+h2 { font-size: 1.15em; }
+.meta { font-size: 0.8em; margin: 0 0 1em; }
+.ingress { font-weight: bold; }
+ol.innhold li { margin-bottom: 0.4em; }
+`,
+  );
+
+  const liste = filer.map((a) => `<li><a href="${a.fil}">${esc(a.tittel)}</a></li>`).join('\n');
+  zip.file('OEBPS/forside.xhtml', side(tittel, `<h1>${esc(tittel)}</h1>\n<p class="meta">${artikler.length} saker fra NRK</p>\n<ol class="innhold">\n${liste}\n</ol>`));
+  zip.file('OEBPS/nav.xhtml', side('Innhold', `<nav epub:type="toc"><h1>Innhold</h1>\n<ol>\n${liste}\n</ol></nav>`));
+  for (const a of filer) zip.file(`OEBPS/${a.fil}`, artikkelSide(a));
+
+  const ncxPunkter = filer
+    .map((a, i) => `<navPoint id="p${i + 1}" playOrder="${i + 1}"><navLabel><text>${esc(a.tittel)}</text></navLabel><content src="${a.fil}"/></navPoint>`)
+    .join('\n');
+  zip.file(
+    'OEBPS/toc.ncx',
+    `<?xml version="1.0" encoding="utf-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+<head><meta name="dtb:uid" content="${id}"/></head>
+<docTitle><text>${esc(tittel)}</text></docTitle>
+<navMap>
+${ncxPunkter}
+</navMap>
+</ncx>
+`,
+  );
+
+  const manifest = filer.map((a) => `<item id="${a.fil.slice(0, 4)}" href="${a.fil}" media-type="application/xhtml+xml"/>`).join('\n');
+  const spine = filer.map((a) => `<itemref idref="${a.fil.slice(0, 4)}"/>`).join('\n');
+  zip.file(
+    'OEBPS/content.opf',
+    `<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid" xml:lang="nb">
+<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+<dc:identifier id="uid">${id}</dc:identifier>
+<dc:title>${esc(tittel)}</dc:title>
+<dc:creator>NRK</dc:creator>
+<dc:language>nb</dc:language>
+<meta property="dcterms:modified">${bygd.toISOString().slice(0, 19)}Z</meta>
+</metadata>
+<manifest>
+<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+<item id="stil" href="stil.css" media-type="text/css"/>
+<item id="forside" href="forside.xhtml" media-type="application/xhtml+xml"/>
+${manifest}
+</manifest>
+<spine toc="ncx">
+<itemref idref="forside"/>
+${spine}
+</spine>
+</package>
+`,
+  );
+
+  return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE', mimeType: 'application/epub+zip' });
+}
+
+// --- Main -----------------------------------------------------------------------
+
+const bygd = new Date();
+const saker = lesRss(await hent(RSS));
+const artikler = (await iParallell(saker, SAMTIDIG, lesArtikkel)).filter(Boolean);
+if (artikler.length === 0) throw new Error(`Ingen artikler (${saker.length} i RSS)`);
+
+const tittel = `NRK ${oslo(bygd, { weekday: 'short', day: 'numeric', month: 'short' })} kl ${oslo(bygd, { hour: '2-digit' })}`;
+const epub = await lagEpub(tittel, artikler, bygd);
+const info = { tittel, bygd: bygd.toISOString(), saker: artikler.length, iRss: saker.length, bytes: epub.length };
+
+await mkdir(UT, { recursive: true });
+await writeFile(new URL('nrk.epub', UT), epub);
+await writeFile(new URL('nrk.json', UT), JSON.stringify(info) + '\n');
+console.log(JSON.stringify(info));
