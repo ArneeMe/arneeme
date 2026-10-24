@@ -39,7 +39,7 @@ jobs:
       - name: Bygg EPUB
         run: |
           npm run build 2>&1 | tee bygg.log
-          echo "::notice title=NRK::$(cat ut/nrk.json)"
+          echo "::notice title=NRK::$(tail -1 bygg.log)"
           grep '^hoppet over' bygg.log | head -20 | sed 's/^/::warning::/' || true
 
       - name: Publiser
