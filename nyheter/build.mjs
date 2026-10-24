@@ -63,6 +63,7 @@ function xhtml(node) {
   if (ny === 'br') return '<br/>';
   if (!BEHOLD.has(ny)) return inni; // pakk ut: behold teksten, dropp taggen
   if (!inni.trim()) return '';
+  if (ny === 'p' && /^\s*(Publisert|Oppdatert)\b/.test(node.textContent)) return '';
   return `<${ny}>${inni}</${ny}>`;
 }
 
@@ -218,9 +219,16 @@ if (artikler.length === 0) throw new Error(`Ingen artikler (${saker.length} i RS
 
 const tittel = `NRK ${oslo(bygd, { weekday: 'short', day: 'numeric', month: 'short' })} kl ${oslo(bygd, { hour: '2-digit' })}`;
 const epub = await lagEpub(tittel, artikler, bygd);
-const info = { tittel, bygd: bygd.toISOString(), saker: artikler.length, iRss: saker.length, bytes: epub.length };
+// `liste` er overskriftene i samme rekkefølge som kapitlene (kapittel 1 er
+// forsiden). `id` er NRKs artikkel-id, som lesebrettet bruker til «lest».
+const liste = artikler.map((a) => ({
+  id: a.lenke.match(/(\d+\.\d+)$/)?.[1] ?? a.lenke,
+  t: a.tittel,
+  kl: klokke(a.dato),
+}));
+const info = { tittel, bygd: bygd.toISOString(), saker: artikler.length, iRss: saker.length, bytes: epub.length, liste };
 
 await mkdir(UT, { recursive: true });
 await writeFile(new URL('nrk.epub', UT), epub);
 await writeFile(new URL('nrk.json', UT), JSON.stringify(info) + '\n');
-console.log(JSON.stringify(info));
+console.log(JSON.stringify({ ...info, liste: undefined }));
