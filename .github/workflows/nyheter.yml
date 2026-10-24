@@ -1,5 +1,6 @@
-# Bygger NRK-utgaven til lesebrettet hver time og legger den i
-# releasen `nrk-siste`. arnee.me/api/nrk.epub videresender den.
+# Bygger NRK-utgaven og dagens vær til lesebrettet hver time og legger
+# dem i releasen `nrk-siste`. arnee.me/api/nrk.epub, nrk.json og
+# hjem.json videresender dem.
 # På PR bygges den bare, uten å publisere.
 name: Nyheter
 
@@ -42,6 +43,11 @@ jobs:
           echo "::notice title=NRK::$(tail -1 bygg.log)"
           grep '^hoppet over' bygg.log | head -20 | sed 's/^/::warning::/' || true
 
+      - name: Vær
+        run: |
+          node vaer.mjs > vaer.log 2>&1 || true
+          echo "::notice title=Vær::$(tail -1 vaer.log)"
+
       - name: Publiser
         if: github.event_name != 'pull_request'
         env:
@@ -50,4 +56,4 @@ jobs:
           gh release view nrk-siste >/dev/null 2>&1 || \
             gh release create nrk-siste --prerelease --latest=false \
               --title 'NRK siste' --notes 'Bygges hver time av nyheter.yml. Hentes via arnee.me/api/nrk.epub.'
-          gh release upload nrk-siste ut/nrk.epub ut/nrk.json --clobber
+          gh release upload nrk-siste ut/nrk.epub ut/nrk.json $(ls ut/hjem.json 2>/dev/null) --clobber
