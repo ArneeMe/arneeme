@@ -1,4 +1,4 @@
-// Videresender siste NRK-utgave (bygd av .github/workflows/nyheter.yml)
+// Videresender siste NRK-utgave og vær (bygd av .github/workflows/nyheter.yml)
 // fra GitHub-releasen, så lesebrettet bare snakker med arnee.me.
 const RELEASE = 'https://github.com/ArneeMe/arneeme/releases/download/nrk-siste/';
 
