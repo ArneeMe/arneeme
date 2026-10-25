@@ -14,7 +14,7 @@ const RSS = 'https://www.nrk.no/toppsaker.rss';
 const UA = 'arnee.me-nyheter/1.0 (personlig lesebrett; https://arnee.me)';
 const SAMTIDIG = 4;
 const MIN_TEGN = 300; // kortere enn dette er video, liveblogg o.l.
-const MAKS_ALDER_MS = 24 * 3600_000; // saker som ikke er oppdatert så nylig, tas ikke med
+const MAKS_ALDER_MS = 36 * 3600_000; // saker som ikke er oppdatert så nylig, tas ikke med
 const UT = new URL('./ut/', import.meta.url);
 
 const stille = new VirtualConsole();
