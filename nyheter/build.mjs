@@ -9,11 +9,13 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import JSZip from 'jszip';
+import sharp from 'sharp';
 
 const RSS = 'https://www.nrk.no/toppsaker.rss';
 const UA = 'arnee.me-nyheter/1.0 (personlig lesebrett; https://arnee.me)';
 const SAMTIDIG = 4;
 const MIN_TEGN = 300; // kortere enn dette er video, liveblogg o.l.
+const BILDE_BREDDE = 480; // lesebrettets skjermbredde
 const MAKS_ALDER_MS = 36 * 3600_000; // saker som ikke er oppdatert så nylig, tas ikke med
 const UT = new URL('./ut/', import.meta.url);
 
@@ -92,16 +94,29 @@ async function lesArtikkel(sak) {
   const dom = new JSDOM(html, { url: sak.lenke, virtualConsole: stille });
   try {
     const endret = oppdatert(dom.window.document);
+    const bildeUrl = dom.window.document.querySelector('meta[property="og:image"]')?.content ?? '';
     const sist = endret && endret > sak.dato ? endret : sak.dato;
     if (Date.now() - sist > MAKS_ALDER_MS) return null;
     const art = new Readability(dom.window.document).parse();
     if (!art || (art.length ?? 0) < MIN_TEGN) return null;
     const innhold = new JSDOM(`<body>${art.content}</body>`).window.document.body;
     const brodtekst = xhtml(innhold).replace(/(<br\/>\s*){2,}/g, '<br/>');
-    return { ...sak, endret: Boolean(endret), byline: art.byline?.trim() ?? '', brodtekst, tekst: innhold.textContent };
+    return { ...sak, bildeUrl, endret: Boolean(endret), byline: art.byline?.trim() ?? '', brodtekst, tekst: innhold.textContent };
   } finally {
     dom.window.close();
   }
+}
+
+// Hovedbildet som gråtone-JPEG for e-blekk. Baseline (ikke progressiv): lesebrettet
+// dekoder progressive JPEG bare i 1/8 oppløsning.
+async function lagBilde(url) {
+  const res = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(20_000) });
+  if (!res.ok) throw new Error(`bilde HTTP ${res.status}`);
+  return sharp(Buffer.from(await res.arrayBuffer()))
+    .resize({ width: BILDE_BREDDE, withoutEnlargement: true })
+    .toColourspace('b-w')
+    .jpeg({ quality: 70, progressive: false })
+    .toBuffer();
 }
 
 async function iParallell(liste, n, fn) {
@@ -148,7 +163,8 @@ function artikkelSide(a) {
   // Readability tar ofte med ingressen selv. Vis RSS-ingressen bare når den mangler.
   const start = a.tekst.replace(/\s+/g, ' ').trim().slice(0, 300);
   const ingress = a.ingress && !start.includes(a.ingress.slice(0, 60)) ? `<p class="ingress">${esc(a.ingress)}</p>` : '';
-  return side(a.tittel, `<h1>${esc(a.tittel)}</h1>\n<p class="meta">${meta}</p>\n${ingress}\n${a.brodtekst}`);
+  const bilde = a.bildeFil ? `<div class="bilde"><img src="${a.bildeFil}" alt=""/></div>\n` : '';
+  return side(a.tittel, `<h1>${esc(a.tittel)}</h1>\n<p class="meta">${meta}</p>\n${bilde}${ingress}\n${a.brodtekst}`);
 }
 
 async function lagEpub(tittel, artikler, bygd) {
@@ -173,6 +189,8 @@ h1 { font-size: 1.4em; margin: 0.6em 0 0.2em; }
 h2 { font-size: 1.15em; }
 .meta { font-size: 0.8em; margin: 0 0 1em; }
 .ingress { font-weight: bold; }
+.bilde { margin: 0 0 1em; text-align: center; }
+.bilde img { width: 100%; }
 ol.innhold li { margin-bottom: 0.4em; }
 `,
   );
@@ -180,7 +198,13 @@ ol.innhold li { margin-bottom: 0.4em; }
   const liste = filer.map((a) => `<li><a href="${a.fil}">${esc(a.tittel)}</a></li>`).join('\n');
   zip.file('OEBPS/forside.xhtml', side(tittel, `<h1>${esc(tittel)}</h1>\n<p class="meta">${artikler.length} saker fra NRK</p>\n<ol class="innhold">\n${liste}\n</ol>`));
   zip.file('OEBPS/nav.xhtml', side('Innhold', `<nav epub:type="toc"><h1>Innhold</h1>\n<ol>\n${liste}\n</ol></nav>`));
-  for (const a of filer) zip.file(`OEBPS/${a.fil}`, artikkelSide(a));
+  for (const a of filer) {
+    if (a.bilde) {
+      a.bildeFil = a.fil.replace('.xhtml', '.jpg');
+      zip.file(`OEBPS/${a.bildeFil}`, a.bilde, { compression: 'STORE' });
+    }
+    zip.file(`OEBPS/${a.fil}`, artikkelSide(a));
+  }
 
   const ncxPunkter = filer
     .map((a, i) => `<navPoint id="p${i + 1}" playOrder="${i + 1}"><navLabel><text>${esc(a.tittel)}</text></navLabel><content src="${a.fil}"/></navPoint>`)
@@ -198,7 +222,12 @@ ${ncxPunkter}
 `,
   );
 
-  const manifest = filer.map((a) => `<item id="${a.fil.slice(0, 4)}" href="${a.fil}" media-type="application/xhtml+xml"/>`).join('\n');
+  const manifest = filer
+    .flatMap((a) => [
+      `<item id="${a.fil.slice(0, 4)}" href="${a.fil}" media-type="application/xhtml+xml"/>`,
+      ...(a.bildeFil ? [`<item id="b${a.fil.slice(1, 4)}" href="${a.bildeFil}" media-type="image/jpeg"/>`] : []),
+    ])
+    .join('\n');
   const spine = filer.map((a) => `<itemref idref="${a.fil.slice(0, 4)}"/>`).join('\n');
   zip.file(
     'OEBPS/content.opf',
@@ -236,6 +265,16 @@ const saker = lesRss(await hent(RSS));
 const artikler = (await iParallell(saker, SAMTIDIG, lesArtikkel)).filter(Boolean);
 if (artikler.length === 0) throw new Error(`Ingen artikler (${saker.length} i RSS)`);
 
+// Hovedbildene, fire om gangen. En sak uten bilde vises bare uten.
+await iParallell(artikler, SAMTIDIG, async (a) => {
+  if (!a.bildeUrl) return;
+  try {
+    a.bilde = await lagBilde(a.bildeUrl);
+  } catch (e) {
+    console.warn(`uten bilde ${a.lenke}: ${e.message}`);
+  }
+});
+
 const tittel = `NRK ${oslo(bygd, { weekday: 'short', day: 'numeric', month: 'short' })} kl ${oslo(bygd, { hour: '2-digit' })}`;
 const epub = await lagEpub(tittel, artikler, bygd);
 // `liste` er overskriftene i samme rekkefølge som kapitlene (kapittel 1 er
@@ -246,7 +285,8 @@ const liste = artikler.map((a) => ({
   kl: klokke(a.dato),
 }));
 const medEndret = artikler.filter((a) => a.endret).length;
-const info = { tittel, bygd: bygd.toISOString(), saker: artikler.length, iRss: saker.length, medEndret, bytes: epub.length, liste };
+const medBilde = artikler.filter((a) => a.bilde).length;
+const info = { tittel, bygd: bygd.toISOString(), saker: artikler.length, iRss: saker.length, medEndret, medBilde, bytes: epub.length, liste };
 
 await mkdir(UT, { recursive: true });
 await writeFile(new URL('nrk.epub', UT), epub);
