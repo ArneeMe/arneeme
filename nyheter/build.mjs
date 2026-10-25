@@ -14,6 +14,7 @@ const RSS = 'https://www.nrk.no/toppsaker.rss';
 const UA = 'arnee.me-nyheter/1.0 (personlig lesebrett; https://arnee.me)';
 const SAMTIDIG = 4;
 const MIN_TEGN = 300; // kortere enn dette er video, liveblogg o.l.
+const MAKS_ALDER_MS = 36 * 3600_000; // saker som ikke er oppdatert så nylig, tas ikke med
 const UT = new URL('./ut/', import.meta.url);
 
 const stille = new VirtualConsole();
@@ -69,17 +70,35 @@ function xhtml(node) {
 
 // --- Artikler -----------------------------------------------------------------
 
+// Når artikkelen sist ble oppdatert, fra metadata på siden. null hvis ukjent.
+function oppdatert(doc) {
+  const kandidater = [
+    doc.querySelector('meta[property="article:modified_time"]')?.content,
+    doc.querySelector('meta[itemprop="dateModified"]')?.content,
+    doc.querySelector('time[itemprop="dateModified"]')?.getAttribute('datetime'),
+  ];
+  for (const script of doc.querySelectorAll('script[type="application/ld+json"]')) {
+    const m = script.textContent.match(/"dateModified"\s*:\s*"([^"]+)"/);
+    if (m) kandidater.push(m[1]);
+  }
+  const tider = kandidater.map((t) => new Date(t)).filter((d) => !isNaN(d));
+  return tider.length ? new Date(Math.max(...tider)) : null;
+}
+
 async function lesArtikkel(sak) {
   const url = new URL(sak.lenke);
   if (url.hostname !== 'www.nrk.no') return null; // tv.nrk.no, radio.nrk.no osv.
   const html = await hent(sak.lenke);
   const dom = new JSDOM(html, { url: sak.lenke, virtualConsole: stille });
   try {
+    const endret = oppdatert(dom.window.document);
+    const sist = endret && endret > sak.dato ? endret : sak.dato;
+    if (Date.now() - sist > MAKS_ALDER_MS) return null;
     const art = new Readability(dom.window.document).parse();
     if (!art || (art.length ?? 0) < MIN_TEGN) return null;
     const innhold = new JSDOM(`<body>${art.content}</body>`).window.document.body;
     const brodtekst = xhtml(innhold).replace(/(<br\/>\s*){2,}/g, '<br/>');
-    return { ...sak, byline: art.byline?.trim() ?? '', brodtekst, tekst: innhold.textContent };
+    return { ...sak, endret: Boolean(endret), byline: art.byline?.trim() ?? '', brodtekst, tekst: innhold.textContent };
   } finally {
     dom.window.close();
   }
@@ -226,7 +245,8 @@ const liste = artikler.map((a) => ({
   t: a.tittel,
   kl: klokke(a.dato),
 }));
-const info = { tittel, bygd: bygd.toISOString(), saker: artikler.length, iRss: saker.length, bytes: epub.length, liste };
+const medEndret = artikler.filter((a) => a.endret).length;
+const info = { tittel, bygd: bygd.toISOString(), saker: artikler.length, iRss: saker.length, medEndret, bytes: epub.length, liste };
 
 await mkdir(UT, { recursive: true });
 await writeFile(new URL('nrk.epub', UT), epub);
