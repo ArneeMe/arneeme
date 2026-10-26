@@ -1,0 +1,52 @@
+# Henter den engelske Wiktionary-ordboka (StarDict, xxyzz/wiktionary_stardict)
+# og legger filene i releasen `ordbok`. arnee.me/api/ordbok/<fil> peker dit,
+# og `waddle dict get` legger dem på lesebrettet. Kjøres for hånd ved behov.
+name: Ordbok
+
+on:
+  workflow_dispatch:
+  # På PR hentes og sjekkes ordboka bare, uten å publisere.
+  pull_request:
+    paths: ['.github/workflows/ordbok.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  ordbok:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Hent engelsk ordbok
+        run: |
+          set -euo pipefail
+          tag=$(gh api repos/xxyzz/wiktionary_stardict/releases/latest --jq .tag_name)
+          echo "Utgave: $tag"
+          curl -sSfL -o en-en.tar.zst "https://github.com/xxyzz/wiktionary_stardict/releases/download/$tag/en-en.tar.zst"
+          mkdir ordbok && tar --zstd -xf en-en.tar.zst -C ordbok
+          # Lesebrettet trenger en flat mappe og en ukomprimert .idx.
+          find ordbok -mindepth 2 -type f -exec mv {} ordbok/ \;
+          find ordbok -mindepth 1 -type d -empty -delete
+          for f in ordbok/*.idx.gz; do [ -e "$f" ] && gzip -d "$f"; done
+          # Bare ordbokfilene; bildene i arkivet viser ikke lesebrettet.
+          find ordbok -type f ! \( -name '*.ifo' -o -name '*.idx' -o -name '*.dict' -o -name '*.dict.dz' -o -name '*.syn' \) -delete
+          ls -l ordbok
+          python3 - "$tag" <<'PY'
+          import json, os, sys
+          filer = sorted(f for f in os.listdir("ordbok"))
+          json.dump({"navn": "english", "utgave": sys.argv[1],
+                     "filer": [{"navn": f, "bytes": os.path.getsize(f"ordbok/{f}")} for f in filer]},
+                    open("ordbok/ordbok.json", "w"))
+          PY
+          echo "::notice title=Ordbok::$(cat ordbok/ordbok.json)"
+          echo "::notice title=ifo::$(tr '\n' ' ' < ordbok/*.ifo)"
+
+      - name: Publiser
+        if: github.event_name != 'pull_request'
+        run: |
+          gh release view ordbok -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
+            gh release create ordbok -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
+              --title 'Ordbok' --notes 'Engelsk Wiktionary-ordbok (StarDict) til lesebrettet. Hentes med `waddle dict get`.'
+          gh release upload ordbok -R "$GITHUB_REPOSITORY" ordbok/* --clobber
