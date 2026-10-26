@@ -43,8 +43,8 @@ const forst = timer[0] ?? serie[0];
 const temp = (t) => t.data.instant.details.air_temperature;
 const temperaturer = (timer.length ? timer : [forst]).map(temp);
 
-// «Regn fra kl 15», «Snø nå» eller «Opphold resten av dagen».
-let tekst = 'Opphold resten av dagen';
+// «Regn fra kl 15», «Snø nå» eller «Ikke regn i dag».
+let tekst = 'Ikke regn i dag';
 for (const t of timer) {
   const neste = t.data.next_1_hours;
   if (!neste || (neste.details?.precipitation_amount ?? 0) < NEDBOR_MM) continue;
