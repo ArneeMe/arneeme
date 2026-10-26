@@ -30,6 +30,8 @@ jobs:
           find ordbok -mindepth 2 -type f -exec mv {} ordbok/ \;
           find ordbok -mindepth 1 -type d -empty -delete
           for f in ordbok/*.idx.gz; do [ -e "$f" ] && gzip -d "$f"; done
+          # Bare ordbokfilene; bildene i arkivet viser ikke lesebrettet.
+          find ordbok -type f ! \( -name '*.ifo' -o -name '*.idx' -o -name '*.dict' -o -name '*.dict.dz' -o -name '*.syn' \) -delete
           ls -l ordbok
           python3 - "$tag" <<'PY'
           import json, os, sys
