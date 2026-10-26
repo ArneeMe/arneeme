@@ -41,6 +41,7 @@ jobs:
                     open("ordbok/ordbok.json", "w"))
           PY
           echo "::notice title=Ordbok::$(cat ordbok/ordbok.json)"
+          echo "::notice title=ifo::$(tr '\n' ' ' < ordbok/*.ifo)"
 
       - name: Publiser
         if: github.event_name != 'pull_request'
