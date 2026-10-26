@@ -5,6 +5,9 @@ name: Ordbok
 
 on:
   workflow_dispatch:
+  # På PR hentes og sjekkes ordboka bare, uten å publisere.
+  pull_request:
+    paths: ['.github/workflows/ordbok.yml']
 
 permissions:
   contents: write
@@ -38,6 +41,7 @@ jobs:
           echo "::notice title=Ordbok::$(cat ordbok/ordbok.json)"
 
       - name: Publiser
+        if: github.event_name != 'pull_request'
         run: |
           gh release view ordbok -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
             gh release create ordbok -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
