@@ -1,4 +1,4 @@
-// Fastvare til lesebrettet (WaddleOS «Oppdater fastvare»). Henter fra
+// Fastvare til lesebrettet og mesh-enhetene (WaddleOS «Oppdater fastvare»). Henter fra
 // waddle-latest-releasen i ArneeMe/waddleos og sender videre, så lesebrettet
 // bare snakker med arnee.me.
 import type { APIRoute } from 'astro';
@@ -9,6 +9,7 @@ const RELEASE = 'https://github.com/ArneeMe/waddleos/releases/download/waddle-la
 const TYPER: Record<string, string> = {
   'version.json': 'application/json; charset=utf-8',
   'waddleos-x4pro.bin': 'application/octet-stream',
+  'waddleos-t5.bin': 'application/octet-stream',
 };
 
 export const GET: APIRoute = async ({ params }) => {
