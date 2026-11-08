@@ -2371,3 +2371,21 @@ body {
   border-color: #808080 #ffffff #ffffff #808080;
   background: #c0c0c0;
 }
+
+.zkp-valg {
+  text-align: left;
+  margin: 8px 0;
+}
+
+.zkp-knapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.zkp-liste {
+  text-align: left;
+  margin: 8px 0;
+}

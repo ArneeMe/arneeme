@@ -2,14 +2,19 @@ import { useState, useEffect, useRef } from 'preact/hooks';
 
 type VerifyState = 'idle' | 'starting' | 'qr' | 'success' | 'error';
 
+type Valg = { alder: 0 | 16 | 18; nasjonalitet: boolean; navn: boolean; test: boolean };
+
+type Svar = { linjer: string[]; test: boolean };
+
 export default function Verifier() {
   const [state, setState] = useState<VerifyState>('idle');
-  const [deepLink, setDeepLink] = useState<string>('');
-  const [devDeepLink, setDevDeepLink] = useState<string>('');
+  const [valg, setValg] = useState<Valg>({ alder: 16, nasjonalitet: false, navn: false, test: false });
+  const [lenke, setLenke] = useState<string>('');
+  const [svar, setSvar] = useState<Svar | null>(null);
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const [kopiert, setKopiert] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvasDevRef = useRef<HTMLCanvasElement>(null);
   const cancelRequestRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -26,65 +31,100 @@ export default function Verifier() {
     if (state !== 'qr') return;
     let cancelled = false;
     import('qrcode').then(({ default: QRCode }) => {
-      if (cancelled) return;
-      const opts = { width: 160, margin: 1, color: { dark: '#000000', light: '#ffffff' } };
-      if (deepLink && canvasRef.current) {
-        QRCode.toCanvas(canvasRef.current, deepLink, opts).catch(() => {});
-      }
-      if (devDeepLink && canvasDevRef.current) {
-        QRCode.toCanvas(canvasDevRef.current, devDeepLink, opts).catch(() => {});
-      }
+      if (cancelled || !lenke || !canvasRef.current) return;
+      QRCode.toCanvas(canvasRef.current, lenke, { width: 200, margin: 1, color: { dark: '#000000', light: '#ffffff' } }).catch(() => {});
     });
     return () => { cancelled = true; };
-  }, [state, deepLink, devDeepLink]);
+  }, [state, lenke]);
+
+  function formål(v: Valg) {
+    const deler: string[] = [];
+    if (v.alder) deler.push(`over ${v.alder}`);
+    if (v.nasjonalitet) deler.push('nasjonalitet');
+    if (v.navn) deler.push('navn');
+    return `Bekreft ${deler.join(', ')}`;
+  }
+
+  function sjekk(v: Valg, navn: string[], result: any): string | string[] {
+    const linjer: string[] = [];
+    if (v.alder) {
+      const gte = result?.age?.gte;
+      if (!navn.includes('compare_age') || gte?.expected !== v.alder || gte?.result !== true) {
+        return `Mangler gyldig bevis for at du er over ${v.alder}.`;
+      }
+      linjer.push(`Over ${v.alder}: ja`);
+    }
+    if (v.nasjonalitet || v.navn) {
+      if (!navn.includes('disclose_bytes')) return 'Mangler bevis for dataene som skulle deles.';
+    }
+    if (v.nasjonalitet) {
+      const n = result?.nationality?.disclose?.result;
+      if (!n) return 'Mangler nasjonalitet i svaret.';
+      linjer.push(`Nasjonalitet: ${n}`);
+    }
+    if (v.navn) {
+      const f = result?.firstname?.disclose?.result;
+      const e = result?.lastname?.disclose?.result;
+      if (!f || !e) return 'Mangler navn i svaret.';
+      linjer.push(`Navn: ${f} ${e}`);
+    }
+    return linjer;
+  }
 
   async function startVerification() {
+    if (!valg.alder && !valg.nasjonalitet && !valg.navn) {
+      setErrorMsg('Velg minst én ting å be om.');
+      setState('error');
+      return;
+    }
     setState('starting');
     setErrorMsg('');
+    setSvar(null);
+    const v = valg;
     try {
       const { ZKPassport } = await import('@zkpassport/sdk');
-      const zkReal = new ZKPassport();
-      const zkDev = new ZKPassport();
+      const zk = new ZKPassport();
+      let builder: any = await zk.request({
+        name: 'arnee.me',
+        logo: 'https://arnee.me/icons/16plus-32.svg',
+        purpose: formål(v),
+        devMode: v.test,
+      });
+      if (v.alder) builder = builder.gte('age', v.alder);
+      if (v.nasjonalitet) builder = builder.disclose('nationality');
+      if (v.navn) builder = builder.disclose('firstname').disclose('lastname');
+      const { url, requestId, onResult, onError, onReject, onProofGenerated } = builder.done();
 
-      const [builderReal, builderDev] = await Promise.all([
-        zkReal.request({ name: 'arnee.me', logo: 'https://arnee.me/icons/16plus-32.svg', purpose: 'Age verification (16+)' }),
-        zkDev.request({ name: 'arnee.me', logo: 'https://arnee.me/icons/16plus-32.svg', purpose: 'Age verification (16+)', devMode: true }),
-      ]);
+      const navn: string[] = [];
+      onProofGenerated((p: any) => { if (p?.name) navn.push(p.name); });
+      cancelRequestRef.current = () => { try { zk.cancelRequest(requestId); } catch {} };
 
-      const { url: urlReal, requestId: idReal, onResult: onResultReal, onError: onErrorReal, onReject: onRejectReal } = builderReal.gte('age', 16).done();
-      const { url: urlDev, requestId: idDev, onResult: onResultDev, onError: onErrorDev, onReject: onRejectDev } = builderDev.gte('age', 16).done();
-
-      cancelRequestRef.current = () => {
-        try { zkReal.cancelRequest(idReal); } catch {}
-        try { zkDev.cancelRequest(idDev); } catch {}
-      };
-
-      const handleVerified = (verified: boolean) => {
-        if (verified) {
-          setState('success');
-        } else {
-          setErrorMsg('Bekreftelsen feilet. Prøv igjen.');
+      onResult(({ verified, result }: any) => {
+        if (!verified) {
+          setErrorMsg('Beviset holdt ikke. Prøv igjen.');
           setState('error');
+          return;
         }
-      };
-
-      onResultReal(({ verified }) => handleVerified(verified));
-      onResultDev(({ verified }) => handleVerified(verified));
-
-      onErrorReal(() => {});
-      onErrorDev(() => {
+        const r = sjekk(v, navn, result);
+        if (typeof r === 'string') {
+          setErrorMsg(r);
+          setState('error');
+          return;
+        }
+        setSvar({ linjer: r, test: v.test });
+        setState('success');
+      });
+      onError(() => {
         setErrorMsg('Noe gikk galt under verifiseringen. Prøv igjen.');
         setState('error');
       });
-
-      onRejectReal(() => {});
-      onRejectDev(() => {
+      onReject(() => {
         setErrorMsg('Forespørselen ble avslått.');
         setState('error');
       });
 
-      setDeepLink(urlReal);
-      setDevDeepLink(urlDev);
+      setLenke(url);
+      setKopiert(false);
       setState('qr');
     } catch {
       setErrorMsg('Kunne ikke starte ZKPassport. Prøv igjen.');
@@ -95,34 +135,49 @@ export default function Verifier() {
   function reset() {
     cancelRequestRef.current?.();
     cancelRequestRef.current = null;
-    setDeepLink('');
-    setDevDeepLink('');
+    setLenke('');
     setErrorMsg('');
+    setSvar(null);
     setState('idle');
   }
+
+  async function kopier() {
+    try {
+      await navigator.clipboard.writeText(lenke);
+      setKopiert(true);
+    } catch {}
+  }
+
+  const appLenke = lenke.replace('https://zkpassport.id/r?', 'zkpassport:///r?');
 
   return (
     <div class="window zkp-window">
       <div class="title-bar">
-        <div class="title-bar-text">16+ Verifisering</div>
+        <div class="title-bar-text">Bevis med pass</div>
       </div>
       <div class="window-body">{renderBody()}</div>
     </div>
   );
 
   function renderBody() {
-    if (state === 'success') {
+    if (state === 'success' && svar) {
       return (
         <div class="age-gate-center">
           <div class="age-gate-success-icon">✓</div>
-          <h2 class="age-gate-title">Verifisert · over 16</h2>
+          <h2 class="age-gate-title">{svar.test ? 'Testpass bekreftet' : 'Bekreftet'}</h2>
+          {svar.test && (
+            <p class="age-gate-error">Testmodus: dette var et testpass, ikke et ekte pass.</p>
+          )}
+          <ul class="zkp-liste">
+            {svar.linjer.map((l) => <li>{l}</li>)}
+          </ul>
           <p class="age-gate-text">
             Et zero-knowledge-bevis ble kontrollert.
             <br />
             Ingenting annet ble lært om deg.
           </p>
           <button class="explorer-btn" onClick={reset}>
-            Verifiser på nytt
+            Ny forespørsel
           </button>
         </div>
       );
@@ -142,23 +197,14 @@ export default function Verifier() {
     if (state === 'qr') {
       return (
         <div class="age-gate-center">
-          <div class="age-gate-qr-row">
-            <div class="age-gate-qr-col">
-              <canvas ref={canvasRef} class="age-gate-qr" width={160} height={160} />
-              <p class="age-gate-muted">Ekte pass</p>
-              {isMobile && deepLink && (
-                <a href={deepLink} class="about-link">Åpne app</a>
-              )}
-            </div>
-            <div class="age-gate-qr-col">
-              <canvas ref={canvasDevRef} class="age-gate-qr" width={160} height={160} />
-              <p class="age-gate-muted">Dev / test</p>
-              {isMobile && devDeepLink && (
-                <a href={devDeepLink} class="about-link">Åpne app (dev)</a>
-              )}
-            </div>
+          <canvas ref={canvasRef} class="age-gate-qr" width={200} height={200} />
+          <p class="age-gate-muted">{valg.test ? 'Testmodus: bare testpass godtas' : 'Ekte pass'}</p>
+          <div class="zkp-knapper">
+            {isMobile && <a href={appLenke} class="explorer-btn">Åpne i Pass</a>}
+            {isMobile && <a href={lenke} class="explorer-btn">Åpne i ZKPassport</a>}
+            <button class="explorer-btn" onClick={kopier}>{kopiert ? 'Kopiert' : 'Kopier lenke'}</button>
           </div>
-          <p class="age-gate-muted">Venter på bekreftelse…</p>
+          <p class="age-gate-muted">Venter på svar…</p>
           <button class="explorer-btn" onClick={reset}>
             Avbryt
           </button>
@@ -166,46 +212,67 @@ export default function Verifier() {
       );
     }
 
-    // idle or starting
+    const sett = (endring: Partial<Valg>) => setValg({ ...valg, ...endring });
     return (
       <div class="age-gate-center">
-        <h2 class="age-gate-title">ZKPassport-demo</h2>
+        <h2 class="age-gate-title">Bevis med pass</h2>
         <p class="age-gate-text">
-          Bevis at du er over 16 med passet ditt — uten å avsløre
+          Velg hva siden skal få vite. Resten av passet
           <br />
-          hvem du er. Et zero-knowledge-bevis, gjort synlig.
+          forblir på telefonen din.
         </p>
+        <fieldset class="zkp-valg">
+          <legend>Be om</legend>
+          <div class="field-row">
+            <input type="radio" id="alder0" name="alder" checked={valg.alder === 0} onChange={() => sett({ alder: 0 })} />
+            <label for="alder0">Ikke alder</label>
+          </div>
+          <div class="field-row">
+            <input type="radio" id="alder16" name="alder" checked={valg.alder === 16} onChange={() => sett({ alder: 16 })} />
+            <label for="alder16">Over 16</label>
+          </div>
+          <div class="field-row">
+            <input type="radio" id="alder18" name="alder" checked={valg.alder === 18} onChange={() => sett({ alder: 18 })} />
+            <label for="alder18">Over 18</label>
+          </div>
+          <div class="field-row">
+            <input type="checkbox" id="nasjonalitet" checked={valg.nasjonalitet} onChange={() => sett({ nasjonalitet: !valg.nasjonalitet })} />
+            <label for="nasjonalitet">Nasjonalitet</label>
+          </div>
+          <div class="field-row">
+            <input type="checkbox" id="navn" checked={valg.navn} onChange={() => sett({ navn: !valg.navn })} />
+            <label for="navn">Fornavn og etternavn</label>
+          </div>
+          <div class="field-row">
+            <input type="checkbox" id="test" checked={valg.test} onChange={() => sett({ test: !valg.test })} />
+            <label for="test">Testmodus (testpass)</label>
+          </div>
+        </fieldset>
         <button
           class="explorer-btn"
           onClick={startVerification}
           disabled={state === 'starting'}
         >
-          {state === 'starting' ? 'Starter…' : 'Verifiser alder'}
+          {state === 'starting' ? 'Starter…' : 'Lag forespørsel'}
         </button>
         <details class="age-gate-details">
           <summary>Hvordan fungerer dette?</summary>
           <div class="age-gate-explainer">
             <p>
-              <strong>App å installere:</strong> "ZKPassport" — App Store
-              eller Google Play. Appen leser NFC-brikken i passet ditt.
+              <strong>App:</strong> ZKPassport fra App Store eller Google Play,
+              eller min egen Pass-app. Appen leser NFC-brikken i passet ditt.
             </p>
             <p>
-              <strong>Hva som skjer:</strong> Telefonen din lager et
-              matematisk bevis på at passet ditt sier at du er over 16.
-              Bare beviset sendes — aldri passdataene.
+              <strong>Hva som skjer:</strong> Telefonen lager et matematisk
+              bevis for det du deler. Bare beviset sendes, aldri passdataene.
             </p>
             <p>
-              <strong>Hva dette nettstedet lærer:</strong> At du er over 16.
-              Det er det.
+              <strong>Hva siden lærer:</strong> Bare det du har krysset av for.
+              Nasjonalitet og navn vises i klartekst.
             </p>
             <p>
-              <strong>Hva det ikke lærer:</strong> Navn, fødselsdato,
-              passnummer, nasjonalitet eller om du har vært her før.
-            </p>
-            <p>
-              <strong>To QR-koder?</strong> Den til venstre er for et ekte
-              pass. Den til høyre er dev/test-modus — nyttig hvis du ikke
-              har et pass for hånden.
+              <strong>Testmodus:</strong> Godtar testpass fra Zero Knowledge
+              Republic. Nyttig uten pass for hånden, men beviser ingenting om deg.
             </p>
           </div>
         </details>
