@@ -108,6 +108,16 @@ try {
   const revealed = await page.$$eval('.mines-cell.revealed', (els) => els.length);
   check('minesveiper: første klikk avslører ruter', revealed > 0, `${revealed} ruter`);
 
+  // --- Tallspill via Start-menyen ---
+  await page.click('.start-button');
+  await page.click('.start-menu-item:has-text("Tallspill")');
+  await page.waitForSelector('.tall-app', { timeout: 5000 });
+  await page.click('.tall-trekk');
+  await page.click('.tall-los');
+  await page.waitForSelector('.tall-svar li', { timeout: 10000 });
+  const losninger = await page.$$eval('.tall-svar li', (els) => els.length);
+  check('tallspill: viser løsninger', losninger > 0 && losninger <= 10, `${losninger} løsninger`);
+
   // --- 404-side (BSOD) med ekte 404-status ---
   const res = await page.goto(BASE + '/finnes/ikke');
   check('404-status på ukjent sti', res.status() === 404, `status ${res.status()}`);

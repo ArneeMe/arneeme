@@ -64,6 +64,7 @@ export default function MyComputer({ instanceId }: Props) {
 
   const gameItems: FolderItem[] = [
     { id: 'minesveiper', label: 'Minesveiper', icon: '/icons/mine.svg', action: () => launch('minesveiper') },
+    { id: 'tallspill', label: 'Tallspill', icon: '/icons/gamepad.svg', action: () => launch('tallspill') },
     { id: 'kanonspill', label: 'Kanonspill', icon: '/icons/gamepad.svg', action: () => launch('kanonspill') },
     { id: 'hoksrud', label: 'Bård Hoksrud', icon: '/icons/gamepad.svg', action: () => launch('hoksrud') },
   ];
