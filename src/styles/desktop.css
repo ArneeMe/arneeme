@@ -2295,6 +2295,117 @@ body {
   }
 }
 
+/* ===== Tallspill ================================================= */
+
+.tall-app {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background: #c0c0c0;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.tall-fieldset {
+  border: 1px solid #808080;
+  padding: 6px 8px 8px;
+  margin: 0;
+}
+
+.tall-store {
+  display: flex;
+  gap: 4px;
+}
+
+.tall-store button {
+  min-width: 0;
+  flex: 1;
+}
+
+.tall-store button.active {
+  box-shadow: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080;
+  font-weight: bold;
+}
+
+.tall-store .tall-trekk {
+  flex: 2;
+  font-weight: bold;
+}
+
+.tall-tavle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tall-klokke,
+.tall-mal {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 22px;
+  color: #f00;
+  background: #000;
+  padding: 2px 6px;
+  letter-spacing: 2px;
+}
+
+.tall-app input.tall-mal {
+  width: 5ch;
+  height: auto;
+  border: none;
+  box-shadow: none;
+  text-align: center;
+  color: #ffd000;
+}
+
+.tall-tall {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+.tall-tall input {
+  min-width: 0;
+  height: 28px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.tall-los {
+  font-weight: bold;
+}
+
+.tall-melding {
+  margin: 0;
+}
+
+.tall-svar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tall-svar ol {
+  margin: 0;
+  padding: 4px 4px 4px 28px;
+  background: #ffffff;
+  font-family: 'Courier New', monospace;
+}
+
+.tall-svar li {
+  padding: 4px 0;
+  border-bottom: 1px dotted #808080;
+}
+
+.tall-svar li:last-child {
+  border-bottom: none;
+}
+
 /* ===== Papirkurv ================================================= */
 
 .trash-empty {
