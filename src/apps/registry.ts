@@ -16,6 +16,7 @@ import LoanCalculator from '../components/desktop/apps/LoanCalculator';
 import Budsjett from '../components/desktop/apps/Budsjett';
 import Minesveiper from '../components/desktop/apps/Minesveiper';
 import Tallspill from '../components/desktop/apps/Tallspill';
+import Bokstavspill from '../bokstavspill/Bokstavspill';
 import Papirkurv from '../components/desktop/apps/Papirkurv';
 import Presentasjoner from '../components/desktop/apps/Presentasjoner';
 
@@ -182,6 +183,22 @@ export const apps: Record<string, AppDefinition> = {
     showOnMobile: true,
     tileColor: '#a000a0',
     component: Tallspill,
+  },
+
+  'bokstavspill': {
+    id: 'bokstavspill',
+    title: 'Bokstavspill',
+    icon: '/icons/gamepad.svg',
+    defaultSize: { w: 380, h: 520 },
+    minSize: { w: 320, h: 360 },
+    resizable: true,
+    singleton: true,
+    showOnDesktop: true,
+    desktopArea: 'right',
+    showInStartMenu: true,
+    showOnMobile: true,
+    tileColor: '#0050ef',
+    component: Bokstavspill,
   },
 
   'presentasjoner': {
