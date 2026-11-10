@@ -118,6 +118,16 @@ try {
   const losninger = await page.$$eval('.tall-svar li', (els) => els.length);
   check('tallspill: viser løsninger', losninger > 0 && losninger <= 10, `${losninger} løsninger`);
 
+  // --- Bokstavspill via Start-menyen ---
+  await page.click('.start-button');
+  await page.click('.start-menu-item:has-text("Bokstavspill")');
+  await page.waitForSelector('.bokstav-app', { timeout: 5000 });
+  await page.click('.bokstav-trekk button:has-text("Tilfeldig")');
+  await page.click('.bokstav-vis');
+  await page.waitForSelector('.bokstav-beste li', { timeout: 10000 });
+  const beste = await page.$$eval('.bokstav-beste li', (els) => els.length);
+  check('bokstavspill: viser beste ord', beste > 0 && beste <= 10, `${beste} ord`);
+
   // --- 404-side (BSOD) med ekte 404-status ---
   const res = await page.goto(BASE + '/finnes/ikke');
   check('404-status på ukjent sti', res.status() === 404, `status ${res.status()}`);
