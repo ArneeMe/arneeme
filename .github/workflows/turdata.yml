@@ -32,8 +32,8 @@ jobs:
       - name: Installer verktøy
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq gdal-bin python3-gdal python3-numpy
-          sudo /usr/bin/python3 -m pip install --break-system-packages -q osmium==4.0.2
+          sudo apt-get install -y -qq gdal-bin python3-gdal python3-numpy python3-pyosmium
+          /usr/bin/python3 -c "import osmium, osgeo; print('osmium og gdal er klare')"
 
       - name: Hent Norge
         run: |
