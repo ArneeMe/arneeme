@@ -1,0 +1,77 @@
+# Lager veier, stier og høyde til Tur-appen og legger dem i releasen `turdata`.
+# arnee.me/api/tur/<fil> peker dit. Veier og stier er fra OpenStreetMap (Norge
+# fra Geofabrik), høyden fra Kartverkets terrengmodell. Kjøres en gang i måneden.
+name: Turdata
+
+on:
+  schedule:
+    - cron: "23 2 3 * *"
+  workflow_dispatch:
+    inputs:
+      hoyde:
+        description: "Lag all høyde på nytt"
+        type: boolean
+        default: false
+  push:
+    branches-ignore: [master]
+    paths: ['turdata/**', '.github/workflows/turdata.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  turdata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PROVE: ${{ github.ref_name != github.event.repository.default_branch }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Installer verktøy
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gdal-bin python3-gdal python3-numpy
+          sudo /usr/bin/python3 -m pip install --break-system-packages -q osmium==4.0.2
+
+      - name: Hent Norge
+        run: |
+          if [ "$PROVE" = true ]; then
+            curl -sSfL -o norge.osm.pbf https://download.geofabrik.de/europe/norway/oslo-latest.osm.pbf || \
+              curl -sSfL -o norge.osm.pbf https://download.geofabrik.de/europe/norway-latest.osm.pbf
+          else
+            curl -sSfL -o norge.osm.pbf https://download.geofabrik.de/europe/norway-latest.osm.pbf
+          fi
+          ls -l norge.osm.pbf
+
+      - name: Veier og stier
+        run: /usr/bin/python3 turdata/bygg.py norge.osm.pbf ut
+
+      - name: Høyde
+        run: |
+          : > finnes.txt
+          if [ "${{ inputs.hoyde }}" != true ]; then
+            gh release view turdata -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' > finnes.txt 2>/dev/null || true
+          fi
+          if [ "$PROVE" = true ]; then
+            /usr/bin/python3 - <<'PY'
+          import json
+          i = json.load(open("ut/indeks.json"))
+          i["veier"] = [v for v in i["veier"] if v["by"] == 119 and v["bx"] == 10]
+          json.dump(i, open("ut/indeks-test.json", "w"))
+          PY
+            /usr/bin/python3 turdata/hoyde.py ut/indeks-test.json ut finnes.txt
+          else
+            /usr/bin/python3 turdata/hoyde.py ut/indeks.json ut finnes.txt
+          fi
+          ls ut | head
+          du -sh ut
+
+      - name: Publiser
+        if: env.PROVE != 'true'
+        run: |
+          gh release view turdata -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
+            gh release create turdata -R "$GITHUB_REPOSITORY" --prerelease --latest=false \
+              --title 'Turdata' --notes 'Veier, stier og høyde til Tur-appen. Bygges en gang i måneden.'
+          gh release upload turdata -R "$GITHUB_REPOSITORY" ut/*.bin ut/indeks.json --clobber
