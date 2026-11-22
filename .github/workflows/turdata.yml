@@ -37,13 +37,22 @@ jobs:
 
       - name: Hent Norge
         run: |
-          if [ "$PROVE" = true ]; then
-            curl -sSfL -o norge.osm.pbf https://download.geofabrik.de/europe/norway/oslo-latest.osm.pbf || \
-              curl -sSfL -o norge.osm.pbf https://download.geofabrik.de/europe/norway-latest.osm.pbf
-          else
-            curl -sSfL -o norge.osm.pbf https://download.geofabrik.de/europe/norway-latest.osm.pbf
-          fi
+          kilder="https://download.geofabrik.de/europe/norway-latest.osm.pbf https://download.openstreetmap.fr/extracts/europe/norway-latest.osm.pbf"
+          for k in $kilder; do
+            for forsok in 1 2 3; do
+              echo "Henter $k (forsøk $forsok)"
+              if curl -sSfL --retry 3 --connect-timeout 30 -o norge.osm.pbf "$k"; then break 2; fi
+              sleep 20
+            done
+          done
+          test -s norge.osm.pbf
           ls -l norge.osm.pbf
+          if [ "$PROVE" = true ]; then
+            osmium extract --help >/dev/null 2>&1 || sudo apt-get install -y -qq osmium-tool
+            osmium extract -b 10.4,59.7,11.1,60.1 norge.osm.pbf -o oslo.osm.pbf --overwrite
+            mv oslo.osm.pbf norge.osm.pbf
+            ls -l norge.osm.pbf
+          fi
 
       - name: Veier og stier
         run: /usr/bin/python3 turdata/bygg.py norge.osm.pbf ut
